@@ -494,32 +494,70 @@
                     <!-- Manufacturers -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Home</a>
+                            <a href="<?php echo $home; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_home; ?></a>
                         </li>                         
                     </ul>
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Search Parts</a>
+                            <a href="<?php echo $parts_search; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_parts_search; ?></a>
                         </li>                         
                     </ul>
+                    <!-- Information -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">About Us</a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_information; ?></a>
+                            <div class="dropdown-menu">
+                                <ul class="list-unstyled">
+                                <?php foreach ($informations as $information) { ?>
+                                    <li><a href="<?php echo $information['href']; ?>"><?php echo $information['title']; ?></a></li>
+                                <?php } ?>
+                                </ul>                                
+                            </div>
                         </li>                         
                     </ul>
+                    <!-- Customer Service -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog</a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_service; ?></a>
+                            <div class="dropdown-menu">
+                                <ul class="list-unstyled">
+                                    <li><a href="<?php echo $contact; ?>"><?php echo $text_contact; ?></a></li>
+                                    <li><a href="<?php echo $return; ?>"><?php echo $text_return; ?></a></li>
+                                    <li><a href="<?php echo $sitemap; ?>"><?php echo $text_sitemap; ?></a></li>
+                                </ul>                                
+                            </div>
                         </li>                         
                     </ul>
+                    <!-- Extras -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Affiliates</a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_extra; ?></a>
+                            <div class="dropdown-menu">
+                                <ul class="list-unstyled">
+                                    <li><a href="<?php echo $manufacturer; ?>"><?php echo $text_manufacturer; ?></a></li>
+                                    <li><a href="<?php echo $voucher; ?>"><?php echo $text_voucher; ?></a></li>
+                                    <li><a href="<?php echo $affiliate; ?>"><?php echo $text_affiliate; ?></a></li>
+                                    <li><a href="<?php echo $special; ?>"><?php echo $text_special; ?></a></li>
+                                </ul>                                
+                            </div>
                         </li>                         
                     </ul>
+                    <!-- Blog -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manufacturers-testing</a>
+                            <a href="<?php echo $blog; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_blog; ?></a>
+                        </li>                         
+                    </ul>
+                    <!-- Affiliates -->
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="<?php echo $affiliates; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_affiliates; ?></a>
+                        </li>                         
+                    </ul>
+                    <!-- Manufacturers -->
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manufacturers</a>
                             <div class="dropdown-menu">
                                 <ul class="list-unstyled">
                                     <li><a>manufacturer-test1</a></li>
@@ -529,6 +567,22 @@
                                     <li><a>manufacturer-test5</a></li>
                                 </ul>
                                 <a href="#" class="see-all">See All Manufacturers</a>
+                            </div>
+                        </li>                         
+                    </ul>
+                    <!-- Models -->
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Models</a>
+                            <div class="dropdown-menu">
+                                <ul class="list-unstyled">
+                                    <li><a>manufacturer-test1</a></li>
+                                    <li><a>manufacturer-test2</a></li>
+                                    <li><a>manufacturer-test3</a></li>
+                                    <li><a>manufacturer-test4</a></li>
+                                    <li><a>manufacturer-test5</a></li>
+                                </ul>
+                                <a href="#" class="see-all">See All Models</a>
                             </div>
                         </li>                         
                     </ul>

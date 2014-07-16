@@ -41,7 +41,8 @@ class ControllerCommonHeader extends Controller {
 		}		
 
 		$this->language->load('common/header');
-
+		$this->language->load('common/footer');
+		// Language
 		$this->data['text_home'] = $this->language->get('text_home');
 		$this->data['text_wishlist'] = sprintf($this->language->get('text_wishlist'), (isset($this->session->data['wishlist']) ? count($this->session->data['wishlist']) : 0));
 		$this->data['text_shopping_cart'] = $this->language->get('text_shopping_cart');
@@ -50,6 +51,9 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_logged'] = sprintf($this->language->get('text_logged'), $this->url->link('account/account', '', 'SSL'), $this->customer->getFirstName(), $this->url->link('account/logout', '', 'SSL'));
 		$this->data['text_account'] = $this->language->get('text_account');
 		$this->data['text_checkout'] = $this->language->get('text_checkout');
+		$this->data['text_blog'] = $this->language->get('text_blog');
+		$this->data['text_parts_search'] = $this->language->get('text_parts_search');
+		$this->data['text_affiliates'] = $this->language->get('text_affiliates');
 
 		$this->data['home'] = $this->url->link('common/home');
 		$this->data['wishlist'] = $this->url->link('account/wishlist', '', 'SSL');
@@ -57,6 +61,24 @@ class ControllerCommonHeader extends Controller {
 		$this->data['account'] = $this->url->link('account/account', '', 'SSL');
 		$this->data['shopping_cart'] = $this->url->link('checkout/cart');
 		$this->data['checkout'] = $this->url->link('checkout/checkout', '', 'SSL');
+		$this->data['text_information'] = $this->language->get('text_information');
+		$this->data['text_service'] = $this->language->get('text_service');
+		$this->data['text_extra'] = $this->language->get('text_extra');
+		$this->data['text_contact'] = $this->language->get('text_contact');
+		$this->data['text_return'] = $this->language->get('text_return');
+		$this->data['text_sitemap'] = $this->language->get('text_sitemap');
+		$this->data['text_manufacturer'] = $this->language->get('text_manufacturer');
+		$this->data['text_voucher'] = $this->language->get('text_voucher');
+		$this->data['text_affiliate'] = $this->language->get('text_affiliate');
+		$this->data['text_special'] = $this->language->get('text_special');
+		$this->data['text_account'] = $this->language->get('text_account');
+		$this->data['text_order'] = $this->language->get('text_order');
+		$this->data['text_wishlist'] = $this->language->get('text_wishlist');
+		$this->data['text_newsletter'] = $this->language->get('text_newsletter');
+		$this->data['text_manufacturers'] = $this->language->get('text_manufacturers');
+		$this->data['text_models'] = $this->language->get('text_models');
+		$this->data['text_see_all_models'] = $this->language->get('text_see_all_models');
+		$this->data['text_see_all_manufacturers'] = $this->language->get('text_see_all_manufacturers');
 
 		// Daniel's robot detector
 		$status = true;
@@ -97,13 +119,11 @@ class ControllerCommonHeader extends Controller {
 
 		// Menu
 		$this->load->model('catalog/category');
-
 		$this->load->model('catalog/product');
-
+		$this->load->model('catalog/information');
+		// categories
 		$this->data['categories'] = array();
-
 		$categories = $this->model_catalog_category->getCategories(0);
-
 		foreach ($categories as $category) {
 			if ($category['top']) {
 				// Level 2
@@ -134,6 +154,27 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
+		// manufacturers
+		$this->data['informations'] = array();
+		$manufacturers = $this->model_catalog_information->getInformations();
+		foreach ($manufacturers as $result) {
+			if ($result) {
+				$this->data['informations'][] = array(
+					'title' => $result['title'],
+					'href'  => $this->url->link('information/information', 'information_id=' . $result['information_id'])
+				);
+			}
+		}
+		// others
+		$this->data['home'] = $this->url->link('common/home');
+
+		$this->data['parts_search'] = $this->url->link('common/home');
+		$this->data['blog'] = $this->url->link('common/home');
+		$this->data['affiliates'] = $this->url->link('common/home');
+
+		$this->data['contact'] = $this->url->link('information/contact');
+		$this->data['return'] = $this->url->link('account/return/insert', '', 'SSL');
+		$this->data['sitemap'] = $this->url->link('information/sitemap');
 
 		$this->children = array(
 			'module/language',

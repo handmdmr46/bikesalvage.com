@@ -349,6 +349,8 @@ a.button, .list a.button {
 	padding: 5px;
 	background: #E7EFEF;
 }
+/* original pagination css */
+/*
 .pagination {
 	border-top: 1px solid #DDDDDD;
 	display: inline-block;
@@ -367,6 +369,39 @@ a.button, .list a.button {
 	color: #A3A3A3;
 }
 .pagination .links b {
+	border: 1px solid #269BC6;
+	padding: 4px 10px;
+	font-size: 12px;
+	font-weight: normal;
+	text-decoration: none;
+	color: #269BC6;
+	background: #FFFFFF;
+}
+.pagination .results {
+	float: right;
+	padding-top: 6px;
+	font-size: 12px;
+}
+*/
+.pagination {
+	border-top: 1px solid #DDDDDD;
+	display: inline-block;
+	width: 100%;
+	padding-top: 6px;
+}
+.pagination li {
+	float: left;
+	padding-top: 6px;
+	list-style: none;
+}
+.pagination li a {
+	border: 1px solid #DDDDDD;
+	padding: 4px 10px;
+	font-size: 12px;
+	text-decoration: none;
+	color: #A3A3A3;
+}
+.pagination .active{
 	border: 1px solid #269BC6;
 	padding: 4px 10px;
 	font-size: 12px;
