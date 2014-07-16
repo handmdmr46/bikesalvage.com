@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>OC Bootstrap Alterations</id>
+	<version>1.1</version>
+	<vqmver>2.4.1</vqmver>
+	<author>ThePath - the1path.com</author>
+	
+	<!-- The following orders nivo slides by name. -->
+	<file name="catalog/model/design/banner.php">
+        <operation error="skip">
+            <search position="replace"><![CDATA[
+            (int)$this->config->get('config_language_id') . "'");
+            ]]></search>
+            <add><![CDATA[
+            (int)$this->config->get('config_language_id') . "' ORDER BY title ASC");
+            ]]></add>
+        </operation>
+	</file>
+	<!-- Make Model/Product Code not required -->
+	<file name="admin/controller/catalog/product.php">
+        <operation error="log">
+            <search position="replace" offset="2">
+            	<![CDATA[if ((utf8_strlen($this->request->post['model']) < 1) || (utf8_strlen($this->request->post['model']) > 64)) {]]>
+            </search>
+            <add>
+            	<![CDATA[]]>
+            </add>
+        </operation>       
+	</file>
+	<file name="admin/view/template/catalog/product_form.tpl">
+        <operation error="log">
+            <search position="replace">
+            	<![CDATA[<td><span class="required">*</span> <?php echo $entry_model; ?></td>]]>
+            </search>
+            <add>
+            	<![CDATA[<td><?php echo $entry_model; ?></td>]]>
+            </add>
+        </operation>   
+		<operation error="log">
+            <search position="replace" offset="2">
+            	<![CDATA[<?php if ($error_model) { ?>]]>
+            </search>
+            <add>
+            	<![CDATA[</td>]]>
+            </add>
+        </operation>     
+	</file>
+	<!-- De brand front end -->
+	<file name="catalog/language/english/common/footer.php">
+		<operation error="skip">
+			<search position="replace"><![CDATA[$_['text_powered']      = 'Powered By <a href="http://www.opencart.com">OpenCart</a><br /> %s &copy; %s';]]></search>
+			<add><![CDATA[
+				$_['text_powered']      = '%s &copy; %s - All rights reserved';
+			]]></add>
+		</operation>
+	</file>
+</modification>
