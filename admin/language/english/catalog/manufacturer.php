@@ -23,6 +23,7 @@ $_['entry_keyword']      = 'SEO Keyword:<br /><span class="help">Do not use spac
 $_['entry_image']        = 'Image:';
 $_['entry_sort_order']   = 'Sort Order:';
 $_['entry_type']         = 'Type:';
+$_['entry_link'] = 'Manufacturer Link';
 
 // Error
 $_['error_permission']   = 'Warning: You do not have permission to modify manufacturers!';

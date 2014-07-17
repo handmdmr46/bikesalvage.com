@@ -121,6 +121,7 @@ class ControllerCommonHeader extends Controller {
 		$this->load->model('catalog/category');
 		$this->load->model('catalog/product');
 		$this->load->model('catalog/information');
+		$this->load->model('catalog/manufacturer');
 		// categories
 		$this->data['categories'] = array();
 		$categories = $this->model_catalog_category->getCategories(0);
@@ -154,16 +155,26 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
-		// manufacturers
+		// information
 		$this->data['informations'] = array();
-		$manufacturers = $this->model_catalog_information->getInformations();
-		foreach ($manufacturers as $result) {
+		$information = $this->model_catalog_information->getInformations();
+		foreach ($information as $result) {
 			if ($result) {
 				$this->data['informations'][] = array(
 					'title' => $result['title'],
 					'href'  => $this->url->link('information/information', 'information_id=' . $result['information_id'])
 				);
 			}
+		}
+		// manufacturers
+		$this->data['manufacturers'] = $this->model_catalog_manufacturer->getManufacturers();
+		if(isset($this->request->post['manufacturer_link'])) {
+			$this->data['manufacturer_link'] = $this->request->post['manufacturer_link'];
+		} elseif (!empty($category_info)) {
+			$this->data['manufacturer_info'] = $this->model_catalog_manufacturer->getManufacturer($category_info['manufacturer_id']);
+			$this->data['manufacturer_link'] = $this->data['manufacturer_info'];
+		} else {
+			$this->data['manufacturer_link'] = '';
 		}
 		// others
 		$this->data['home'] = $this->url->link('common/home');

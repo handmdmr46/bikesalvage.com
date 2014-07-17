@@ -279,6 +279,7 @@ class ControllerCatalogManufacturer extends Controller {
 		$this->data['entry_image'] = $this->language->get('entry_image');
 		$this->data['entry_sort_order'] = $this->language->get('entry_sort_order');
 		$this->data['entry_customer_group'] = $this->language->get('entry_customer_group');
+		$this->data['entry_link'] = $this->language->get('entry_link');
 
 		$this->data['button_save'] = $this->language->get('button_save');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
@@ -373,6 +374,15 @@ class ControllerCatalogManufacturer extends Controller {
 			$this->data['image'] = $manufacturer_info['image'];
 		} else {
 			$this->data['image'] = '';
+		}
+
+		// Manufacturer Link
+		if (isset($this->request->post['link'])) {
+			$this->data['link'] = $this->request->post['link'];
+		} elseif (!empty($manufacturer_info)) {
+			$this->data['link'] = $manufacturer_info['link'];
+		} else {
+			$this->data['link'] = '';
 		}
 
 		$this->load->model('tool/image');
