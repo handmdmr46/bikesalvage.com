@@ -124,6 +124,7 @@ class ControllerCommonHeader extends Controller {
 		$this->load->model('catalog/manufacturer');
 		// categories
 		$this->data['categories'] = array();
+		$this->data['test'] = $this->model_catalog_category->getCategories(0);
 		$categories = $this->model_catalog_category->getCategories(0);
 		foreach ($categories as $category) {
 			if ($category['top']) {
@@ -155,6 +156,24 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
+		$this->data['test'] = $this->model_catalog_category->getCategoriesByManufacturerId(2);
+		$this->data['models'] = array();
+		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
+		foreach ($manufacturers as $manufacturer) {
+			$model_data = array();
+			$categories = $this->model_catalog_category->getCategoriesByManufacturerId($manufacturer['manufacturer_id']);
+			foreach($categories as $result) {
+				$model_data[] = array(
+					'name' => $result['name'],
+					'href' => $this->url->link('product/category', 'path=' . $result['category_id'])
+				);
+			}
+			$this->data['models'][] = array(
+				'manufacturer' => $manufacturer['name'],
+				'model_data'   => $model_data
+			);
+		}
+
 		// information
 		$this->data['informations'] = array();
 		$information = $this->model_catalog_information->getInformations();
@@ -168,14 +187,18 @@ class ControllerCommonHeader extends Controller {
 		}
 		// manufacturers
 		$this->data['manufacturers'] = $this->model_catalog_manufacturer->getManufacturers();
-		if(isset($this->request->post['manufacturer_link'])) {
-			$this->data['manufacturer_link'] = $this->request->post['manufacturer_link'];
-		} elseif (!empty($category_info)) {
-			$this->data['manufacturer_info'] = $this->model_catalog_manufacturer->getManufacturer($category_info['manufacturer_id']);
-			$this->data['manufacturer_link'] = $this->data['manufacturer_info'];
-		} else {
-			$this->data['manufacturer_link'] = '';
-		}
+		// manufacturer_id
+		/*
+		5 = american
+		8 = British & European
+		3 = suzuki
+		1 = honda
+		4 = yamaha
+		7 = harley
+		2 = kawasaki
+		*/
+		// $this->data['']
+		
 		// others
 		$this->data['home'] = $this->url->link('common/home');
 

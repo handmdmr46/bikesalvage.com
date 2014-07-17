@@ -454,7 +454,9 @@
                 <?php } ?>
             <?php } ?>
 		</header>
-        <?php if ($categories) { ?>
+        
+       <?php //print_r($models); ?>
+       
             <nav class="main-navbar navbar navbar-inverse" role="navigation">
                 <div class="navbar-header">
                     <span class="visible-xs navbar-brand"><?php echo $this->language->get('text_category'); ?></span>
@@ -467,7 +469,7 @@
                 </div>
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
                     <!-- Categories -->
-                   <!--  <ul class="nav navbar-nav">
+                    <!-- <ul class="nav navbar-nav">
                         <?php foreach ($categories as $category) { ?>
                             <?php if ($category['children']) { ?>
                                 <li class="dropdown">
@@ -491,7 +493,7 @@
                             <?php } ?>
                         <?php } ?>
                     </ul> -->
-                    <!-- Manufacturers -->
+                    <!-- Home -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="<?php echo $home; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_home; ?></a>
@@ -557,36 +559,35 @@
                     <!-- Manufacturers -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manufacturers</a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_manufacturers; ?></a>
                             <div class="dropdown-menu">
                                 <ul class="list-unstyled">
-                                    <li><a>manufacturer-test1</a></li>
-                                    <li><a>manufacturer-test2</a></li>
-                                    <li><a>manufacturer-test3</a></li>
-                                    <li><a>manufacturer-test4</a></li>
-                                    <li><a>manufacturer-test5</a></li>
+                                    <?php foreach ($manufacturers as $result) { ?>
+                                        <li><a href="<?php echo $result['link']; ?>"><?php echo $result['name']; ?></a></li>
+                                    <?php } ?>
                                 </ul>
                                 <a href="#" class="see-all">See All Manufacturers</a>
                             </div>
                         </li>                         
-                    </ul>
+                    </ul>                    
                     <!-- Models -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Models</a>
-                            <div class="dropdown-menu">
-                                <ul class="list-unstyled">
-                                    <li><a>manufacturer-test1</a></li>
-                                    <li><a>manufacturer-test2</a></li>
-                                    <li><a>manufacturer-test3</a></li>
-                                    <li><a>manufacturer-test4</a></li>
-                                    <li><a>manufacturer-test5</a></li>
-                                </ul>
-                                <a href="#" class="see-all">See All Models</a>
+                            <div class="dropdown-menu">                                
+                                    <?php foreach ($models as $model) { ?>
+                                        <?php if ($model['model_data']) { ?>                                        
+                                            <ul class="list-unstyled"><blockquote><?php echo $model['manufacturer']; ?></blockquote>
+                                                <?php foreach ($model['model_data'] as $cat) { ?>
+                                                    <li><a href="<?php echo $cat['href']; ?>"><?php echo $cat['name']; ?></a></li>
+                                                <?php } ?>
+                                            </ul>
+                                        <?php } ?>
+                                    <?php } ?>                                
                             </div>
                         </li>                         
                     </ul>
                 </div>
             </nav>
-        <?php } ?>
+      
 		<div id="notification"></div>
