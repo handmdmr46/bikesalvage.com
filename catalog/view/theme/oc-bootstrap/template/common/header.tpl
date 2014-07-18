@@ -496,12 +496,12 @@
                     <!-- Home -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="<?php echo $home; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_home; ?></a>
+                            <a href="<?php echo $home; ?>"><?php echo $text_home; ?></a>
                         </li>                         
                     </ul>
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="<?php echo $parts_search; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_parts_search; ?></a>
+                            <a href="<?php echo $parts_search; ?>"><?php echo $text_parts_search; ?></a>
                         </li>                         
                     </ul>
                     <!-- Information -->
@@ -553,7 +553,7 @@
                     <!-- Affiliates -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="<?php echo $affiliates; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_affiliates; ?></a>
+                            <a href="<?php echo $affiliates; ?>"><?php echo $text_affiliates; ?></a>
                         </li>                         
                     </ul>
                     <!-- Manufacturers -->

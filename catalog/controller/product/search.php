@@ -4,9 +4,7 @@ class ControllerProductSearch extends Controller {
 		$this->language->load('product/search');
 
 		$this->load->model('catalog/category');
-
 		$this->load->model('catalog/product');
-
 		$this->load->model('tool/image'); 
 
 		if (isset($this->request->get['search'])) {
@@ -29,10 +27,20 @@ class ControllerProductSearch extends Controller {
 			$description = '';
 		} 
 
+		// add maufacturer_id to search
+		if (isset($this->request->get['manufacturer_id'])) {
+			$manufacturer_id = $this->request->get['manufacturer_id'];
+			// for pre-selected items
+			$this->data['man_id'] = $this->request->get['manufacturer_id'];
+		} else {
+			$manufacturer_id = 0;
+			$this->data['man_id'] = 0;			
+		} 
+
 		if (isset($this->request->get['category_id'])) {
 			$category_id = $this->request->get['category_id'];
 		} else {
-			$category_id = 0;
+			$category_id = 0;			
 		} 
 
 		if (isset($this->request->get['sub_category'])) {
@@ -65,14 +73,16 @@ class ControllerProductSearch extends Controller {
 			$limit = $this->config->get('config_catalog_limit');
 		}
 
+		// Page Title
 		if (isset($this->request->get['search'])) {
-			$this->document->setTitle($this->language->get('heading_title') .  ' - ' . $this->request->get['search']);
+			$this->document->setTitle($this->language->get('heading_title') .  ' - ' . $this->request->get['search']);			
 		} else {
 			$this->document->setTitle($this->language->get('heading_title'));
 		}
 
 		$this->document->addScript('catalog/view/javascript/jquery/jquery.total-storage.min.js');
 
+		// Breadcrumbs
 		$this->data['breadcrumbs'] = array();
 
 		$this->data['breadcrumbs'][] = array(
@@ -93,6 +103,11 @@ class ControllerProductSearch extends Controller {
 
 		if (isset($this->request->get['description'])) {
 			$url .= '&description=' . $this->request->get['description'];
+		}
+
+		// added manufacturer_id
+		if (isset($this->request->get['manufacturer_id'])) {
+			$url .= '&manufacturer_id=' . $this->request->get['manufacturer_id'];
 		}
 
 		if (isset($this->request->get['category_id'])) {
@@ -126,37 +141,41 @@ class ControllerProductSearch extends Controller {
 		);
 
 		if (isset($this->request->get['search'])) {
-			$this->data['heading_title'] = $this->language->get('heading_title') .  ' - ' . $this->request->get['search'];
+			$this->data['heading_title'] = $this->language->get('heading_title') .  ':<br> <kbd>' . $this->request->get['search'] . '</kbd>';
 		} else {
-			$this->data['heading_title'] = $this->language->get('heading_title');
+			$this->data['heading_title'] = $this->language->get('heading_title_no_results');
 		}
 
-		$this->data['text_empty'] = $this->language->get('text_empty');
-		$this->data['text_critea'] = $this->language->get('text_critea');
-		$this->data['text_search'] = $this->language->get('text_search');
-		$this->data['text_keyword'] = $this->language->get('text_keyword');
-		$this->data['text_category'] = $this->language->get('text_category');
-		$this->data['text_sub_category'] = $this->language->get('text_sub_category');
-		$this->data['text_quantity'] = $this->language->get('text_quantity');
-		$this->data['text_manufacturer'] = $this->language->get('text_manufacturer');
-		$this->data['text_model'] = $this->language->get('text_model');
-		$this->data['text_price'] = $this->language->get('text_price');
-		$this->data['text_tax'] = $this->language->get('text_tax');
-		$this->data['text_points'] = $this->language->get('text_points');
-		$this->data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
-		$this->data['text_display'] = $this->language->get('text_display');
-		$this->data['text_list'] = $this->language->get('text_list');
-		$this->data['text_grid'] = $this->language->get('text_grid');		
-		$this->data['text_sort'] = $this->language->get('text_sort');
-		$this->data['text_limit'] = $this->language->get('text_limit');
-
-		$this->data['entry_search'] = $this->language->get('entry_search');
-		$this->data['entry_description'] = $this->language->get('entry_description');
-
-		$this->data['button_search'] = $this->language->get('button_search');
-		$this->data['button_cart'] = $this->language->get('button_cart');
-		$this->data['button_wishlist'] = $this->language->get('button_wishlist');
-		$this->data['button_compare'] = $this->language->get('button_compare');
+		// Language
+		$this->data['text_empty']                 = $this->language->get('text_empty');
+		$this->data['text_critea']                = $this->language->get('text_critea');
+		$this->data['text_search']                = $this->language->get('text_search');
+		$this->data['text_keyword']               = $this->language->get('text_keyword');
+		$this->data['text_category']              = $this->language->get('text_category');
+		$this->data['text_sub_category']          = $this->language->get('text_sub_category');
+		$this->data['text_quantity']              = $this->language->get('text_quantity');
+		$this->data['text_manufacturer']          = $this->language->get('text_manufacturer');
+		$this->data['text_model']                 = $this->language->get('text_model');
+		$this->data['text_price']                 = $this->language->get('text_price');
+		$this->data['text_tax']                   = $this->language->get('text_tax');
+		$this->data['text_points']                = $this->language->get('text_points');
+		$this->data['text_compare']               = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
+		$this->data['text_display']               = $this->language->get('text_display');
+		$this->data['text_list']                  = $this->language->get('text_list');
+		$this->data['text_grid']                  = $this->language->get('text_grid');		
+		$this->data['text_sort']                  = $this->language->get('text_sort');
+		$this->data['text_limit']                 = $this->language->get('text_limit');
+		$this->data['text_select_model']          = $this->language->get('text_select_model');
+		$this->data['text_search_by']             = $this->language->get('text_search_by');
+		$this->data['text_advanced_search_title'] = $this->language->get('text_advanced_search_title');
+		
+		$this->data['entry_search']               = $this->language->get('entry_search');
+		$this->data['entry_description']          = $this->language->get('entry_description');
+		
+		$this->data['button_search']              = $this->language->get('button_search');
+		$this->data['button_cart']                = $this->language->get('button_cart');
+		$this->data['button_wishlist']            = $this->language->get('button_wishlist');
+		$this->data['button_compare']             = $this->language->get('button_compare');
 
 		$this->data['compare'] = $this->url->link('product/compare');
 
@@ -197,20 +216,26 @@ class ControllerProductSearch extends Controller {
 				'children'    => $level_2_data
 			);
 		}
+		$this->load->model('catalog/manufacturer');
+
+		// for manufacturers select list
+		$this->data['manufacturers'] = $this->model_catalog_manufacturer->getManufacturers();
 
 		$this->data['products'] = array();
 
-		if (isset($this->request->get['search']) || isset($this->request->get['tag'])) {
+// HERES MY FUKING PROBLEM _________________HHHHEEEERRRREEEEE?????????BETTER BE!!!!!!!!!!!!!!!!!!!!!!
+		if (isset($this->request->get['search']) || isset($this->request->get['tag']) || isset($this->request->get['manufacturer_id']) || isset($this->request->get['category_id'])) {
 			$data = array(
-				'filter_name'         => $search, 
-				'filter_tag'          => $tag, 
-				'filter_description'  => $description,
-				'filter_category_id'  => $category_id, 
-				'filter_sub_category' => $sub_category, 
-				'sort'                => $sort,
-				'order'               => $order,
-				'start'               => ($page - 1) * $limit,
-				'limit'               => $limit
+				'filter_name'            => $search, 
+				'filter_tag'             => $tag, 
+				'filter_description'     => $description,
+				'filter_manufacturer_id' => $manufacturer_id, // added filter_manufacturer_id
+				'filter_category_id'     => $category_id, 
+				'filter_sub_category'    => $sub_category, 
+				'sort'                   => $sort,
+				'order'                  => $order,
+				'start'                  => ($page - 1) * $limit,
+				'limit'                  => $limit
 			);
 
 			$product_total = $this->model_catalog_product->getTotalProducts($data);
@@ -274,6 +299,11 @@ class ControllerProductSearch extends Controller {
 
 			if (isset($this->request->get['description'])) {
 				$url .= '&description=' . $this->request->get['description'];
+			}
+
+			// added manufacturer_id to search $url
+			if (isset($this->request->get['manufacturer_id'])) {
+				$url .= '&manufacturer_id=' . $this->request->get['manufacturer_id'];
 			}
 
 			if (isset($this->request->get['category_id'])) {
@@ -360,6 +390,11 @@ class ControllerProductSearch extends Controller {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
+			// added manufacturer_id to search $url
+			if (isset($this->request->get['manufacturer_id'])) {
+				$url .= '&manufacturer_id=' . $this->request->get['manufacturer_id'];
+			}
+
 			if (isset($this->request->get['category_id'])) {
 				$url .= '&category_id=' . $this->request->get['category_id'];
 			}
@@ -404,6 +439,11 @@ class ControllerProductSearch extends Controller {
 				$url .= '&description=' . $this->request->get['description'];
 			}
 
+			// added manufacturer_id to search $url
+			if (isset($this->request->get['manufacturer_id'])) {
+				$url .= '&manufacturer_id=' . $this->request->get['manufacturer_id'];
+			}
+
 			if (isset($this->request->get['category_id'])) {
 				$url .= '&category_id=' . $this->request->get['category_id'];
 			}
@@ -434,14 +474,14 @@ class ControllerProductSearch extends Controller {
 			$this->data['pagination'] = $pagination->render();
 		}	
 
-		$this->data['search'] = $search;
-		$this->data['description'] = $description;
-		$this->data['category_id'] = $category_id;
-		$this->data['sub_category'] = $sub_category;
-
-		$this->data['sort'] = $sort;
-		$this->data['order'] = $order;
-		$this->data['limit'] = $limit;
+		$this->data['search']          = $search;
+		$this->data['description']     = $description;
+		$this->data['manufacturer_id'] = $manufacturer_id;
+		$this->data['category_id']     = $category_id;
+		$this->data['sub_category']    = $sub_category;
+		$this->data['sort']            = $sort;
+		$this->data['order']           = $order;
+		$this->data['limit']           = $limit;
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/product/search.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/product/search.tpl';
@@ -459,6 +499,15 @@ class ControllerProductSearch extends Controller {
 		);
 
 		$this->response->setOutput($this->render());
+	}
+
+	public function manufacturerToCategory() {
+		$json = array();
+		$this->load->model('catalog/category');
+		$json = array (
+			'categories' => $this->model_catalog_category->getCategoryIdByManufacturerId($this->request->get['manufacturer_id'])
+		);
+		$this->response->setOutput(json_encode($json));
 	}
 }
 ?>

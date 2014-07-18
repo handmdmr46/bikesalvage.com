@@ -15,9 +15,16 @@ $_['text_option']       = 'Available Options';
 $_['text_qty']          = 'Qty:';
 $_['text_minimum']      = 'This product has a minimum quantity of %s';
 $_['text_or']           = '- OR -';
-$_['text_reviews']      = '%s reviews'; 
-$_['text_write']        = 'Write a review';
-$_['text_no_reviews']   = 'There are no reviews for this product.';
+
+// $_['text_reviews']      = '%s reviews'; 
+$_['text_reviews']      = '%s questions'; 
+
+// $_['text_write']        = 'Write a review';
+$_['text_write']        = 'Ask a Question';
+
+// $_['text_no_reviews']   = 'There are no question for this product.';
+$_['text_no_reviews'] = 'No questions have been asked about this product.';
+
 $_['text_on']           = ' on ';
 $_['text_note']         = '<span style="color: #FF0000;">Note:</span> HTML is not translated!';
 $_['text_share']        = 'Share';
@@ -48,7 +55,10 @@ $_['entry_captcha']     = 'Enter the code in the box below:';
 // Tabs
 $_['tab_description']   = 'Description';
 $_['tab_attribute']     = 'Specification';
-$_['tab_review']        = 'Reviews (%s)';
+
+// $_['tab_review']        = 'Reviews (%s)';
+$_['tab_review']        = 'Questions (%s)';
+
 $_['tab_related']       = 'Related Products'; 
 
 // Error

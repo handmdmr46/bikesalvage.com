@@ -89,5 +89,39 @@ class ModelCatalogCategory extends Model {
 		
 		return $query->row['total'];
 	}
+
+	// for chained category select
+	public function getCategoryIdByManufacturerId($manufacturer_id) {
+		$category_data = $this->cache->get('categorytomanufacturer.' .(int)$manufacturer_id);
+		
+		if(!$category_data) {
+			
+			if($manufacturer_id == '') {
+				
+				$query = $this->db->query("SELECT     c.category_id,
+													     cd.name
+										     FROM       " . DB_PREFIX . "category c
+										     LEFT JOIN  " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id)
+											 ORDER BY   name ASC");
+				
+			} else {
+			
+				$query = $this->db->query("SELECT     c.category_id,
+													     cd.name
+										     FROM       " . DB_PREFIX . "category c
+										     LEFT JOIN  " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id)
+										     WHERE      c.manufacturer_id = '" . (int)$manufacturer_id . "'
+											 ORDER BY    name ASC");
+									   
+			}
+			
+			$category_data = $query->rows;
+			
+			$this->cache->set('categorytomanufacturer.' . (int)$manufacturer_id, $category_data);
+		}
+		
+		return $category_data;
+		
+	}
 }
 ?>

@@ -71,6 +71,7 @@ class ControllerProductManufacturer extends Controller {
 		$this->response->setOutput($this->render());										
 	}
 
+	// gets products by manufacturer_id
 	public function info() {
 		$this->language->load('product/manufacturer');
 

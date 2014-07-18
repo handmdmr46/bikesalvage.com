@@ -156,7 +156,8 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
-		$this->data['test'] = $this->model_catalog_category->getCategoriesByManufacturerId(2);
+		// models
+		// $this->data['test'] = $this->model_catalog_category->getCategoriesByManufacturerId(2);
 		$this->data['models'] = array();
 		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
 		foreach ($manufacturers as $manufacturer) {
@@ -187,24 +188,14 @@ class ControllerCommonHeader extends Controller {
 		}
 		// manufacturers
 		$this->data['manufacturers'] = $this->model_catalog_manufacturer->getManufacturers();
-		// manufacturer_id
-		/*
-		5 = american
-		8 = British & European
-		3 = suzuki
-		1 = honda
-		4 = yamaha
-		7 = harley
-		2 = kawasaki
-		*/
-		// $this->data['']
+		
 		
 		// others
 		$this->data['home'] = $this->url->link('common/home');
 
-		$this->data['parts_search'] = $this->url->link('common/home');
-		$this->data['blog'] = $this->url->link('common/home');
-		$this->data['affiliates'] = $this->url->link('common/home');
+		$this->data['parts_search'] = $this->url->link('product/search');
+		$this->data['blog'] = $this->url->link('blog/home');
+		$this->data['affiliates'] = $this->url->link('affiliate/dashboard');
 
 		$this->data['contact'] = $this->url->link('information/contact');
 		$this->data['return'] = $this->url->link('account/return/insert', '', 'SSL');
