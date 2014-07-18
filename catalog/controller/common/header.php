@@ -187,12 +187,21 @@ class ControllerCommonHeader extends Controller {
 			}
 		}
 		// manufacturers
-		$this->data['manufacturers'] = $this->model_catalog_manufacturer->getManufacturers();
+		// $this->data['manufacturers'] = $this->model_catalog_manufacturer->getManufacturers();
+		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
+		foreach($manufacturers as $result) {
+			if ($result) {
+				$this->data['manufacturers'][] = array(
+					'title' => $result['name'],
+					'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $result['manufacturer_id'])
+				);
+			}
+		}
 		
 		
 		// others
 		$this->data['home'] = $this->url->link('common/home');
-
+		$this->data['all_manufacturers'] = $this->url->link('product/manufacturer');
 		$this->data['parts_search'] = $this->url->link('product/search');
 		$this->data['blog'] = $this->url->link('blog/home');
 		$this->data['affiliates'] = $this->url->link('affiliate/dashboard');

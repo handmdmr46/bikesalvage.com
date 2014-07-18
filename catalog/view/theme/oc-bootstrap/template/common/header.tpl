@@ -562,11 +562,11 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_manufacturers; ?></a>
                             <div class="dropdown-menu">
                                 <ul class="list-unstyled">
-                                    <?php foreach ($manufacturers as $result) { ?>
-                                        <li><a href="<?php echo $result['link']; ?>"><?php echo $result['name']; ?></a></li>
+                                    <?php foreach ($manufacturers as $manufacturer) { ?>
+                                        <li><a href="<?php echo $manufacturer['href']; ?>"><?php echo $manufacturer['title']; ?></a></li>
                                     <?php } ?>
                                 </ul>
-                                <a href="#" class="see-all">See All Manufacturers</a>
+                                <a href="<?php echo $all_manufacturers; ?>" class="see-all">See All Manufacturers</a>
                             </div>
                         </li>                         
                     </ul>                    

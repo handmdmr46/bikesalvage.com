@@ -46,8 +46,13 @@ $_['text_year'] = 'year';
 
 // Entry
 $_['entry_name']        = 'Your Name:';
-$_['entry_review']      = 'Your Review:';
-$_['entry_rating']      = 'Rating:';
+
+// $_['entry_review']      = 'Your Review:';
+$_['entry_review']      = 'Your Question:';
+
+// $_['entry_rating']      = 'Rating:';
+$_['entry_rating']      = 'Rate this product:';
+
 $_['entry_good']        = 'Good';
 $_['entry_bad']         = 'Bad';
 $_['entry_captcha']     = 'Enter the code in the box below:';
