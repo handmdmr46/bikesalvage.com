@@ -96,4 +96,36 @@ $_['text_openbay_order_import']        = 'Order import';
 $_['text_paypal_manage']               = 'PayPal';
 $_['text_paypal_search']               = 'Search';
 $_['text_recurring_profile']           = 'Recurring Profiles';
+
+// blog
+$_['text_extras']             = 'Extras';
+$_['text_blog']               = 'Blog';
+$_['text_blog_category']      = 'Blog Categories';
+$_['text_add_blog']           = 'Blog Posts';
+$_['text_blog_comments']      = 'Blog Comments';
+$_['text_blog_feed']          = 'Blog Feed';
+$_['text_add_blog_link']      = 'Blog Links';
+$_['text_blog_configuration'] = 'Blog Configuration';
+$_['text_url_alias']          = 'SEO URL Rewritter';
+$_['text_manage_url_alias']   = 'Manage SEO URL';
+
+// Affiliates text
+$_['text_affiliate']                   = 'Affiliates';
+$_['text_affiliate_import']            = 'Imports';
+$_['text_affiliate_setting']           = 'Settings';
+$_['text_affiliate_profile']           = 'Profiles';
+$_['text_affiliate_payment']           = 'Payment';
+$_['text_affiliate_approval']          = 'Approvals';
+$_['text_affiliate_sale']              = 'Sales';
+
+// csv_import
+$_['text_csv_import']                  = 'CSV Import';
+$_['text_import_csv']                  = 'Import CSV - step 1';
+$_['text_import_ebayid']               = 'Import eBayID - step 2';
+$_['text_stock_control']               = 'Stock Control';
+$_['text_linked_products']             = 'Linked Products';
+$_['text_unlinked_products']           = 'Unlinked Products';
+$_['text_import'] 					   = 'Import';
+$_['text_ebay_log'] 				   = 'eBay Log';
+
 ?>

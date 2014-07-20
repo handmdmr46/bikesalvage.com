@@ -76,6 +76,49 @@
         </script>
     <?php } ?>
 	<?php echo $google_analytics; ?>
+    <style type="text/css">
+    body{
+        background-image: url("admin/view/image/patterns/14.png");
+        background-position: top left;
+        background-repeat: repeat;
+    }
+    #main-content-area {
+        background-color: #ffffff;
+    }
+    nav.topbar {
+        background-color: #333333;
+    }
+    nav.topbar ul.nav li a {
+        color: #ffffff;
+        font-size: 16px;
+    }
+    nav.topbar ul.nav li a:hover {
+        color: #ffffff;
+    }
+    #currency a {
+        background: none repeat scroll 0 0 #FFFFFF;
+        color: #000000;
+    }
+    #currency a:hover {
+        color: #ffffff;
+    }
+    .main-navbar{
+        background-color: #333333;
+    }
+    nav.main-navbar ul.nav li a{
+        font-size: 16px;
+        color: #ffffff;
+    }
+    nav.main-navbar ul.nav li ul li a {
+        color: #333333;
+    }
+    nav.main-navbar ul.nav li a.see-all {
+        color: #296bbd;
+    }
+    nav.main-navbar ul.nav li a.see-all:hover {
+        color: #ffffff;
+    }
+    </style>
     <?php
         // If Theme Options module is enabled
         if($this->config->get('themeoptions_status')== 1) {
@@ -97,6 +140,7 @@
         
 			<style type="text/css">
             body {
+
                 <?php
                 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
                     $path_image = $this->config->get('config_ssl') . 'image/';
@@ -105,7 +149,7 @@
                 }
 				
 				if ($this->config->get('themeoptions_no_bg')== 1) { ?>
-					background-image: none;
+					background-image: none;                    
                 <?php } else if ($this->config->get('themeoptions_custom_image')!='') { ?>
                     background-image: url("<?php echo $path_image . $this->config->get('themeoptions_custom_image') ?>"); ?>;
                     background-position: top center;
@@ -427,7 +471,7 @@
             </ul>
         </div>
     </nav>
-    <div class="container">
+    <div class="container" id="main-content-area">
 		<header id="header" class="row clearfix">
         	<div class="<?php if ($status == '0' || $status == '1' && $this->config->get('themeoptions_center_logo') == 0) { ?>col-xs-12 col-sm-9 col-md-6 <?php } else { ?>col-md-12<?php } ?>">
                 <?php if ($logo) { ?>
@@ -547,7 +591,7 @@
                     <!-- Blog -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="<?php echo $blog; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_blog; ?></a>
+                            <a href="<?php echo $blog; ?>"><?php echo $text_blog; ?></a>
                         </li>                         
                     </ul>
                     <!-- Affiliates -->

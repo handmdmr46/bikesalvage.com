@@ -1,0 +1,616 @@
+<modification>
+	<id>vQmod: Blog System - Edit admin, catalog, and seo url files</id>
+	<version>Blog System for OpenCart v1.5.2</version>
+	<vqmver>2.1.5</vqmver>
+	<author>Rio Yudistira Eryanza - http://www.themagicalworks.com</author>
+<!-- The Admin Files [START] -->
+	<file name="admin/controller/common/header.php">
+        <operation>
+            <search position="after"><![CDATA[
+            $this->data['text_zone'] = $this->language->get('text_zone');
+            ]]></search>
+            <add><![CDATA[
+            $this->data['text_extras'] = $this->language->get('text_extras');
+			$this->data['text_blog'] = $this->language->get('text_blog');
+			$this->data['text_blog_category'] = $this->language->get('text_blog_category');
+			$this->data['text_add_blog'] = $this->language->get('text_add_blog');
+			$this->data['text_blog_comments'] = $this->language->get('text_blog_comments');
+			$this->data['text_blog_feed'] = $this->language->get('text_blog_feed');
+			$this->data['text_add_blog_link'] = $this->language->get('text_add_blog_link');
+			$this->data['text_blog_configuration'] = $this->language->get('text_blog_configuration');
+			$this->data['text_url_alias'] = $this->language->get('text_url_alias');
+			$this->data['text_manage_url_alias'] = $this->language->get('text_manage_url_alias');
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="after"><![CDATA[
+            $this->data['zone'] = $this->url->link('localisation/zone', 'token=' . $this->session->data['token'], 'SSL');
+            ]]></search>
+            <add><![CDATA[
+			$this->data['blog_category'] = $this->url->link('extras/blog_category', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['add_blog'] = $this->url->link('extras/blog', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['blog_comments'] = $this->url->link('extras/blog_comment', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['blog_feed'] = $this->url->link('extras/blog_feed', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['add_blog_link'] = $this->url->link('extras/blog_link', 'token=' . $this->session->data['token'], 'SSL');
+ 			$this->data['blog_configuration'] = $this->url->link('extras/blog_configuration', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['url_alias'] = $this->url->link('extras/seo_url', 'token=' . $this->session->data['token'], 'SSL');
+            ]]></add>
+        </operation>
+	</file>
+	<file name="admin/language/english/common/header.php">
+        <operation>
+            <search position="before"><![CDATA[
+            ?>
+            ]]></search>
+            <add><![CDATA[
+            $_['text_extras']             = 'Extras';
+			$_['text_blog']              = 'Blog';
+			$_['text_blog_category']              = 'Blog Categories';
+			$_['text_add_blog']              = 'Blog Posts';
+			$_['text_blog_comments']              = 'Blog Comments';
+			$_['text_blog_feed']              = 'Blog Feed';
+			$_['text_add_blog_link']              = 'Blog Links';
+			$_['text_blog_configuration']              = 'Blog Configuration';
+			$_['text_url_alias']              = 'SEO URL Rewritter';
+			$_['text_manage_url_alias']              = 'Manage SEO URL';
+            ]]></add>
+        </operation>
+	</file>
+	<file name="admin/view/template/common/header.tpl">
+        <operation>
+            <search position="before"><![CDATA[
+            <li id="help"><a class="top"><?php echo $text_help; ?></a>
+            ]]></search>
+            <add><![CDATA[
+			<li id="extras"><a class="top"><?php echo $text_extras; ?></a>
+        	  <ul>
+				<li><a class="parent"><?php echo $text_blog; ?></a>
+			      <ul>
+			        <li><a href="<?php echo $add_blog; ?>"><?php echo $text_add_blog; ?></a></li>
+			        <li><a href="<?php echo $blog_category; ?>"><?php echo $text_blog_category; ?></a></li>
+			        <li><a href="<?php echo $blog_comments; ?>"><?php echo $text_blog_comments; ?></a></li>
+			        <li><a href="<?php echo $add_blog_link; ?>"><?php echo $text_add_blog_link; ?></a></li>
+			        <li><a href="<?php echo $blog_feed; ?>"><?php echo $text_blog_feed; ?></a></li>
+			        <li><a href="<?php echo $blog_configuration; ?>"><?php echo $text_blog_configuration; ?></a></li>
+			      </ul>
+		        </li>	
+				<li><a class="parent"><?php echo $text_url_alias; ?></a>
+				  <ul>
+					<li><a href="<?php echo $url_alias; ?>"><?php echo $text_manage_url_alias; ?></a></li>
+				  </ul>
+				</li>	
+			  </ul>
+      		</li>			
+            ]]></add>
+        </operation>
+	</file>
+<!-- The Admin Files [END] -->
+<!-- The Catalog Files [START] -->
+	<file name="catalog/controller/common/header.php">
+        <operation>
+            <search position="after"><![CDATA[
+            $this->data['title'] = $this->document->getTitle();
+            ]]></search>
+            <add><![CDATA[
+            $this->document->addScript('catalog/view/javascript/jquery/extras/blog.js');
+			
+			if (file_exists('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css')) {
+				$this->document->addStyle('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css');
+			} else {
+				$this->document->addStyle('catalog/view/theme/default/stylesheet/magic.css');
+			}
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[
+            $this->data['text_home'] = $this->language->get('text_home');
+            ]]></search>
+            <add><![CDATA[
+            $this->data['text_blog'] = $this->language->get('text_blog');
+            $this->data['text_product_rss'] = $this->language->get('text_product_rss');
+            $this->data['text_blog_rss'] = $this->language->get('text_blog_rss');
+            $this->data['text_contact'] = $this->language->get('text_contact');
+            $this->data['text_telephone'] = $this->language->get('text_telephone');
+            $this->data['text_fax'] = $this->language->get('text_fax');
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="after"><![CDATA[
+            $this->data['home'] = $this->url->link('common/home');
+            ]]></search>
+            <add><![CDATA[
+            $this->data['blog'] = $this->url->link('extras/blog');
+			$this->data['contact'] = $this->url->link('information/contact');
+            ]]></add>
+        </operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$this->data['checkout'] = $this->url->link('checkout/checkout', '', 'SSL');
+			]]></search>
+			<add><![CDATA[
+			if (isset($this->request->get['blogpath'])) {
+			  $parts = explode('_', (string)$this->request->get['blogpath']);
+			  $this->data['blogpath'] = $parts[0];
+			} else {
+			  $this->data['blogpath'] = 'home';
+			}
+			]]></add>
+		</operation>
+		<operation>
+            <search position="after"><![CDATA[
+            $this->data['google_analytics'] = html_entity_decode($this->config->get('config_google_analytics'), ENT_QUOTES, 'UTF-8');
+            ]]></search>
+            <add><![CDATA[
+			$this->data['store'] = $this->config->get('config_name');
+			$this->data['address'] = nl2br($this->config->get('config_address'));
+			$this->data['telephone'] = $this->config->get('config_telephone');
+			$this->data['fax'] = $this->config->get('config_fax');
+            $this->data['google_base_status'] = $this->config->get('google_base_status');
+            $this->data['blog_feed_status'] = $this->config->get('blog_feed_status');
+
+			$this->data['product_feed'] = $this->url->link('feed/google_base');
+			$this->data['blog_feed'] = $this->url->link('extras/blog_feed');
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="before"><![CDATA[
+            $this->children = array(
+            ]]></search>
+            <add><![CDATA[
+			// Blog Menu
+			$this->load->model('extras/blog_category');
+			$this->load->model('extras/blog');
+			
+			$this->data['blog_categories'] = array();
+						
+			$blog_categories = $this->model_extras_blog_category->getBlogCategories(0);
+			
+			foreach ($blog_categories as $blog_category) {
+				if ($blog_category['top']) {
+					$children_data = array();
+					
+					$children = $this->model_extras_blog_category->getBlogCategories($blog_category['blog_category_id']);
+					
+					foreach ($children as $child) {
+						$data = array(
+							'filter_blog_category_id'  => $child['blog_category_id'],
+							'filter_sub_blog_category' => true	
+						);		
+							
+						if ($this->config->get('config_product_count')) {
+							$blog_total = $this->model_extras_blog->getTotalBlogs($data);
+							
+							$child['name'] .= ' (' . $blog_total . ')';
+						}
+									
+						$children_data[] = array(
+							'name'  => $child['name'],
+							'href'  => $this->url->link('extras/blog_category', 'blogpath=' . $blog_category['blog_category_id'] . '_' . $child['blog_category_id'])	
+						);					
+					}
+					
+					// Level 1
+					$this->data['blog_categories'][] = array(
+						'name'     => $blog_category['name'],
+						'children' => $children_data,
+						'blogpath' => $blog_category['blog_category_id'],
+						'column'   => $blog_category['column'] ? $blog_category['column'] : 1,
+						'href'     => $this->url->link('extras/blog_category', 'blogpath=' . $blog_category['blog_category_id'])
+					);
+				}
+			}
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/language/english/common/header.php">
+        <operation>
+            <search position="before"><![CDATA[
+            ?>
+            ]]></search>
+            <add><![CDATA[
+			$_['text_blog']              = 'Our Blog';
+			$_['text_product_rss']              = 'Products RSS';
+			$_['text_blog_rss']              = 'Blog RSS';
+			$_['text_contact']              = 'Contact Us';
+			$_['text_telephone']              = 'Phone:';
+			$_['text_fax']              = 'Fax:';
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[
+			$_['text_search']         = 'Search';
+            ]]></search>
+            <add><![CDATA[
+			$_['text_search']         = 'Search Our Products';
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[
+			$_['text_checkout']       = 'Checkout';
+            ]]></search>
+            <add><![CDATA[
+			$_['text_checkout']       = 'Secure Checkout';
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/view/theme/default/template/common/header.tpl">
+        <operation>
+            <search position="replace"><![CDATA[
+            <div class="links"><a href="<?php echo $home; ?>"><?php echo $text_home; ?></a><a href="<?php echo $wishlist; ?>" id="wishlist-total"><?php echo $text_wishlist; ?></a><a href="<?php echo $account; ?>"><?php echo $text_account; ?></a><a href="<?php echo $shopping_cart; ?>"><?php echo $text_shopping_cart; ?></a><a href="<?php echo $checkout; ?>"><?php echo $text_checkout; ?></a></div>
+            ]]></search>
+            <add><![CDATA[
+			<div class="links"><a href="<?php echo $home; ?>"><?php echo $text_home; ?></a><a href="<?php echo $blog; ?>"><?php echo $text_blog; ?></a><a href="<?php echo $wishlist; ?>" id="wishlist-total"><?php echo $text_wishlist; ?></a><a href="<?php echo $account; ?>"><?php echo $text_account; ?></a><a href="<?php echo $shopping_cart; ?>"><?php echo $text_shopping_cart; ?></a><a href="<?php echo $checkout; ?>"><?php echo $text_checkout; ?></a></div>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[
+			<div id="notification"></div>
+            ]]></search>
+            <add><![CDATA[
+			<?php if ($blog_categories) { ?>
+			<div id="blogMenu">
+			  <ul>
+				<?php foreach ($blog_categories as $blog_category) { ?>
+				<li><a href="<?php echo $blog_category['href']; ?>"><?php echo $blog_category['name']; ?></a>
+				  <?php if ($blog_category['children']) { ?>
+				  <div>
+					<?php for ($i = 0; $i < count($blog_category['children']);) { ?>
+					<ul>
+					  <?php $j = $i + ceil(count($blog_category['children']) / $blog_category['column']); ?>
+					  <?php for (; $i < $j; $i++) { ?>
+					  <?php if (isset($blog_category['children'][$i])) { ?>
+					  <li><a href="<?php echo $blog_category['children'][$i]['href']; ?>"><?php echo $blog_category['children'][$i]['name']; ?></a></li>
+					  <?php } ?>
+					  <?php } ?>
+					</ul>
+					<?php } ?>
+				  </div>
+				  <?php } ?>
+				</li>
+				<?php } ?>
+			  </ul>
+			</div>
+			<?php } ?>
+            ]]></add>
+        </operation>
+	</file>
+<!-- The Catalog Files [END] -->
+<!-- The Product Pages [START] -->
+	<file name="catalog/controller/product/category.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$image = false;
+            ]]></search>
+            <add><![CDATA[
+			$image = $this->model_tool_image->resize('no_image.jpg', $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/controller/product/manufacturer.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$image = false;
+            ]]></search>
+            <add><![CDATA[
+			$image = $this->model_tool_image->resize('no_image.jpg', $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/controller/product/search.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$image = false;
+            ]]></search>
+            <add><![CDATA[
+			$image = $this->model_tool_image->resize('no_image.jpg', $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/controller/product/special.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$image = false;
+            ]]></search>
+            <add><![CDATA[
+			$image = $this->model_tool_image->resize('no_image.jpg', $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/controller/product/product.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$image = false;
+            ]]></search>
+            <add><![CDATA[
+			$image = $this->model_tool_image->resize('no_image.jpg', $this->config->get('config_image_product_width'), $this->config->get('config_image_product_height'));
+            ]]></add>
+        </operation>
+	</file>
+<!-- The Product Pages [END] -->
+<!-- The Modules [START] -->
+	<file name="catalog/language/english/module/category.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$_['heading_title'] = 'Categories';
+            ]]></search>
+            <add><![CDATA[
+			$_['heading_title'] = 'Our Products';
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/language/english/module/featured.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$_['heading_title'] = 'Featured';
+            ]]></search>
+            <add><![CDATA[
+			$_['heading_title'] = 'Our Featured Products';
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/language/english/module/special.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$_['heading_title'] = 'Specials';
+            ]]></search>
+            <add><![CDATA[
+			$_['heading_title'] = 'Our Special Products';
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/language/english/module/latest.php">
+        <operation>
+            <search position="replace"><![CDATA[
+			$_['heading_title'] = 'Latest';
+            ]]></search>
+            <add><![CDATA[
+			$_['heading_title'] = 'Our Recent Products';
+            ]]></add>
+        </operation>
+	</file>
+<!-- The Modules [END] -->
+<!-- The Footer Files [START] -->
+	<file name="catalog/controller/common/footer.php">
+        <operation>
+            <search position="after"><![CDATA[
+			$this->data['newsletter'] = $this->url->link('account/newsletter', '', 'SSL');
+            ]]></search>
+            <add><![CDATA[
+			$this->load->model('tool/image');
+			$this->load->model('extras/blog');
+
+			$url = '';
+			
+			if (isset($this->request->get['blog_id'])) {
+				$this->data['blog_id'] = $this->request->get['blog_id'];
+			} else {
+				$this->data['blog_id'] = 0;
+			}
+
+			$this->data['blogs'] = array();
+	
+			$data = array(
+				'sort'                => 'b.date_added',
+				'order'               => 'DESC',
+				'start'               => 0,
+				'limit'               => 5
+			);
+	
+			foreach ($this->model_extras_blog->getBlogs($data) as $result) {
+				if ($result['image']) {
+					$image = $this->model_tool_image->resize($result['image'], 48, 48);
+				} else {
+					$image = $this->model_tool_image->resize('no_image.jpg', 48, 48);
+				}
+				
+				// Blog Post Tags [START]
+				$tags = array();
+				$tags = $this->model_extras_blog->getBlogTags($result['blog_id']);
+				// Blog Post Tags [END]
+	
+				$this->data['blogs'][] = array(
+					'blog_id'  => $result['blog_id'],
+					'thumb'       => $image,
+					'title'        => $result['title'],
+					'description' => mb_substr(str_replace('&nbsp;',' ',strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, 72) . '..',
+					'date_added' => date("M. d, Y h:i a", strtotime($result['date_added'])),
+					'image'   		=> $image,
+					'tags' => $tags,
+					'tag_href' => $this->url->link('extras/blog_search'),
+					//'rating'      => $result['rating'],
+					//'reviews'     => sprintf($this->language->get('text_reviews'), (int)$result['reviews']),
+					'href'        => $this->url->link('extras/blog/getblog', $url . '&blog_id=' . $result['blog_id'])
+				);
+			}
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[
+			$this->data['text_newsletter'] = $this->language->get('text_newsletter');
+            ]]></search>
+            <add><![CDATA[
+			$this->data['text_twitter'] = $this->language->get('text_twitter');
+			$this->data['text_facebook'] = $this->language->get('text_facebook');
+			$this->data['text_latest_blog'] = $this->language->get('text_latest_blog');
+			$this->data['text_developed'] = $this->language->get('text_developed');
+			$this->data['text_view_all_topics'] = $this->language->get('text_view_all_topics');
+			$this->data['text_view_all_tweets'] = $this->language->get('text_view_all_tweets');
+			$this->data['text_address'] = $this->language->get('text_address');
+			$this->data['text_email'] = $this->language->get('text_email');
+			$this->data['text_telephone'] = $this->language->get('text_telephone');
+			$this->data['text_fax'] = $this->language->get('text_fax');
+			
+			$this->data['developed'] = $this->language->get('text_developed');
+
+			$this->data['store'] = $this->config->get('config_name');
+			$this->data['address'] = nl2br($this->config->get('config_address'));
+			$this->data['telephone'] = $this->config->get('config_telephone');
+			$this->data['fax'] = $this->config->get('config_fax');
+			$this->data['email'] = $this->config->get('config_email');
+
+			$this->data['twitter_id'] = $this->config->get('blog_twitter_id');
+			$this->data['facebook_page_id'] = $this->config->get('blog_facebook_page_id');
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[
+			$this->data['newsletter'] = $this->url->link('account/newsletter', '', 'SSL');		
+            ]]></search>
+            <add><![CDATA[
+			$this->data['blog_all'] = $this->url->link('extras/blog');
+			$this->data['tweets_all'] = 'https://twitter.com/#!/' . $this->config->get('blog_twitter_id');
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[
+			$this->data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
+            ]]></search>
+            <add><![CDATA[
+			$this->data['powered'] = sprintf($this->language->get('text_powered'), date('Y', time()), $this->config->get('config_name'));
+            ]]></add>
+        </operation>
+	</file>
+	<file name="catalog/language/english/common/footer.php">
+        <operation>
+            <search position="before"><![CDATA[
+			?>
+            ]]></search>
+            <add><![CDATA[
+			$_['text_twitter']   = 'Twitter';
+			$_['text_facebook']   = 'Facebook';
+			$_['text_latest_blog']   = 'Recent Entries';
+			$_['text_developed']      = 'This OpenCart extension is developed by <a href="http://www.themagicalworks.com" target="_blank">The Magical Works Studio</a>';
+			$_['text_view_all_topics']   = 'View All Topics';
+			$_['text_view_all_tweets']   = 'View All Tweets';
+			$_['text_address']   = 'Address';
+			$_['text_telephone']   = 'Telephone';
+			$_['text_fax']   = 'Fax';
+			$_['text_email']   = 'Email';
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[
+			$_['text_powered']      = 'Powered By <a href="http://www.opencart.com">OpenCart</a><br /> %s &copy; %s';
+            ]]></search>
+            <add><![CDATA[
+			$_['text_powered']      = 'Copyright &copy; %s %s. All Rights Reserved.<br /><b>Powered By <a href="http://www.opencart.com">OpenCart</a></b>';
+            ]]></add>
+        </operation>
+	</file>
+<!-- The Footer Files [END] -->
+<!-- The SEO URL File [START] -->
+	<file name="catalog/controller/common/seo_url.php">
+        <operation>
+            <search position="before"><![CDATA[
+            if ($url[0] == 'manufacturer_id') {
+            ]]></search>
+            <add><![CDATA[
+            if ($url[0] == 'blog_category_id') {
+				if (!isset($this->request->get['blogpath'])) {
+					$this->request->get['blogpath'] = $url[1];
+				} else {
+					$this->request->get['blogpath'] .= '_' . $url[1];
+				}
+			}
+			
+			if ($url[0] == 'blog_id') {
+				$this->request->get['blog_id'] = $url[1];
+			}
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="before"><![CDATA[
+            } elseif (isset($this->request->get['information_id'])) {
+            ]]></search>
+            <add><![CDATA[
+            } elseif (isset($this->request->get['blogpath']) && !isset($this->request->get['blog_id'])) {
+				$this->request->get['route'] = 'extras/blog_category';
+			} elseif (isset($this->request->get['blog_id'])) {
+				$this->request->get['route'] = 'extras/blog/getblog';
+			]]></add>
+        </operation>
+		<operation>
+            <search position="replace"><![CDATA[
+            if (($data['route'] == 'product/product' && $key == 'product_id') || (($data['route'] == 'product/manufacturer/product' || $data['route'] == 'product/product') && $key == 'manufacturer_id') || ($data['route'] == 'information/information' && $key == 'information_id')) {
+            ]]></search>
+            <add><![CDATA[
+            if (($data['route'] == 'product/product' && $key == 'product_id') || (($data['route'] == 'product/manufacturer/product' || $data['route'] == 'product/product') && $key == 'manufacturer_id') || ($data['route'] == 'information/information' && $key == 'information_id') || ($data['route'] == 'extras/blog/getblog' && $key == 'blog_id')) {
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="before"><![CDATA[
+            } elseif ($key == 'path') {
+            ]]></search>
+            <add><![CDATA[
+            } elseif ($key == 'blogpath') {
+				$blog_categories = explode('_', $value);
+			
+				foreach ($blog_categories as $blog_category) {
+					$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "url_alias WHERE `query` = 'blog_category_id=" . (int)$blog_category . "'");
+			
+					if ($query->num_rows) {
+						$url .= '/' . $query->row['keyword'];
+			
+					}							
+				}
+			
+				unset($data[$key]);
+			} elseif ($key == 'route') {
+				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "url_alias WHERE `query` = '" . $this->db->escape($value) . "'");
+			
+				if ($query->num_rows) {
+					$url .= '/' . $query->row['keyword'];
+				
+					unset($data[$key]);
+				}
+			]]></add>
+        </operation>
+		<!-- Rewrite the URL [START] -->
+		<operation>
+            <search position="after"><![CDATA[
+            $parts = explode('/', $this->request->get['_route_']);
+            ]]></search>
+            <add><![CDATA[
+            $route = "";
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="after"><![CDATA[
+            $url = explode('=', $query->row['query']);
+            ]]></search>
+            <add><![CDATA[
+            if(count($url) > 1){
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="before" offset="1"><![CDATA[
+            $this->request->get['route'] = 'error/not_found';
+            ]]></search>
+            <add><![CDATA[
+            }else{
+				$route = $url[0];
+			}
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="after" offset="1"><![CDATA[
+            $this->request->get['route'] = 'information/information';
+            ]]></search>
+            <add><![CDATA[
+            else {
+				$this->request->get['route'] = $route;
+			}
+            ]]></add>
+        </operation>
+		<operation>
+            <search position="replace"><![CDATA[
+            if (isset($this->request->get['route'])) {
+            ]]></search>
+            <add><![CDATA[
+            if (isset($this->request->get['route']) && $this->request->get['route'] != 'captcha' ) {//Add && $this->request->get['route'] != 'captcha' for don't rewrite when using captcha function.
+            ]]></add>
+        </operation>
+		<!-- Rewrite the URL [END] -->
+	</file>
+<!-- The SEO URL File [END] -->
+</modification>

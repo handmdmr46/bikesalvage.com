@@ -3,6 +3,15 @@ class ControllerCommonHeader extends Controller {
 	protected function index() {
 		$this->data['title'] = $this->document->getTitle();
 
+		// blog
+		$this->document->addScript('catalog/view/javascript/jquery/extras/blog.js');
+			
+		if (file_exists('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css')) {
+			$this->document->addStyle('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css');
+		} else {
+			$this->document->addStyle('catalog/view/theme/default/stylesheet/magic.css');
+		}
+
 		if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
 			$server = $this->config->get('config_ssl');
 		} else {
@@ -27,6 +36,16 @@ class ControllerCommonHeader extends Controller {
 		$this->data['direction'] = $this->language->get('direction');
 		$this->data['google_analytics'] = html_entity_decode($this->config->get('config_google_analytics'), ENT_QUOTES, 'UTF-8');
 		$this->data['name'] = $this->config->get('config_name');
+
+		// blog
+		$this->data['store']              = $this->config->get('config_name');
+		$this->data['address']            = nl2br($this->config->get('config_address'));
+		$this->data['telephone']          = $this->config->get('config_telephone');
+		$this->data['fax']                = $this->config->get('config_fax');
+		$this->data['google_base_status'] = $this->config->get('google_base_status');
+		$this->data['blog_feed_status']   = $this->config->get('blog_feed_status');
+		$this->data['product_feed']       = $this->url->link('feed/google_base');
+		$this->data['blog_feed']          = $this->url->link('extras/blog_feed');
 
 		if ($this->config->get('config_icon') && file_exists(DIR_IMAGE . $this->config->get('config_icon'))) {
 			$this->data['icon'] = $server . 'image/' . $this->config->get('config_icon');
@@ -79,6 +98,20 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_models'] = $this->language->get('text_models');
 		$this->data['text_see_all_models'] = $this->language->get('text_see_all_models');
 		$this->data['text_see_all_manufacturers'] = $this->language->get('text_see_all_manufacturers');
+		//blog
+		$this->data['text_blog'] = $this->language->get('text_blog');
+        $this->data['text_product_rss'] = $this->language->get('text_product_rss');
+        $this->data['text_blog_rss'] = $this->language->get('text_blog_rss');
+        $this->data['text_contact'] = $this->language->get('text_contact');
+        $this->data['text_telephone'] = $this->language->get('text_telephone');
+        $this->data['text_fax'] = $this->language->get('text_fax');
+
+        if (isset($this->request->get['blogpath'])) {
+		  $parts = explode('_', (string)$this->request->get['blogpath']);
+		  $this->data['blogpath'] = $parts[0];
+		} else {
+		  $this->data['blogpath'] = 'home';
+		}
 
 		// Daniel's robot detector
 		$status = true;
@@ -122,6 +155,45 @@ class ControllerCommonHeader extends Controller {
 		$this->load->model('catalog/product');
 		$this->load->model('catalog/information');
 		$this->load->model('catalog/manufacturer');
+		/*$this->load->model('extras/blog_category');
+		$this->load->model('extras/blog');*/
+
+		// Blog Menu				
+		/*$this->data['blog_categories'] = array();
+		$blog_categories = $this->model_extras_blog_category->getBlogCategories(0);		
+		foreach ($blog_categories as $blog_category) {
+			if ($blog_category['top']) {
+				
+				$children_data = array();				
+				$children = $this->model_extras_blog_category->getBlogCategories($blog_category['blog_category_id']);
+				
+				foreach ($children as $child) {
+					$data = array(
+						'filter_blog_category_id'  => $child['blog_category_id'],
+						'filter_sub_blog_category' => true	
+					);		
+						
+					if ($this->config->get('config_product_count')) {
+						$blog_total = $this->model_extras_blog->getTotalBlogs($data);						
+						$child['name'] .= ' (' . $blog_total . ')';
+					}
+								
+					$children_data[] = array(
+						'name'  => $child['name'],
+						'href'  => $this->url->link('extras/blog_category', 'blogpath=' . $blog_category['blog_category_id'] . '_' . $child['blog_category_id'])	
+					);					
+				}
+				
+				// Level 1
+				$this->data['blog_categories'][] = array(
+					'name'     => $blog_category['name'],
+					'children' => $children_data,
+					'blogpath' => $blog_category['blog_category_id'],
+					'column'   => $blog_category['column'] ? $blog_category['column'] : 1,
+					'href'     => $this->url->link('extras/blog_category', 'blogpath=' . $blog_category['blog_category_id'])
+				);
+			}
+		}*/
 		// categories
 		$this->data['categories'] = array();
 		$this->data['test'] = $this->model_catalog_category->getCategories(0);
@@ -187,7 +259,6 @@ class ControllerCommonHeader extends Controller {
 			}
 		}
 		// manufacturers
-		// $this->data['manufacturers'] = $this->model_catalog_manufacturer->getManufacturers();
 		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
 		foreach($manufacturers as $result) {
 			if ($result) {
@@ -203,12 +274,17 @@ class ControllerCommonHeader extends Controller {
 		$this->data['home'] = $this->url->link('common/home');
 		$this->data['all_manufacturers'] = $this->url->link('product/manufacturer');
 		$this->data['parts_search'] = $this->url->link('product/search');
-		$this->data['blog'] = $this->url->link('blog/home');
 		$this->data['affiliates'] = $this->url->link('affiliate/dashboard');
-
+		$this->data['blog'] = $this->url->link('extras/blog');
 		$this->data['contact'] = $this->url->link('information/contact');
 		$this->data['return'] = $this->url->link('account/return/insert', '', 'SSL');
 		$this->data['sitemap'] = $this->url->link('information/sitemap');
+
+		// extras
+		$this->data['manufacturer'] = $this->url->link('product/manufacturer');
+		$this->data['voucher'] = $this->url->link('account/voucher', '', 'SSL');
+		$this->data['affiliate'] = $this->url->link('affiliate/account', '', 'SSL');
+		$this->data['special'] = $this->url->link('product/special');
 
 		$this->children = array(
 			'module/language',
