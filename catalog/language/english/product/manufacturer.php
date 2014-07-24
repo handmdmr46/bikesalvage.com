@@ -1,14 +1,14 @@
 <?php
 // Heading
-$_['heading_title']     = 'Find Your Favorite Brand';
+$_['heading_title']     = 'Find Your Favorite Manufacturer';
 
 // Text
-$_['text_brand']        = 'Brand';
-$_['text_index']        = 'Brand Index:';
-$_['text_error']        = 'Brand not found!';
+$_['text_brand']        = 'Manufacturer';
+$_['text_index']        = 'Manufacturer Index:';
+$_['text_error']        = 'Manufacturer not found!';
 $_['text_empty']        = 'There are no products to list.';
 $_['text_quantity']     = 'Qty:';
-$_['text_manufacturer'] = 'Brand:';
+$_['text_manufacturer'] = 'Manufacturer:';
 $_['text_model']        = 'Product Code:'; 
 $_['text_points']       = 'Reward Points:'; 
 $_['text_price']        = 'Price:'; 

@@ -24,10 +24,34 @@ class ControllerModuleCategory extends Controller {
 		}
 
 		$this->load->model('catalog/category');
-
 		$this->load->model('catalog/product');
+		$this->load->model('catalog/manufacturer');
 
-		$this->data['categories'] = array();
+		// updated version
+		$this->data['models'] = array();
+		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
+		foreach ($manufacturers as $manufacturer) {
+			$model_data = array();
+			$categories = $this->model_catalog_category->getCategoriesByManufacturerId($manufacturer['manufacturer_id']);
+			foreach($categories as $result) {
+				$total = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => $result['category_id']));
+				// make this changable in admin later
+				if($total > 0) {
+					$model_data[] = array(
+						'name' => $result['name'] . ($this->config->get('config_product_count') ? ' (' . $total . ')' : ''),
+						'href' => $this->url->link('product/category', 'path=' . $result['category_id'])
+					);
+				}
+			}
+			$this->data['models'][] = array(
+				'manufacturer' => $manufacturer['name'],
+				'model_data'   => $model_data
+			);
+		}
+
+
+
+		/*$this->data['categories'] = array();
 
 		$categories = $this->model_catalog_category->getCategories(0);
 
@@ -61,7 +85,7 @@ class ControllerModuleCategory extends Controller {
 				'children'    => $children_data,
 				'href'        => $this->url->link('product/category', 'path=' . $category['category_id'])
 			);	
-		}
+		}*/
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/module/category.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/module/category.tpl';

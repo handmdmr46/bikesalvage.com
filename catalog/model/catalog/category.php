@@ -7,7 +7,29 @@ class ModelCatalogCategory extends Model {
 	}
 	
 	public function getCategories($parent_id = 0) {
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) WHERE c.parent_id = '" . (int)$parent_id . "' AND cd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "'  AND c.status = '1' ORDER BY c.sort_order, LCASE(cd.name)");
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category c 
+									LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) 
+									LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) 
+								   WHERE c.parent_id = '" . (int)$parent_id . "' 
+								   AND cd.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+								   AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "'  
+								   AND c.status = '1' 
+								   ORDER BY c.sort_order, LCASE(cd.name)");
+
+		return $query->rows;
+	}
+
+	public function getCategoriesByManufacturerId($manufacturer_id) {
+		$query = $this->db->query("SELECT c.category_id, cd.name
+								   FROM " . DB_PREFIX . "category c 
+									LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) 
+									LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) 
+									LEFT JOIN " . DB_PREFIX . "manufacturer m ON (c.manufacturer_id = m.manufacturer_id)
+								   WHERE m.manufacturer_id = '" . (int)$manufacturer_id . "' 
+								   AND cd.language_id = '" . (int)$this->config->get('config_language_id') . "' 
+								   AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "'  
+								   AND c.status = '1' 
+								   ORDER BY c.sort_order, LCASE(cd.name)");
 
 		return $query->rows;
 	}
@@ -66,6 +88,40 @@ class ModelCatalogCategory extends Model {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) WHERE c.parent_id = '" . (int)$parent_id . "' AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND c.status = '1'");
 		
 		return $query->row['total'];
+	}
+
+	// for chained category select
+	public function getCategoryIdByManufacturerId($manufacturer_id) {
+		$category_data = $this->cache->get('categorytomanufacturer.' .(int)$manufacturer_id);
+		
+		if(!$category_data) {
+			
+			if($manufacturer_id == '') {
+				
+				$query = $this->db->query("SELECT     c.category_id,
+													     cd.name
+										     FROM       " . DB_PREFIX . "category c
+										     LEFT JOIN  " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id)
+											 ORDER BY   name ASC");
+				
+			} else {
+			
+				$query = $this->db->query("SELECT     c.category_id,
+													     cd.name
+										     FROM       " . DB_PREFIX . "category c
+										     LEFT JOIN  " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id)
+										     WHERE      c.manufacturer_id = '" . (int)$manufacturer_id . "'
+											 ORDER BY    name ASC");
+									   
+			}
+			
+			$category_data = $query->rows;
+			
+			$this->cache->set('categorytomanufacturer.' . (int)$manufacturer_id, $category_data);
+		}
+		
+		return $category_data;
+		
 	}
 }
 ?>

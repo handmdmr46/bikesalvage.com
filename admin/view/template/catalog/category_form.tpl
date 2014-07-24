@@ -32,6 +32,23 @@
                   <span class="error"><?php echo $error_name[$language['language_id']]; ?></span>
                   <?php } ?></td>
               </tr>
+              <!-- Manufacturers to Category link -->
+              <tr>
+                <td><span class="required">*</span> <?php echo $entry_manufacturer; ?></td>
+                <td>
+                    <select name="manufacturer_link">
+                    <option value=""><?php echo $entry_select; ?></option>
+                    <?php foreach($manufacturers as $manufacturer) { ?>
+                    <?php if(!empty($manufacturer_info) && ($manufacturer_info['manufacturer_id'] == $manufacturer['manufacturer_id'])) { ?>
+                    <option value="<?php echo $manufacturer['manufacturer_id']; ?>" selected="selected"><?php echo $manufacturer['name']; ?></option>
+                    <?php } else { ?>
+                    <option value="<?php echo $manufacturer['manufacturer_id']; ?>"><?php echo $manufacturer['name']; ?></option>
+                    <?php } ?>
+                    <?php } ?>
+                    </select>
+                    <?php if ($error_manufacturer) { ?><span class="error"><?php echo $error_manufacturer; ?></span><?php } ?>
+                </td>
+              </tr>
               <tr>
                 <td><?php echo $entry_meta_description; ?></td>
                 <td><textarea name="category_description[<?php echo $language['language_id']; ?>][meta_description]" cols="40" rows="5"><?php echo isset($category_description[$language['language_id']]) ? $category_description[$language['language_id']]['meta_description'] : ''; ?></textarea></td>

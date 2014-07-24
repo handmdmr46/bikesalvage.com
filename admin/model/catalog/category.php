@@ -9,6 +9,10 @@ class ModelCatalogCategory extends Model {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET image = '" . $this->db->escape(html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8')) . "' WHERE category_id = '" . (int)$category_id . "'");
 		}
 
+		if (isset($data['manufacturer_link'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "category SET manufacturer_id = '" . (int)$data['manufacturer_link'] . "' WHERE category_id = '" . (int)$category_id . "'");
+		}
+
 		foreach ($data['category_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "category_description SET category_id = '" . (int)$category_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', description = '" . $this->db->escape($value['description']) . "'");
 		}
@@ -59,6 +63,10 @@ class ModelCatalogCategory extends Model {
 
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET image = '" . $this->db->escape(html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8')) . "' WHERE category_id = '" . (int)$category_id . "'");
+		}
+
+		if (isset($data['manufacturer_link'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "category SET manufacturer_id = '" . (int)$data['manufacturer_link'] . "' WHERE category_id = '" . (int)$category_id . "'");
 		}
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "category_description WHERE category_id = '" . (int)$category_id . "'");

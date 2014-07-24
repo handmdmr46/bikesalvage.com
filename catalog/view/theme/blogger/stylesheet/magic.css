@@ -1,0 +1,370 @@
+/* OpenCart Blogger Styles [START]*/
+#magicBlogger {
+	
+}
+#magicBlogger #post {
+	border: 1px solid #CCC;
+	padding: 4px;
+	margin-bottom: 10px;
+}
+#magicBlogger #post .title {
+	margin-bottom: 4px;
+}
+#magicBlogger #post .title a {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 4px;
+	text-decoration: none;
+}
+#magicBlogger #post .title a:hover {
+	text-decoration: underline;
+}
+#magicBlogger #post .date {
+	height: 32px;
+	line-height: 32px;
+	background: #CCC;
+	padding: 0px 10px 0px 10px;
+	font-size: 11px;
+	font-weight: normal;
+	color: #666;
+	margin-bottom: 10px;
+	text-transform: uppercase;
+}
+#magicBlogger #post .date span {
+	font-size: 11px;
+	font-weight: bold;
+	color: #666;
+	margin-bottom: 4px;
+	text-transform: none;
+}
+#magicBlogger #post .display {
+	
+}
+
+#magicBlogger #post .image {
+	float: left;
+	border: 1px solid #FFF;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+#magicBlogger #post .description {
+	font-size: 12px;
+	font-weight: normal;
+	margin-bottom: 0px;
+	text-align: left;
+}
+#magicBlogger #post .tags {
+	display: block;
+	height: 32px;
+	line-height: 32px;
+	padding: 0px 10px 0px 10px;
+	background: #b5021b;
+	font-size: 12px;
+	font-weight: normal;
+	color: #FFF;
+	margin-top: 20px;
+}
+#magicBlogger #post .tags .left {
+	float: left;
+	text-align: left;
+}
+#magicBlogger #post .tags .right {
+	float: right;
+	text-align: right;
+}
+#magicBlogger #post .tags span {
+	font-size: 12px;
+	font-weight: bold;
+	color: #000;
+	margin-top: 10px;
+}
+#magicBlogger #post .tags a {
+	background: none;
+	font-size: 12px;
+	font-weight: normal;
+	color: #FFF;
+	padding: inherit;
+	margin-top: 10px;
+	text-decoration: none;
+}
+#magicBlogger #post .tags a:hover {
+	color: #000;
+	text-decoration: none;
+}
+#magicBlogger #post .bottom {
+	height: 1px;
+}
+#comment {
+	margin-top: 20px;
+}
+.comment-responses span {
+	font-style: italic;
+}
+.comment-list {
+	padding: 10px;
+	overflow: auto;
+	margin-bottom: 20px;
+	border: 1px solid #EEEEEE;
+}
+.comment-list .author {
+	float: left;
+	font-size: 12px;
+	font-weight: normal;
+	color: #000;
+	margin-bottom: 20px;
+}
+.comment-list .author a {
+	font-size: 12px;
+	font-weight: bold;
+	color: #000;
+	text-decoration: none;
+}
+.comment-list .author a:hover {
+	color: #000;
+	text-decoration: underline;
+}
+.comment-list .rating {
+	float: right;
+	margin-bottom: 20px;
+}
+.comment-list .text {
+	clear: both;
+}
+.blogTags {
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+.blogVideo {
+	margin-bottom: 20px;
+}
+.blogImage {
+	margin-bottom: 20px;
+}
+.blogImage img {
+	border: 1px solid #DDD;
+	padding: 5px;
+	margin-right: 10px;
+}
+/* Blog Latest Link [START]*/
+.blogLatestLink {
+	margin-top: -5px;
+}
+.blogLatestLink ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.blogLatestLink > ul > li {
+	padding: 8px 8px 8px 0px;
+}
+.blogLatestLink > ul > li + li {
+	border-top: 1px solid #EEEEEE;
+}
+.blogLatestLink > ul > li > a {
+	font-size: 11px;
+	text-decoration: none;
+	color: #333;
+}
+.blogLatestLink > ul > li ul {
+	display: none;
+}
+.blogLatestLink > ul > li a.active {
+	font-weight: bold;
+}
+.blogLatestLink > ul > li a.active + ul {
+	display: block;
+}
+.blogLatestLink > ul > li ul > li {
+	padding: 5px 5px 0px 10px;
+}
+.blogLatestLink > ul > li ul > li > a {
+	text-decoration: none;
+	display: block;
+}
+.blogLatestLink > ul > li ul > li > a.active {
+	font-weight: bold;
+}
+/* Blog Latest Link [END]*/
+/* Blog Latest Footer [START]*/
+.blogLatestFooter {
+	margin-top: 0px;
+}
+.blogLatestFooter ul {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+.blogLatestFooter > ul > li {
+	font-size: 11px;
+	font-weight: normal;
+	color: #b4b3b3;
+	padding: 8px 8px 8px 0px;
+	border-bottom: 1px solid #303030;
+}
+.blogLatestFooter > ul > li > a {
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #333;
+}
+.blogLatestFooter > ul > li ul {
+	display: none;
+}
+.blogLatestFooter > ul > li a.active {
+	font-weight: bold;
+}
+.blogLatestFooter > ul > li span.date-added {
+	font-size: 10px;
+	font-weight: bold;
+	color: #FFF;
+	text-transform: uppercase;
+}
+/* Blog Latest Footer [END]*/
+.blogRelated {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.blogRelated ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.blogRelated > ul > li {
+	padding: 8px 8px 8px 0px;
+}
+.blogRelated > ul > li + li {
+	border-top: 1px solid #EEEEEE;
+}
+.blogRelated > ul > li > a {
+	background: url(../image/arrow-category.png) left center no-repeat;
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #b5021b;
+	padding-left: 10px;
+}
+.blogRelated > ul > li a.active {
+	font-weight: bold;
+}
+/* Blog Search */
+#blogModule #search {
+	position: relative;
+	width: 230px;
+	z-index: 15;
+}
+#blogModule .button-blog-search {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	background: #EEE url('../image/button-search.png') center center no-repeat;
+	width: 32px;
+	height: 25px;
+	border-left: 1px solid #CCCCCC;
+	margin: 1px;
+	cursor: pointer;
+}
+#blogModule #search input {
+	background: #F9F9F9;
+	padding: 5px 37px 5px 5px;
+	width: 186px;
+	height: 15px;
+	border: 1px solid #CCCCCC;
+	-webkit-border-radius: 3px 3px 3px 3px;
+	-moz-border-radius: 3px 3px 3px 3px;
+	-khtml-border-radius: 3px 3px 3px 3px;
+	border-radius: 3px 3px 3px 3px;
+	font-style: italic;
+	color: #666;
+}
+/* blog_link */
+.blog_link div {
+	margin-bottom: 8px;
+}
+/* blogMenu */
+#blogMenu {
+	background: #323232;
+	height: 37px;
+	margin-bottom: 10px;
+	-webkit-border-radius: 0px 0px 0px 0px;
+	-moz-border-radius: 0px 0px 0px 0px;
+	-khtml-border-radius: 0px 0px 0px 0px;
+	border-radius: 0px 0px 0px 0px;
+	-webkit-box-shadow: 0px 2px 2px #DDDDDD;
+	-moz-box-shadow: 0px 2px 2px #DDDDDD;
+	box-shadow: 0px 2px 2px #DDDDDD;
+	padding: -5px 0px 0px 0px;
+}
+#blogMenu ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#blogMenu > ul > li {
+	position: relative;
+	float: left;
+	z-index: 19;
+	padding: 0px 0px 0px 0px;
+}
+#blogMenu > ul > li:hover {
+}
+#blogMenu > ul > li > a {
+	font-size: 11px;
+	font-weight:bold;
+	color: #FFF;
+	line-height: 24px;
+	text-decoration: none;
+	text-transform: uppercase;
+	display: block;
+	padding: 7px 16px 6px 16px;
+	margin-bottom: 0px;
+	z-index: 6;
+	position: relative;
+	border-right: 1px solid #000;
+}
+#blogMenu > ul > li > a.selected {
+	background: #b81314;
+	color: #FFF;
+}
+#blogMenu > ul > li:hover > a {
+	background: #b81314;
+}
+#blogMenu > ul > li > div {
+	display: none;
+	min-width:200px;
+	background: #b81314;
+	position: absolute;
+	z-index: 5;
+	padding: 5px;
+	border: none;
+	-webkit-border-radius: 0px 0px 5px 5px;
+	-moz-border-radius: 0px 0px 5px 5px;
+	-khtml-border-radius: 0px 0px 5px 5px;
+	border-radius: 0px 0px 0px 0px;
+	opacity: .9;
+}
+#blogMenu > ul > li:hover > div {
+	display: table;
+}
+#blogMenu > ul > li > div > ul {
+	display: table-cell;
+}
+#blogMenu > ul > li ul + ul {
+	padding-left: 20px;
+}
+#blogMenu > ul > li ul > li > a {
+	text-decoration: none;
+	padding: 4px;
+	color: #FFFFFF;
+	display: block;
+	white-space: nowrap;
+	min-width: 120px;
+}
+#blogMenu > ul > li ul > li > a:hover {
+	background: #000000;
+}
+#blogMenu > ul > li > div > ul > li > a {
+	color: #FFFFFF;
+}
+
+/* OpenCart Blogger Styles [END]*/

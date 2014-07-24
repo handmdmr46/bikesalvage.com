@@ -62,7 +62,9 @@ $(document).ready(function(){
   <?php if ($logged) { ?>
   <div id="menu">
     <ul class="left" style="display: none;">
+      <!-- dashboard -->
       <li id="dashboard"><a href="<?php echo $home; ?>" class="top"><?php echo $text_dashboard; ?></a></li>
+      <!-- catalog -->
       <li id="catalog"><a class="top"><?php echo $text_catalog; ?></a>
         <ul>
           <li><a href="<?php echo $category; ?>"><?php echo $text_category; ?></a></li>
@@ -82,6 +84,7 @@ $(document).ready(function(){
           <li><a href="<?php echo $information; ?>"><?php echo $text_information; ?></a></li>
         </ul>
       </li>
+      <!-- extension -->
       <li id="extension"><a class="top"><?php echo $text_extension; ?></a>
         <ul>
           <li><a href="<?php echo $module; ?>"><?php echo $text_module; ?></a></li>
@@ -128,6 +131,7 @@ $(document).ready(function(){
           <?php } ?>
         </ul>
       </li>
+      <!-- sale -->
       <li id="sale"><a class="top"><?php echo $text_sale; ?></a>
         <ul>
           <li><a href="<?php echo $order; ?>"><?php echo $text_order; ?></a></li>
@@ -160,6 +164,7 @@ $(document).ready(function(){
           <li><a href="<?php echo $contact; ?>"><?php echo $text_contact; ?></a></li>
         </ul>
       </li>
+      <!-- system -->
       <li id="system"><a class="top"><?php echo $text_system; ?></a>
         <ul>
           <li><a href="<?php echo $setting; ?>"><?php echo $text_setting; ?></a></li>
@@ -205,6 +210,35 @@ $(document).ready(function(){
           <li><a href="<?php echo $backup; ?>"><?php echo $text_backup; ?></a></li>
         </ul>
       </li>
+      <!-- affiliates -->
+      <li id="affiliate"><a class="top"><?php echo $text_affiliate; ?></a>
+        <ul>
+          <li><a href="<?php echo $affiliate_approval; ?>"><?php echo $text_affiliate_approval; ?></a></li>
+          <li><a href="<?php echo $affiliate_import; ?>"><?php echo $text_affiliate_import; ?></a></li>
+          <li><a href="<?php echo $affiliate_profile; ?>"><?php echo $text_affiliate_profile; ?></a></li>
+          <li><a href="<?php echo $affiliate_setting; ?>"><?php echo $text_affiliate_setting; ?></a></li>
+          <li><a href="<?php echo $affiliate_sale; ?>"><?php echo $text_affiliate_sale; ?></a></li>
+        </ul>
+      </li>
+      <!-- csv_import -->
+      <li id="csv-import"><a class="top"><?php echo $text_csv_import; ?></a>
+        <ul>
+          <li><a class="parent"><?php echo $text_import; ?></a>
+              <ul>
+                <li><a href="<?php echo $csv_import; ?>"><?php echo $text_import_csv; ?></a></li>
+                <li><a href="<?php echo $ebayid_import; ?>"><?php echo $text_import_ebayid; ?></a></li>
+              </ul>
+          </li>          
+          <li><a class="parent" href="<?php echo $stock_control; ?>"><?php echo $text_stock_control; ?></a>
+              <ul>
+                <li><a href="<?php echo $linked_products; ?>"><?php echo $text_linked_products; ?></a></li>
+                <li><a href="<?php echo $unlinked_products; ?>"><?php echo $text_unlinked_products; ?></a></li>
+              </ul>
+          </li>
+          <li><a href="<?php echo $ebay_log; ?>"><?php echo $text_ebay_log; ?></a></li>
+        </ul>
+      </li>
+      <!-- reports -->
       <li id="reports"><a class="top"><?php echo $text_reports; ?></a>
         <ul>
           <li><a class="parent"><?php echo $text_sale; ?></a>
@@ -237,6 +271,27 @@ $(document).ready(function(){
           </li>
         </ul>
       </li>
+      <!-- extras -->
+      <li id="extras"><a class="top"><?php echo $text_extras; ?></a>
+        <ul>
+          <li><a class="parent"><?php echo $text_blog; ?></a>
+              <ul>
+                <li><a href="<?php echo $add_blog; ?>"><?php echo $text_add_blog; ?></a></li>
+                <li><a href="<?php echo $blog_category; ?>"><?php echo $text_blog_category; ?></a></li>
+                <li><a href="<?php echo $blog_comments; ?>"><?php echo $text_blog_comments; ?></a></li>
+                <li><a href="<?php echo $add_blog_link; ?>"><?php echo $text_add_blog_link; ?></a></li>
+                <li><a href="<?php echo $blog_feed; ?>"><?php echo $text_blog_feed; ?></a></li>
+                <li><a href="<?php echo $blog_configuration; ?>"><?php echo $text_blog_configuration; ?></a></li>
+              </ul>
+          </li> 
+          <li><a class="parent"><?php echo $text_url_alias; ?></a>
+              <ul>
+                <li><a href="<?php echo $url_alias; ?>"><?php echo $text_manage_url_alias; ?></a></li>
+              </ul>
+          </li> 
+        </ul>
+      </li>
+      <!-- help -->
       <li id="help"><a class="top"><?php echo $text_help; ?></a>
         <ul>
           <li><a href="http://www.opencart.com" target="_blank"><?php echo $text_opencart; ?></a></li>

@@ -29,6 +29,8 @@ $_['entry_column']           = 'Columns:<br/><span class="help">Number of column
 $_['entry_sort_order']       = 'Sort Order:';
 $_['entry_status']           = 'Status:';
 $_['entry_layout']           = 'Layout Override:';
+$_['entry_manufacturer'] = 'Manufacturers';
+$_['entry_select'] = 'Please Select';
 
 // Error 
 $_['error_warning']          = 'Warning: Please check the form carefully for errors!';
