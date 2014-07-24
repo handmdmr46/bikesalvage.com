@@ -220,21 +220,19 @@ $(document).ready(function(){
           <li><a href="<?php echo $affiliate_sale; ?>"><?php echo $text_affiliate_sale; ?></a></li>
         </ul>
       </li>
-      <!-- csv_import -->
-      <li id="csv-import"><a class="top"><?php echo $text_csv_import; ?></a>
+      <!-- import -->
+      <li id="import"><a class="top"><?php echo $text_import; ?></a>
         <ul>
-          <li><a class="parent"><?php echo $text_import; ?></a>
-              <ul>
-                <li><a href="<?php echo $csv_import; ?>"><?php echo $text_import_csv; ?></a></li>
-                <li><a href="<?php echo $ebayid_import; ?>"><?php echo $text_import_ebayid; ?></a></li>
-              </ul>
-          </li>          
-          <li><a class="parent" href="<?php echo $stock_control; ?>"><?php echo $text_stock_control; ?></a>
-              <ul>
-                <li><a href="<?php echo $linked_products; ?>"><?php echo $text_linked_products; ?></a></li>
-                <li><a href="<?php echo $unlinked_products; ?>"><?php echo $text_unlinked_products; ?></a></li>
-              </ul>
-          </li>
+          <li><a href="<?php echo $csv_import; ?>"><?php echo $text_import_csv; ?></a></li>
+          <li><a href="<?php echo $ebayid_import; ?>"><?php echo $text_import_ebayid; ?></a></li>
+        </ul>
+      </li>
+       <!-- inventory -->
+      <li id="inventory"><a class="top"><?php echo $text_inventory; ?></a>
+        <ul>
+          <li><a class="parent" href="<?php echo $stock_control; ?>"><?php echo $text_stock_control; ?></a></li>
+          <li><a href="<?php echo $linked_products; ?>"><?php echo $text_linked_products; ?></a></li>
+          <li><a href="<?php echo $unlinked_products; ?>"><?php echo $text_unlinked_products; ?></a></li>
           <li><a href="<?php echo $ebay_log; ?>"><?php echo $text_ebay_log; ?></a></li>
         </ul>
       </li>
