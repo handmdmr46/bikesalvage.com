@@ -1,5 +1,6 @@
 <?php
 class ControllerExtrasSeoURL extends Controller { 
+	
 	private $error = array();
 
 	public function index() {

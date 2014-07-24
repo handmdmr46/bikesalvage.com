@@ -97,7 +97,7 @@ $_['text_paypal_manage']               = 'PayPal';
 $_['text_paypal_search']               = 'Search';
 $_['text_recurring_profile']           = 'Recurring Profiles';
 
-// blog
+// Blog
 $_['text_extras']             = 'Extras';
 $_['text_blog']               = 'Blog';
 $_['text_blog_category']      = 'Blog Categories';

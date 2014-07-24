@@ -1,5 +1,6 @@
 <?php
 class ControllerExtrasBlogComment extends Controller {
+	
 	private $error = array();
  
 	public function index() {

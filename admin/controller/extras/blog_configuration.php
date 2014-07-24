@@ -1,5 +1,6 @@
 <?php
 class ControllerExtrasBlogConfiguration extends Controller {
+	
 	private $error = array();
  
 	public function index() {
