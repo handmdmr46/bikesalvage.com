@@ -62,8 +62,11 @@
             </table>
       </form>
     </div><!-- .content -->
+
     <div class="pagination"><?php echo $pagination; ?></div>
+
   </div><!-- .box -->
+
 </div><!-- #content -->
 
 <script type="text/javascript"><!--

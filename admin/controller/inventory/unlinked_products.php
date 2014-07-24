@@ -1,7 +1,7 @@
 <?php
 class ControllerInventoryUnlinkedProducts extends Controller {
 	/**
-	*
+	* View all un-linked products, add product link manually 
 	*
 	*/
 	public function index() {

@@ -1,4 +1,8 @@
 <?php
+/**
+* language file inventory stock control
+*
+*/
 // Text 
 $_['heading_title_stock_control']     =	'Stock Control';
 $_['heading_title_ebay_profile']      = 'Stock Control | eBay Profile';

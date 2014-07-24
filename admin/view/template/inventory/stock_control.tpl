@@ -1,13 +1,13 @@
 <?php echo $header; ?>
+<!-- 
 
+Admin template for testing ebay calls from opencart
+
+
+
+ -->
 <div id="content">
-<?php
 
-// for($i=2; $i <= 20; $i++) {
-// 	echo $i . "<br>";
-// }
-
-?>
 	<div class="breadcrumb">
 	  <?php foreach ($breadcrumbs as $breadcrumb) { ?>
 	    <?php echo $breadcrumb['separator']; ?><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a>
@@ -191,7 +191,9 @@
 		        	</td></tr>
 				<?php //} ?>		      
 		      </table>
+
 		  </form>
+
         </div><!-- .content -->
 
     </div><!-- .box -->
