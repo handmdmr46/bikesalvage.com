@@ -109,7 +109,7 @@ $_['text_blog_configuration'] = 'Blog Configuration';
 $_['text_url_alias']          = 'SEO URL Rewritter';
 $_['text_manage_url_alias']   = 'Manage SEO URL';
 
-// Affiliates text
+// Affiliates 
 $_['text_affiliate']                   = 'Affiliates';
 $_['text_affiliate_import']            = 'Imports';
 $_['text_affiliate_setting']           = 'Settings';
@@ -118,14 +118,17 @@ $_['text_affiliate_payment']           = 'Payment';
 $_['text_affiliate_approval']          = 'Approvals';
 $_['text_affiliate_sale']              = 'Sales';
 
-// csv_import
+// import
 $_['text_csv_import']                  = 'CSV Import';
 $_['text_import_csv']                  = 'Import CSV - step 1';
 $_['text_import_ebayid']               = 'Import eBayID - step 2';
+$_['text_import'] 					   = 'Import';
+
+
+// inventory
 $_['text_stock_control']               = 'Stock Control';
 $_['text_linked_products']             = 'Linked Products';
 $_['text_unlinked_products']           = 'Unlinked Products';
-$_['text_import'] 					   = 'Import';
 $_['text_ebay_log'] 				   = 'eBay Log';
-
+$_['text_inventory'] = 'Inventory';
 ?>

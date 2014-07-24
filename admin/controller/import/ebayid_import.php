@@ -5,9 +5,9 @@ class ControllerImportEbayidImport extends Controller {
 	*
 	*/
 	public function index() {
-		$this->language->load('affiliate/csv_import');
+		$this->language->load('import/csv_import');
 		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
-		$this->load->model('affiliate/csv_import');
+		$this->load->model('import/csv_import');
 		$this->document->addScript('view/javascript/event_scheduler/codebase/dhtmlxscheduler.js');
     	$this->document->addScript('view/javascript/event_scheduler/codebase/ext/dhtmlxscheduler_year_view.js');
     	$this->document->addStyle('view/javascript/event_scheduler/codebase/dhtmlxscheduler.css');
@@ -27,7 +27,7 @@ class ControllerImportEbayidImport extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title_ebayid_import'),
-       		'href'      => $this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'),
+       		'href'      => $this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'),
        		'separator' => ' :: '
 		);
 
@@ -159,20 +159,20 @@ class ControllerImportEbayidImport extends Controller {
 	    $start = ($page - 1) * $limit;
 
 	    // Buttons
-	    $this->data['import_ids'] = $this->url->link('affiliate/ebayid_import/importIds', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['import_ids'] = $this->url->link('import/ebayid_import/importIds', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['clear_dates'] = $this->url->link('affiliate/ebayid_import/clearDates', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['reload'] = $this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['edit_linked_products'] = $this->url->link('affiliate/ebayid_import/editLinkedProducts', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['edit_unlinked_products'] = $this->url->link('affiliate/ebayid_import/editUnlinkedProducts', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['clear_products'] = $this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['activate_linked_products'] = $this->url->link('affiliate/ebayid_import/activatProductLinks', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['set_ebay_profile'] = $this->url->link('affiliate/ebayid_import/setEbayProfile', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['clear_dates'] = $this->url->link('import/ebayid_import/clearDates', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['reload'] = $this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['edit_linked_products'] = $this->url->link('import/ebayid_import/editLinkedProducts', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['edit_unlinked_products'] = $this->url->link('import/ebayid_import/editUnlinkedProducts', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['clear_products'] = $this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['activate_linked_products'] = $this->url->link('import/ebayid_import/activatProductLinks', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['set_ebay_profile'] = $this->url->link('import/ebayid_import/setEbayProfile', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
-	    $profiles                        = $this->model_affiliate_csv_import->getEbayProfile();
-	    $this->data['ebay_sites']        = $this->model_affiliate_csv_import->getEbaySiteIds();
-	    $this->data['compat_levels']     = $this->model_affiliate_csv_import->getEbayCompatibilityLevels();
-	    $this->data['dates']             = $this->model_affiliate_csv_import->getEbayImportStartDates();
+	    $profiles                        = $this->model_import_csv_import->getEbayProfile();
+	    $this->data['ebay_sites']        = $this->model_import_csv_import->getEbaySiteIds();
+	    $this->data['compat_levels']     = $this->model_import_csv_import->getEbayCompatibilityLevels();
+	    $this->data['dates']             = $this->model_import_csv_import->getEbayImportStartDates();
 	    // Profiles
 	    if (!empty($profiles)) {
 	      $this->data['developer_id'] = $profiles['developer_id'];
@@ -210,7 +210,7 @@ class ControllerImportEbayidImport extends Controller {
 	      $this->data['compat'] = '';
 	    }
 
-	    $this->template = 'affiliate/ebayid_import.tpl';
+	    $this->template = 'import/ebayid_import.tpl';
 
 	    $this->children = array(
 	      'common/header',
@@ -221,13 +221,13 @@ class ControllerImportEbayidImport extends Controller {
 	}
 
     public  function importIds() {
-	    $this->language->load('affiliate/csv_import');
+	    $this->language->load('import/csv_import');
 		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
-		$this->load->model('affiliate/csv_import');
+		$this->load->model('import/csv_import');
 
 	    if ($this->request->server['REQUEST_METHOD'] == 'POST' && $this->validateEbayIdImport() == 1) {
 
-	      $this->model_affiliate_csv_import->setEbayImportStartDates($this->request->post);
+	      $this->model_import_csv_import->setEbayImportStartDates($this->request->post);
 
 	      $call_name = 'GetSellerList';
 
@@ -259,7 +259,7 @@ class ControllerImportEbayidImport extends Controller {
 	        if (isset($this->request->get['page'])) {
 	          $url .= '&page=' . $this->request->get['page'];
 	        }
-	        $this->redirect($this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+	        $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	      }
 
 	      $doc_response = new DomDocument();
@@ -279,7 +279,7 @@ class ControllerImportEbayidImport extends Controller {
 	        if (isset($this->request->get['page'])) {
 	          $url .= '&page=' . $this->request->get['page'];
 	        }
-	        $this->redirect($this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+	        $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	      }
 
 	      $titles = $doc_response->getElementsByTagName('Title');
@@ -345,7 +345,7 @@ class ControllerImportEbayidImport extends Controller {
 	      $match      = 0;
 	      $ebay_id    = array();
 	      $product_id = array();
-	      $unlinked   = $this->model_affiliate_csv_import->getCsvImportProducts();
+	      $unlinked   = $this->model_import_csv_import->getCsvImportProducts();
 
 	      foreach($unlinked as $product){
 	        foreach(array_combine($import_data['id'], $import_data['title']) as $item_id => $ebay_title) {
@@ -357,25 +357,25 @@ class ControllerImportEbayidImport extends Controller {
 	        }
 	      }
 	      $data = array_combine($product_id,$ebay_id); //array_combine($keys,$values)
-	      $this->model_affiliate_csv_import->addEbayListingProductLink($data);
+	      $this->model_import_csv_import->addEbayListingProductLink($data);
 	      $this->session->data['success'] = $this->language->get('success_import');
-	      $this->redirect($this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
+	      $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
 	      $this->response->setOutput(json_encode($json));
 	    }
 	    $this->getForm();
     }
 
     public function setEbayProfile() {
-	    $this->language->load('affiliate/csv_import');
+	    $this->language->load('import/csv_import');
 		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('import/stock_control');
 
 	    if ($this->validateSaveEbayProfile() == 1) {	        	        	        
-	        $this->model_affiliate_stock_control->setEbayProfile($this->request->post);
+	        $this->model_import_stock_control->setEbayProfile($this->request->post);
     		$this->session->data['success'] = $this->language->get('success_profile');
-    		$this->redirect($this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
+    		$this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
 	    } 
-	    $this->redirect($this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));    	
+	    $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));    	
     }
 
     protected function validateSaveEbayProfile() {
@@ -475,15 +475,15 @@ class ControllerImportEbayidImport extends Controller {
     }
 
     public  function clearDates() {
-	    $this->language->load('affiliate/csv_import');
+	    $this->language->load('import/csv_import');
 		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
-		$this->load->model('affiliate/csv_import');
+		$this->load->model('import/csv_import');
 
-	    $this->model_affiliate_csv_import->deleteEbayImportStartDates();
+	    $this->model_import_csv_import->deleteEbayImportStartDates();
 
 	    $this->session->data['success'] = $this->language->get('success_clear_dates');
 
-	    $this->redirect($this->url->link('affiliate/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
+	    $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
     }
 
 }// end class

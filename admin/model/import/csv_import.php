@@ -1,6 +1,9 @@
 <?php
-class ModelAffiliateCsvImport extends Model {
-
+class ModelImportCsvImport extends Model {
+	/**
+	* CSV Import and eBayID Import
+	*
+	*/
 	public function getManufacturerName($manufacturer_id) {
 		$query = $this->db->query("SELECT `name` FROM " . DB_PREFIX . "manufacturer WHERE `manufacturer_id` = '" . (int)$manufacturer_id . "'");
 
