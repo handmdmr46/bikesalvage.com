@@ -1,6 +1,6 @@
 <?php 
 class ControllerExtrasBlogCategory extends Controller { 
-	//testrigni
+
 	private $error = array();
  
 	public function index() {
