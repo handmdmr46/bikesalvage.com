@@ -32,7 +32,7 @@
                   <span class="error"><?php echo $error_name[$language['language_id']]; ?></span>
                   <?php } ?></td>
               </tr>
-              <!-- Manufacturers to Category link -->
+              <!-- Manufacturers to Category Link -->
               <tr>
                 <td><span class="required">*</span> <?php echo $entry_manufacturer; ?></td>
                 <td>
