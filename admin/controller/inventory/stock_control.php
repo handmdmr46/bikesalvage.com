@@ -1,7 +1,7 @@
 <?php
 class ControllerInventoryStockControl extends Controller {
 	/**
-	*
+	* Adjust's inventory on eBay for every opencart sale
 	*
 	*/
 	public function index() {

@@ -1,7 +1,7 @@
 <?php 
 class ControllerInventoryEbayCronLog extends Controller { 
 	/**
-	*
+	* Monitors calls made from ebay_cron.php, cron job to track and control inventory sold on eBay
 	*
 	*/
 	private $error = array();

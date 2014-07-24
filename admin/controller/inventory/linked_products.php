@@ -1,7 +1,7 @@
 <?php
 class ControllerInventoryLinkedProducts extends Controller {
 	/**
-	*
+	* View all linked products
 	*
 	*/
 	public function index() {
