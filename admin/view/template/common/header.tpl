@@ -230,7 +230,7 @@ $(document).ready(function(){
        <!-- inventory -->
       <li id="inventory"><a class="top"><?php echo $text_inventory; ?></a>
         <ul>
-          <li><a class="parent" href="<?php echo $stock_control; ?>"><?php echo $text_stock_control; ?></a></li>
+          <li><a href="<?php echo $stock_control; ?>"><?php echo $text_stock_control; ?></a></li>
           <li><a href="<?php echo $linked_products; ?>"><?php echo $text_linked_products; ?></a></li>
           <li><a href="<?php echo $unlinked_products; ?>"><?php echo $text_unlinked_products; ?></a></li>
           <li><a href="<?php echo $ebay_log; ?>"><?php echo $text_ebay_log; ?></a></li>

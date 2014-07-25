@@ -33,11 +33,11 @@ class ControllerInventoryEbayCronLog extends Controller {
 
    		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('affiliate/ebay_cron_log', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('inventory/ebay_cron_log', 'token=' . $this->session->data['token'], 'SSL'),
       		'separator' => ' :: '
    		);
 		
-		$this->data['clear'] = $this->url->link('affiliate/ebay_cron_log/clear', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['clear'] = $this->url->link('inventory/ebay_cron_log/clear', 'token=' . $this->session->data['token'], 'SSL');
 		
 		$file = DIR_LOGS . 'ebay_cron_log.txt';
 		
@@ -47,7 +47,7 @@ class ControllerInventoryEbayCronLog extends Controller {
 			$this->data['log'] = '';
 		}
 
-		$this->template = 'affiliate/ebay_cron_log.tpl';
+		$this->template = 'inventory/ebay_cron_log.tpl';
 		$this->children = array(
 			'common/header',
 			'common/footer'
@@ -67,7 +67,7 @@ class ControllerInventoryEbayCronLog extends Controller {
 		
 		$this->session->data['success'] = $this->language->get('text_success');
 		
-		$this->redirect($this->url->link('affiliate/ebay_cron_log', 'token=' . $this->session->data['token'], 'SSL'));		
+		$this->redirect($this->url->link('inventory/ebay_cron_log', 'token=' . $this->session->data['token'], 'SSL'));		
 	}
 }
 ?>

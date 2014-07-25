@@ -5,9 +5,9 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	*
 	*/
 	public function index() {
-		$this->language->load('affiliate/stock_control');
+		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_unlinked_products'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('inventory/stock_control');
 		$this->init();
 	}
 
@@ -23,7 +23,7 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title_unlinked_products'),
-       		'href'      => $this->url->link('affiliate/unlinked_products', 'token=' . $this->session->data['token'], 'SSL'),
+       		'href'      => $this->url->link('inventory/unlinked_products', 'token=' . $this->session->data['token'], 'SSL'),
        		'separator' => ' :: '
 		);
 
@@ -72,12 +72,12 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	    $start = ($page - 1) * $limit;
 
 	    // Buttons
-	    $this->data['link_product'] = $this->url->link('affiliate/unlinked_products/linkProduct', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['link_product'] = $this->url->link('inventory/unlinked_products/linkProduct', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
 	    // Variables	    
-		$total                           = $this->model_affiliate_stock_control->getTotalUnlinkedProducts();
-		$this->data['unlinked_products'] = $this->model_affiliate_stock_control->getUnlinkedProducts($start, $limit);
+		$total                           = $this->model_inventory_stock_control->getTotalUnlinkedProducts();
+		$this->data['unlinked_products'] = $this->model_inventory_stock_control->getUnlinkedProducts($start, $limit);
 
 	    // Pagination
 	    $pagination        = new Pagination();
@@ -85,11 +85,11 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	    $pagination->page  = $page;
 	    $pagination->limit = $limit;
 	    $pagination->text  = $this->language->get('text_pagination');
-	    $pagination->url   = $this->url->link('affiliate/unlinked_products', 'token=' . $this->session->data['token']  . '&page={page}' , 'SSL');
+	    $pagination->url   = $this->url->link('inventory/unlinked_products', 'token=' . $this->session->data['token']  . '&page={page}' , 'SSL');
 
 	    $this->data['pagination'] = $pagination->render();
 
-	    $this->template = 'affiliate/unlinked_products.tpl';
+	    $this->template = 'inventory/unlinked_products.tpl';
 
 	    $this->children = array(
 	      'common/header',
@@ -100,9 +100,9 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	}
 
 	public function linkProduct() {
-			$this->language->load('affiliate/stock_control');
+			$this->language->load('inventory/stock_control');
 			$this->document->setTitle($this->language->get('heading_title_unlinked_products'));
-			$this->load->model('affiliate/stock_control');
+			$this->load->model('inventory/stock_control');
 
 			$url = '';
 
@@ -114,15 +114,15 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 				foreach ($this->request->post['selected'] as $product_id) {
 					$ebay_item_id_str = $product_id . '_ebay_item_id';
 					$ebay_item_id = $this->request->post[$ebay_item_id_str];
-					$this->model_affiliate_stock_control->setProductLink($product_id, $ebay_item_id);
+					$this->model_inventory_stock_control->setProductLink($product_id, $ebay_item_id);
 				}
 
 				$this->session->data['success'] = $this->language->get('success_link_product');
-				$this->redirect($this->url->link('affiliate/unlinked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+				$this->redirect($this->url->link('inventory/unlinked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 			}
 
 			$this->session->data['error'] = $this->language->get('error_edit');
-			$this->redirect($this->url->link('affiliate/unlinked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->redirect($this->url->link('inventory/unlinked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	}
 
 	/*protected function validateLinkProduct() {

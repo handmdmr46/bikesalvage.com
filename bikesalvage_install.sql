@@ -233,6 +233,20 @@ CREATE TABLE `oc_ebay_site_ids` (
   UNIQUE KEY `site_id` (`site_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
+
+DROP TABLE IF EXISTS `oc_shipping_method`;
+CREATE TABLE `oc_shipping_method` (
+  `shipping_id` int(11) NOT NULL AUTO_INCREMENT,
+  `method_name` varchar(255) NOT NULL,
+  `zone` enum('domestic','international') NOT NULL,
+  `group` varchar(32) NOT NULL,
+  `key` varchar(64) NOT NULL,
+  `value` text NOT NULL,
+  `key_id` int(11) NOT NULL,
+  PRIMARY KEY (`shipping_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
+
+
 INSERT INTO `oc_ebay_compatibility` (`level`, `id`) VALUES
 (851, 1),
 (849, 2),
@@ -289,8 +303,20 @@ INSERT INTO `oc_ebay_site_ids` (`id`, `site_id`, `site_name`) VALUES
 (24, 71, 'France'),
 (25, 77, 'Germany');
 
+INSERT INTO `oc_shipping_method` (`shipping_id`, `method_name`, `zone`, `group`, `key`, `value`, `key_id`) VALUES
+(1, 'First Class Mail Parcel', 'domestic', 'usps', 'usps_domestic_00', '1', 0),
+(3, 'Priority Mail ', 'domestic', 'usps', 'usps_domestic_1', '1', 1),
+(4, 'Priority Mail Flat Rate Envelope', 'domestic', 'usps', 'usps_domestic_16', '1', 16),
+(5, 'Priority Mail Regular Flat Rate Box', 'domestic', 'usps', 'usps_domestic_17', '1', 17),
+(6, 'Priority Mail Flat Rate Large Box', 'domestic', 'usps', 'usps_domestic_22', '1', 22),
+(7, 'Parcel Post', 'domestic', 'usps', 'usps_domestic_4', '1', 4),
+(9, 'First Class International Parcels', 'international', 'usps', 'usps_international_15', '1', 15),
+(10, 'Priority Mail International', 'international', 'usps', 'usps_international_2', '1', 2),
+(11, 'Priority Mail Flat Rate Envelope', 'international', 'usps', 'usps_international_8', '1', 8),
+(12, 'Priority Mail Flat Rate Box', 'international', 'usps', 'usps_international_9', '1', 9),
+(13, 'Priority Mail Flat Rate Large Box', 'international', 'usps', 'usps_international_11', '1', 11);
 
--- alter tables --
+/* alter tables */
 
 ALTER TABLE `oc_customer_group`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';

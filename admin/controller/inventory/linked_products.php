@@ -5,9 +5,9 @@ class ControllerInventoryLinkedProducts extends Controller {
 	*
 	*/
 	public function index() {
-		$this->language->load('affiliate/stock_control');
+		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_linked_products'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('inventory/stock_control');
 		$this->init();
 	}
 
@@ -23,7 +23,7 @@ class ControllerInventoryLinkedProducts extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title_linked_products'),
-       		'href'      => $this->url->link('affiliate/linked_products', 'token=' . $this->session->data['token'], 'SSL'),
+       		'href'      => $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'], 'SSL'),
        		'separator' => ' :: '
 		);
 
@@ -71,12 +71,12 @@ class ControllerInventoryLinkedProducts extends Controller {
 	    $start = ($page - 1) * $limit;
 
 	    // Variables	    
-	    $total                    		 = $this->model_affiliate_stock_control->getTotalLinkedProducts();
-	    $this->data['linked_products']   = $this->model_affiliate_stock_control->getLinkedProducts($start, $limit);
+	    $total                    		 = $this->model_inventory_stock_control->getTotalLinkedProducts();
+	    $this->data['linked_products']   = $this->model_inventory_stock_control->getLinkedProducts($start, $limit);
 
 	    // Buttons
-	    $this->data['edit'] = $this->url->link('affiliate/linked_products/edit', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['remove'] = $this->url->link('affiliate/linked_products/remove', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['edit'] = $this->url->link('inventory/linked_products/edit', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['remove'] = $this->url->link('inventory/linked_products/remove', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
 	    // Pagination
@@ -85,11 +85,11 @@ class ControllerInventoryLinkedProducts extends Controller {
 	    $pagination->page  = $page;
 	    $pagination->limit = $limit;
 	    $pagination->text  = $this->language->get('text_pagination');
-	    $pagination->url   = $this->url->link('affiliate/linked_products', 'token=' . $this->session->data['token']  . '&page={page}' , 'SSL');
+	    $pagination->url   = $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token']  . '&page={page}' , 'SSL');
 
 	    $this->data['pagination'] = $pagination->render();
 
-	    $this->template = 'affiliate/linked_products.tpl';
+	    $this->template = 'inventory/linked_products.tpl';
 
 	    $this->children = array(
 	      'common/header',
@@ -102,9 +102,9 @@ class ControllerInventoryLinkedProducts extends Controller {
 	}
 
 	public function edit() {
-		$this->language->load('affiliate/stock_control');
+		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_linked_products'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('inventory/stock_control');
 
 	    $url = '';
 
@@ -117,21 +117,21 @@ class ControllerInventoryLinkedProducts extends Controller {
 	          
 	          $ebay_item_id_str = $product_id . '_ebay_item_id';
 	          $ebay_item_id     = $this->request->post[$ebay_item_id_str];
-	          $this->model_affiliate_stock_control->setLinkedProductEbayItemId($product_id, $ebay_item_id);
+	          $this->model_inventory_stock_control->setLinkedProductEbayItemId($product_id, $ebay_item_id);
 	      }
 
 	      $this->session->data['success'] = $this->language->get('success_edit');
-	      $this->redirect($this->url->link('affiliate/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+	      $this->redirect($this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	    }
 
 	    $this->session->data['error'] = $this->language->get('error_edit');
-	    $this->redirect($this->url->link('affiliate/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+	    $this->redirect($this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	}
 
 	public function remove() {
-		$this->language->load('affiliate/stock_control');
+		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_linked_products'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('inventory/stock_control');
 
 	    $url = '';
 
@@ -141,15 +141,15 @@ class ControllerInventoryLinkedProducts extends Controller {
 
 	    if (isset($this->request->post['selected'])) {
 	      foreach ($this->request->post['selected'] as $product_id) {	          
-	      	$this->model_affiliate_stock_control->removeProductLink($product_id);
+	      	$this->model_inventory_stock_control->removeProductLink($product_id);
 	      }
 
 	      $this->session->data['success'] = $this->language->get('success_remove');
-	      $this->redirect($this->url->link('affiliate/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+	      $this->redirect($this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	    }
 
 	    $this->session->data['error'] = $this->language->get('error_edit');
-	    $this->redirect($this->url->link('affiliate/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+	    $this->redirect($this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	}
 
 

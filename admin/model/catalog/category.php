@@ -65,6 +65,7 @@ class ModelCatalogCategory extends Model {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET image = '" . $this->db->escape(html_entity_decode($data['image'], ENT_QUOTES, 'UTF-8')) . "' WHERE category_id = '" . (int)$category_id . "'");
 		}
 
+		// Manufacturer Link
 		if (isset($data['manufacturer_link'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET manufacturer_id = '" . (int)$data['manufacturer_link'] . "' WHERE category_id = '" . (int)$category_id . "'");
 		}

@@ -5,9 +5,9 @@ class ControllerInventoryStockControl extends Controller {
 	*
 	*/
 	public function index() {
-		$this->language->load('affiliate/stock_control');
+		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_stock_control'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('inventory/stock_control');
 		$this->init();
 	}
 
@@ -23,7 +23,7 @@ class ControllerInventoryStockControl extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title_stock_control'),
-       		'href'      => $this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'),
+       		'href'      => $this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'),
        		'separator' => ' :: '
 		);
 
@@ -173,15 +173,15 @@ class ControllerInventoryStockControl extends Controller {
 	    $start = ($page - 1) * $limit;
 
 		// Buttons
-	    $this->data['ebay_call'] = $this->url->link('affiliate/stock_control/ebayCall', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['set_ebay_profile'] = $this->url->link('affiliate/stock_control/setEbayProfile', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['ebay_call'] = $this->url->link('inventory/stock_control/ebayCall', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['set_ebay_profile'] = $this->url->link('inventory/stock_control/setEbayProfile', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
 	    // Database
-	    $profiles                        = $this->model_affiliate_stock_control->getEbayProfile();
-	    $this->data['ebay_sites']        = $this->model_affiliate_stock_control->getEbaySiteIds();
-	    $this->data['compat_levels']     = $this->model_affiliate_stock_control->getEbayCompatibilityLevels();
-	    $this->data['ebay_call_names']   = $this->model_affiliate_stock_control->getEbayCallNames();
+	    $profiles                        = $this->model_inventory_stock_control->getEbayProfile();
+	    $this->data['ebay_sites']        = $this->model_inventory_stock_control->getEbaySiteIds();
+	    $this->data['compat_levels']     = $this->model_inventory_stock_control->getEbayCompatibilityLevels();
+	    $this->data['ebay_call_names']   = $this->model_inventory_stock_control->getEbayCallNames();
 
 	    // Ebay Profile Variables 
 	    if(!empty($profiles)) {
@@ -224,7 +224,7 @@ class ControllerInventoryStockControl extends Controller {
 	    $this->data['new_quantity'] = '';
 
 		// Load Template View
-		$this->template = 'affiliate/stock_control.tpl';
+		$this->template = 'inventory/stock_control.tpl';
 
 	    $this->children = array(
 	      'common/header',
@@ -235,53 +235,53 @@ class ControllerInventoryStockControl extends Controller {
 	}
 
 	public function ebayCall() {
-		$this->language->load('affiliate/stock_control');
+		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_stock_control'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('inventory/stock_control');
 		if($this->validateEbayCall() != 1) {
-			$this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		if($this->request->post['ebay_call_name'] == 'getOrders' && $this->request->server['REQUEST_METHOD'] == 'POST' && $this->validateEbayProfile() == 1) {
-			$this->session->data['getOrders'] = $this->model_affiliate_stock_control->getOrdersRequest();
+			$this->session->data['getOrders'] = $this->model_inventory_stock_control->getOrdersRequest();
 		    $this->session->data['success'] = $this->language->get('success_get_orders');			
-    		$this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+    		$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		if($this->request->post['ebay_call_name'] == 'getItemQuantity' && $this->request->server['REQUEST_METHOD'] == 'POST' && $this->validateEbayProfile() == 1) {
-			$this->session->data['getItemQuantity'] = $this->model_affiliate_stock_control->getEbayItemQuantity($this->request->post['item_id']);
+			$this->session->data['getItemQuantity'] = $this->model_inventory_stock_control->getEbayItemQuantity($this->request->post['item_id']);
 			$this->session->data['success'] = $this->language->get('success_get_item');		
-    		$this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+    		$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 
 		}
 
 		if($this->request->post['ebay_call_name'] == 'endFixedPriceItem' && $this->request->server['REQUEST_METHOD'] == 'POST' && $this->validateEbayProfile() == 1) {
 			$this->endItem($this->request->post['item_id']);		
-    		$this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+    		$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		if($this->request->post['ebay_call_name'] == 'reviseInventoryStatus' && $this->request->server['REQUEST_METHOD'] == 'POST' && $this->validateEbayProfile() == 1) {
-			$this->session->data['reviseInventoryStatus'] = $this->model_affiliate_stock_control->reviseEbayItemQuantity($this->request->post['item_id'], $this->request->post['new_quantity']);
+			$this->session->data['reviseInventoryStatus'] = $this->model_inventory_stock_control->reviseEbayItemQuantity($this->request->post['item_id'], $this->request->post['new_quantity']);
 			$this->session->data['success'] = $this->language->get('success_revise_item');
-    		$this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+    		$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->session->data['error'] = $this->language->get('error');
-    	$this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+    	$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 	}
 
     public function setEbayProfile() {
-	    $this->language->load('affiliate/stock_control');
+	    $this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_stock_control'));
-		$this->load->model('affiliate/stock_control');
+		$this->load->model('inventory/stock_control');
 
 	    if ($this->validateEbayProfile() != 1) {
-	        $this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+	        $this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 	    }
 
-    	$this->model_affiliate_stock_control->setEbayProfile($this->request->post);
+    	$this->model_inventory_stock_control->setEbayProfile($this->request->post);
     	$this->session->data['success'] = $this->language->get('success_profile');
-    	$this->redirect($this->url->link('affiliate/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+    	$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
     }
 
     protected function validateEbayProfile() {
