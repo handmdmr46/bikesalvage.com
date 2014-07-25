@@ -1,5 +1,9 @@
 <?php 
 class ControllerProductCategory extends Controller {  
+	/**
+	* Modified for custom search query
+	*
+	*/
 	public function index() { 
 		$this->language->load('product/category');
 

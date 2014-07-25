@@ -1,5 +1,10 @@
 <?php
 class ModelCatalogProduct extends Model {
+	/**
+	* Modified for custom search query
+	*
+	*
+	*/
 	public function updateViewed($product_id) {
 		$this->db->query("UPDATE " . DB_PREFIX . "product SET viewed = (viewed + 1) WHERE product_id = '" . (int)$product_id . "'");
 	}
