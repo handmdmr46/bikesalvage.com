@@ -130,5 +130,8 @@ $_['text_stock_control']               = 'Stock Control';
 $_['text_linked_products']             = 'Linked Products';
 $_['text_unlinked_products']           = 'Unlinked Products';
 $_['text_ebay_log'] 				   = 'eBay Log';
-$_['text_inventory'] = 'Inventory';
+$_['text_inventory'] 				   = 'Inventory';
+
+// Product Upload
+$_['text_product_upload']              = 'Product Upload';
 ?>

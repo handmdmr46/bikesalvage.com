@@ -152,6 +152,9 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_unlinked_products']  = $this->language->get('text_unlinked_products');
 		$this->data['text_ebay_log']           = $this->language->get('text_ebay_log');
 
+		// product upload
+		$this->data['text_product_upload']     = $this->language->get('text_product_upload');
+
 		if (!$this->user->isLogged() || !isset($this->request->get['token']) || !isset($this->session->data['token']) || ($this->request->get['token'] != $this->session->data['token'])) {
 			$this->data['logged'] = '';
 
@@ -277,6 +280,9 @@ class ControllerCommonHeader extends Controller {
 			$this->data['linked_products']             = $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['unlinked_products']           = $this->url->link('inventory/unlinked_products', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['ebay_log']           		   = $this->url->link('inventory/ebay_cron_log', 'token=' . $this->session->data['token'], 'SSL');
+
+			// Product Upload
+			$this->data['product_upload']              = $this->url->link('catalog/product_upload', 'token=' . $this->session->data['token'], 'SSL');
 
 			$this->data['stores'] = array();
 
