@@ -20,7 +20,7 @@
 
     <div class="heading">
       <h1><img src="admin/view/image/download.png" alt="" /> <?php echo $heading_title_csv_import; ?></h1>
-      <h1 class="wait" style="margin-left:1850px; display:none;" ">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20"/></h1>
+  
       <div class="buttons">        
           <a onclick="start_import(); $('#form').submit();" class="button" title="start the CSV import"><?php echo $button_import; ?></a>
           <a onclick="$('#form').attr('action', '<?php echo $edit; ?>'); $('#form').submit();" class="button" title="edit the selected product"><?php echo $button_edit_list; ?></a>
@@ -38,7 +38,9 @@
           <td><?php echo $text_choose_file; ?></td>
           <td><input name="csv" type="file" /><?php if($loading) { echo $loading; } ?></td>
         </tr>
-
+        <td>
+            <div class="wait success" style="float:right; display:none; background-image:none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></div>
+        </td>
       </table>
     <table class="list" cellpadding="2">
       <thead>

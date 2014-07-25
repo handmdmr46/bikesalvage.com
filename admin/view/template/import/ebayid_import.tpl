@@ -21,7 +21,7 @@
 
     <div class="heading">
       <h1><img src="view/image/download.png" alt="" /> <?php echo $heading_title; ?></h1>
-      <h1 class="wait" style="margin-left:1700px; display: none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></h1>
+      
       <div class="buttons">
         <a onclick="start_import(); $('#form').attr('action', '<?php echo $import_ids; ?>'); $('#form').submit();" class="button" title="start the eBay ItemID import"><?php echo $button_import; ?></a>
         <a onclick="$('#form').attr('action', '<?php echo $set_ebay_profile; ?>'); $('#form').submit();" class="button" title="save the eBay developer profile settings"><?php echo $button_set_ebay_profile; ?></a>
@@ -39,6 +39,9 @@
             <?php if ($error_start_date) { ?>
             <span class="error"><?php echo $error_start_date; ?></span>
             <?php } ?>
+          </td>
+          <td>
+            <div class="wait success" style="float:right; display:none; background-image:none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></div>
           </td>
 
         </tr>

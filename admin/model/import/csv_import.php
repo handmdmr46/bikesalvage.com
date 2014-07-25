@@ -454,7 +454,7 @@ class ModelImportCsvImport extends Model {
 		 		AND       p.csv_import = '1'";
 
 		$query = $this->db->query($sql);
-
+		$product_data = array();
 		foreach($query->rows as $data) {
 			$product_data[] = array (
 				'title'      => $data['name'],

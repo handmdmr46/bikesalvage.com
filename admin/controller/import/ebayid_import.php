@@ -346,16 +346,18 @@ class ControllerImportEbayidImport extends Controller {
 	      $ebay_id    = array();
 	      $product_id = array();
 	      $unlinked   = $this->model_import_csv_import->getCsvImportProducts();
-
-	      foreach($unlinked as $product){
-	        foreach(array_combine($import_data['id'], $import_data['title']) as $item_id => $ebay_title) {
-	          if ($product['title'] === $ebay_title) {
-	            $ebay_id[]    = $item_id;
-	            $product_id[] = $product['product_id'];
-	            $match++;
-	          }
-	        }
+	      if($unlinked) {
+	      	foreach($unlinked as $product){
+		        foreach(array_combine($import_data['id'], $import_data['title']) as $item_id => $ebay_title) {
+		          if ($product['title'] === $ebay_title) {
+		            $ebay_id[]    = $item_id;
+		            $product_id[] = $product['product_id'];
+		            $match++;
+		          }
+		        }
+	      	}
 	      }
+	      
 	      $data = array_combine($product_id,$ebay_id); //array_combine($keys,$values)
 	      $this->model_import_csv_import->addEbayListingProductLink($data);
 	      $this->session->data['success'] = $this->language->get('success_import');
