@@ -12,7 +12,7 @@ Active Branches: ** = not used
 	  - admin/controller/affiliate/profile.php
 	  - admin/controller/affiliate/setting.php
 	  - admin/model/affiliate/affiliate.php
-	  - admin/language/english/affilaite.php
+	  - admin/language/english/affiliate.php
 	  - admin/view/template/affiliate/approval_list.tpl
 	  - admin/view/template/affiliate/import_list.tpl
 	  - admin/view/template/affiliate/profile_list.tpl
@@ -44,6 +44,8 @@ Active Branches: ** = not used
 	  - admin/view/template/inventory/linked_products.tpl
 	  - admin/view/template/inventory/unlinked_products.tpl
 	  - admin/view/template/inventory/stock_control.tpl
+	  - system/startup.php
+	  - system/library/ebaycall.php
 
 
 	import
@@ -53,6 +55,9 @@ Active Branches: ** = not used
 	  - admin/model/import/csv_imnport.php
 	  - admin/view/template/import/csv_import.tpl
 	  - admin/view/template/import/ebayid_import.tpl
+	  - system/startup.php
+	  - system/library/ebaycall.php
+	  - system/library/parsecsv.php
 
 	
 	categorytomanufacturer
@@ -71,6 +76,11 @@ Active Branches: ** = not used
 	  - catalog/model/catalog/manufacturer.php
 	  - catalog/langauge/english/product/search.php
 	  - catalog/view/theme/oc-bootstrap/template/product/search.tpl
+
+	productupload
+	  - admin/controller/catalog/custom_product.php
+	  - admin/model/catalog/custom_product.php
+	  - admin/language/english/catalog/custom_product.php
 
 	
 

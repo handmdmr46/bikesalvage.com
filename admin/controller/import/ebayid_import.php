@@ -1,7 +1,7 @@
 <?php
 class ControllerImportEbayidImport extends Controller {
 	/**
-	*
+	* Imports ebay itemID and links opencart product to ebay product
 	*
 	*/
 	public function index() {
@@ -368,10 +368,10 @@ class ControllerImportEbayidImport extends Controller {
     public function setEbayProfile() {
 	    $this->language->load('import/csv_import');
 		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
-		$this->load->model('import/stock_control');
+		$this->load->model('inventory/stock_control');
 
 	    if ($this->validateSaveEbayProfile() == 1) {	        	        	        
-	        $this->model_import_stock_control->setEbayProfile($this->request->post);
+	        $this->model_inventory_stock_control->setEbayProfile($this->request->post);
     		$this->session->data['success'] = $this->language->get('success_profile');
     		$this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
 	    } 
