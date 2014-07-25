@@ -66,7 +66,9 @@ Active Branches: ** = not used
 
 	customsearch
 	  - catalog/controller/product/search.php
-	  - catalog/model/product/search.php
+	  - catalog/model/catalog/product.php
+	  - catalog/model/catalog/category.php
+	  - catalog/model/catalog/manufacturer.php
 	  - catalog/langauge/english/product/search.php
 	  - catalog/view/theme/oc-bootstrap/template/product/search.tpl
 
