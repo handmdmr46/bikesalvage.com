@@ -21,14 +21,13 @@ class ModelShippingCustomShipping extends Model {
 		
 	}
 	
-	/*public function getProductShippingMethodTest($product_id) {
+	public function getProductShippingMethod($product_id) {
 		
 		$product_shipping_method = array();
 		
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "shipping_method 
-		LEFT JOIN " . DB_PREFIX . "product_to_shipping 
-		ON " . DB_PREFIX . "shipping_method.shipping_id = " . DB_PREFIX . "product_to_shipping.shipping_id 
-		WHERE product_id = '" . (int)$product_id . "'");
+		                            LEFT JOIN " . DB_PREFIX . "product_to_shipping p2s ON p2s.shipping_id = p2s.shipping_id 
+		                           WHERE product_id = '" . (int)$product_id . "'");
 		
 		foreach ($query->rows as $result) {
 			
@@ -45,7 +44,7 @@ class ModelShippingCustomShipping extends Model {
 		
 		return $product_shipping_method;
 		
-	}*/
+	}
 	
 	//$product_id = $this->db->getLastId();
 	

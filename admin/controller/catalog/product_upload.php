@@ -153,8 +153,7 @@ class ControllerCatalogProductUpload extends Controller {
 			
 		// Sucess
 		if (isset($this->session->data['success'])) {
-			$this->data['success'] = $this->session->data['success'];
-		
+			$this->data['success'] = $this->session->data['success'];		
 			unset($this->session->data['success']);
 		} else {
 			$this->data['success'] = '';
