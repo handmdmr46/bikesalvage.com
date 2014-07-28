@@ -16,7 +16,7 @@
 	});
 
 	function startProgressBar(){ 
-		$('.wait').show();  $('.button').hide();
+		$('.wait').show();  $('.btn').hide();
 	}
 
 //--></script> 

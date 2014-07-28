@@ -425,21 +425,13 @@ class ControllerCheckoutConfirm extends Controller {
 			
 			// Order Totals for Confirm View			
 			$this->data['totals'] = $total_data;
-			// **** confirm payment and FINALIZE ORDER through payment module *****
 			
+			// **** CONFIRM PAYMENT and FINALIZE ORDER through payment module *****
 			$this->data['payment'] = $this->getChild('payment/' . $this->session->data['payment_method']['code']);
 		} else {
 			$this->data['redirect'] = $redirect;
 		}			
 		
-		// Add Affiliate Orders
-		/*if($this->cart->countProducts() > 1) {
-			foreach($this->cart->getProducts() as $product) {
-				if($product['affiliate_id'] != 0) {
-					$this->addAffiliateOrder($data);
-				}
-			}           
-		}*/
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/checkout/confirm.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/checkout/confirm.tpl';
@@ -449,23 +441,5 @@ class ControllerCheckoutConfirm extends Controller {
 		
 		$this->response->setOutput($this->render());	
   	}
-	
-	/*public function addAffiliateOrder($data) {
-		foreach($this->cart->getProducts() as $product) {
-			$affiliate_id[] = $product['affiliate_id'];
-		}
-		$affiliate_id = array_count_values($affiliate_id);
-		$data['affiliate_id'] = $affiliate_id;
-		$data['session_shipping'] = $this->session->data['shipping_method']['cost'];
-		$this->load->model('affiliate/dashboard_order_total');
-		$this->model_affiliate_dashboard_order_total->addAffiliateOrders($data);
-	}*/
-	
-	
-	
-	
-	
-	
-              	
-}
+}// end class
 ?>
