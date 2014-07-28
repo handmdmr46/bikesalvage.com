@@ -261,6 +261,10 @@ class ModelCheckoutOrder extends Model {
 		}
 	}	
 
+	/**
+	*
+	* Modified: eBay call for stock control here
+	*/
 	public function confirm($order_id, $order_status_id, $comment = '', $notify = false) {
 		$order_info = $this->getOrder($order_id);
 		 
@@ -701,8 +705,16 @@ class ModelCheckoutOrder extends Model {
 					}
 				}				
 			}	
+			
+			// Send Affiliates Order Alert Email
+			foreach ($order_product_query->rows as $product) {
+				if ($product['affiliate_id'] != 0) {
+					// $affiliate_email = $this->getAffiliateEmail($product['affiliate_id']);
 
-			// Send Affiliates Order Alert Email	
+					// start build affiliate order emails here....
+				}
+
+			}
 		}
 		
 		$this->load->model('affiliate/dashboard_order_total');
