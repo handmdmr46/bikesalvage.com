@@ -152,6 +152,12 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_unlinked_products']  = $this->language->get('text_unlinked_products');
 		$this->data['text_ebay_log']           = $this->language->get('text_ebay_log');
 
+		// Extras
+		$this->data['text_shipping_methods'] = $this->language->get('text_shipping_methods');
+
+		// product upload
+		$this->data['text_product_upload']     = $this->language->get('text_product_upload');
+
 		if (!$this->user->isLogged() || !isset($this->request->get['token']) || !isset($this->session->data['token']) || ($this->request->get['token'] != $this->session->data['token'])) {
 			$this->data['logged'] = '';
 
@@ -259,7 +265,7 @@ class ControllerCommonHeader extends Controller {
 			$this->data['blog_feed'] = $this->url->link('extras/blog_feed', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['add_blog_link'] = $this->url->link('extras/blog_link', 'token=' . $this->session->data['token'], 'SSL');
  			$this->data['blog_configuration'] = $this->url->link('extras/blog_configuration', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['url_alias'] = $this->url->link('extras/seo_url', 'token=' . $this->session->data['token'], 'SSL');
+			
 
 			// Affiliate  
 			$this->data['affiliate_approval']          = $this->url->link('affiliate/approval', 'token=' . $this->session->data['token'], 'SSL');
@@ -277,6 +283,13 @@ class ControllerCommonHeader extends Controller {
 			$this->data['linked_products']             = $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['unlinked_products']           = $this->url->link('inventory/unlinked_products', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['ebay_log']           		   = $this->url->link('inventory/ebay_cron_log', 'token=' . $this->session->data['token'], 'SSL');
+
+			// Product Upload
+			$this->data['product_upload']              = $this->url->link('catalog/product_upload', 'token=' . $this->session->data['token'], 'SSL');
+
+			// Extras
+			$this->data['shipping_methods']            = $this->url->link('shipping/custom_shipping', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['url_alias'] 				   = $this->url->link('extras/seo_url', 'token=' . $this->session->data['token'], 'SSL');
 
 			$this->data['stores'] = array();
 

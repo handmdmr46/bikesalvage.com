@@ -10,7 +10,7 @@ $_['text_backup']                      = 'Backup / Restore';
 $_['text_banner']                      = 'Banners';
 $_['text_catalog']                     = 'Catalog';
 $_['text_category']                    = 'Categories';
-$_['text_confirm']			           = 'Delete/Uninstall cannot be undone! Are you sure you want to do this?';
+$_['text_confirm']                     = 'Delete/Uninstall cannot be undone! Are you sure you want to do this?';
 $_['text_country']                     = 'Countries';
 $_['text_coupon']                      = 'Coupons';
 $_['text_currency']                    = 'Currencies';
@@ -98,16 +98,15 @@ $_['text_paypal_search']               = 'Search';
 $_['text_recurring_profile']           = 'Recurring Profiles';
 
 // Blog
-$_['text_extras']             = 'Extras';
-$_['text_blog']               = 'Blog';
-$_['text_blog_category']      = 'Blog Categories';
-$_['text_add_blog']           = 'Blog Posts';
-$_['text_blog_comments']      = 'Blog Comments';
-$_['text_blog_feed']          = 'Blog Feed';
-$_['text_add_blog_link']      = 'Blog Links';
-$_['text_blog_configuration'] = 'Blog Configuration';
-$_['text_url_alias']          = 'SEO URL Rewritter';
-$_['text_manage_url_alias']   = 'Manage SEO URL';
+$_['text_extras']                      = 'Extras';
+$_['text_blog']                        = 'Blog';
+$_['text_blog_category']               = 'Blog Categories';
+$_['text_add_blog']                    = 'Blog Posts';
+$_['text_blog_comments']               = 'Blog Comments';
+$_['text_blog_feed']                   = 'Blog Feed';
+$_['text_add_blog_link']               = 'Blog Links';
+$_['text_blog_configuration']          = 'Blog Configuration';
+$_['text_url_alias']                   = 'SEO URL Rewritter';
 
 // Affiliates 
 $_['text_affiliate']                   = 'Affiliates';
@@ -122,13 +121,20 @@ $_['text_affiliate_sale']              = 'Sales';
 $_['text_csv_import']                  = 'CSV Import';
 $_['text_import_csv']                  = 'Import CSV - step 1';
 $_['text_import_ebayid']               = 'Import eBayID - step 2';
-$_['text_import'] 					   = 'Import';
+$_['text_import']                      = 'Import';
 
 
 // inventory
 $_['text_stock_control']               = 'Stock Control';
 $_['text_linked_products']             = 'Linked Products';
 $_['text_unlinked_products']           = 'Unlinked Products';
-$_['text_ebay_log'] 				   = 'eBay Log';
-$_['text_inventory'] = 'Inventory';
+$_['text_ebay_log']                    = 'eBay Log';
+$_['text_inventory']                   = 'Inventory';
+
+// Product Upload
+$_['text_product_upload']              = 'Product Upload';
+
+// Extras
+$_['text_manage_url_alias']            = 'Manage SEO URL';
+$_['text_shipping_methods']            = 'Shipping Methods';
 ?>
