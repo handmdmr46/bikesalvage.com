@@ -5,17 +5,18 @@ class ControllerCatalogProductUpload extends Controller {
 	public function index() {
 
 		$this->language->load('catalog/product');
+		$this->language->load('catalog/product_upload');
 
-		$this->document->setTitle($this->language->get('heading_title')); 
+		$this->document->setTitle($this->language->get('heading_title_form')); 
 
-		$this->load->model('catalog/product');
+		$this->load->model('catalog/product_upload');
 
 		$this->getForm();
 	}
 
   	protected function getForm() {
 		// Language
-		$this->data['heading_title']            = $this->language->get('heading_title');
+		$this->data['heading_title']            = $this->language->get('heading_title_form');
 		
 		$this->data['text_enabled']             = $this->language->get('text_enabled');
 		$this->data['text_disabled']            = $this->language->get('text_disabled');
@@ -97,6 +98,7 @@ class ControllerCatalogProductUpload extends Controller {
 		$this->data['button_add_special']       = $this->language->get('button_add_special');
 		$this->data['button_add_image']         = $this->language->get('button_add_image');
 		$this->data['button_remove']            = $this->language->get('button_remove');
+		$this->data['button_product_list']      = $this->language->get('button_product_list');
 		
 		$this->data['button_add_image_link']    = $this->language->get('button_add_image_link');
 		$this->data['entry_gallery_image_link'] = $this->language->get('entry_gallery_image_link');
@@ -196,6 +198,7 @@ class ControllerCatalogProductUpload extends Controller {
 		}
 		// Form Cancel
 		$this->data['cancel'] = $this->url->link('catalog/product_upload', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$this->data['product_list'] = $this->url->link('catalog/product_upload/getList', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
 		if (isset($this->request->get['product_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
       		$product_info = $this->model_catalog_product_upload->getProduct($this->request->get['product_id']);
@@ -329,10 +332,10 @@ class ControllerCatalogProductUpload extends Controller {
 		}
 				
 		// Shipping methods
-		$this->load->model('extras/shipping_method');
+		$this->load->model('shipping/custom_shipping');
 		
 		// this is for the view
-		$this->data['shipping_method'] = $this->model_extras_shipping_method->getShippingMethods();
+		$this->data['shipping_method'] = $this->model_shipping_custom_shipping->getShippingMethods();
 		
 		//example <input type="checkbox" value="1" name="shipping_type[]">
 		//value="shipping_id" returned from view and stored in shipping_type. This is from <input name="shipping_type[]"> in the view
@@ -400,7 +403,15 @@ class ControllerCatalogProductUpload extends Controller {
 		$this->response->setOutput($this->render());
   	}
 
-  	protected function getList() {
+  	// function needs to be public
+  	public function getList() {
+
+  		$this->language->load('catalog/product');
+		$this->language->load('catalog/product_upload');
+
+		$this->document->setTitle($this->language->get('heading_title')); 
+
+		$this->load->model('catalog/product_upload');
 		
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
@@ -498,8 +509,9 @@ class ControllerCatalogProductUpload extends Controller {
       		'separator' => ' :: '
    		);
 		
-		$this->data['insert'] = $this->url->link('catalog/product_upload/insert', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$this->data['insert'] = $this->url->link('catalog/product_upload', 'token=' . $this->session->data['token'] . $url, 'SSL');
 		$this->data['delete'] = $this->url->link('catalog/product_upload/delete', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$this->data['edit_list'] = $this->url->link('catalog/product_upload/editList', 'token=' . $this->session->data['token'] . $url, 'SSL');
     	
 		$this->data['products'] = array();
 
@@ -516,12 +528,13 @@ class ControllerCatalogProductUpload extends Controller {
 		);
 		
 		$this->load->model('tool/image');
+		$this->load->model('catalog/product');
 		
-		$product_total = $this->model_catalog_product->getTotalProducts($data);
-			
+		$results = array();
+		$product_total = $this->model_catalog_product->getTotalProducts($data);			
 		$results = $this->model_catalog_product->getProducts($data);
 				    	
-		if ($result) {
+		if ($results) {
 			foreach ($results as $result) {
 				$action = array();
 				
@@ -548,12 +561,11 @@ class ControllerCatalogProductUpload extends Controller {
 					'action'     => $action
 				);
     		}
-		}
+		} 
 		
 		
 		// Language
-		$this->data['heading_title']        = $this->language->get('heading_title');		
-		$this->data['heading_product_edit'] = $this->language->get('heading_product_edit');
+		$this->data['heading_title']        = $this->language->get('heading_title_list');		
 		
 		$this->data['text_enabled']         = $this->language->get('text_enabled');		
 		$this->data['text_disabled']        = $this->language->get('text_disabled');		
@@ -573,6 +585,8 @@ class ControllerCatalogProductUpload extends Controller {
 		$this->data['button_delete']        = $this->language->get('button_delete');		
 		$this->data['button_filter']        = $this->language->get('button_filter');
 		$this->data['button_search']        = $this->language->get('button_search');
+		$this->data['button_edit_list']     = $this->language->get('button_edit_list');
+
 	 
  		$this->data['token'] = $this->session->data['token'];
 		
@@ -688,13 +702,14 @@ class ControllerCatalogProductUpload extends Controller {
   	}
 
   	public function insert() {
+  		$this->language->load('catalog/product');
 		$this->language->load('catalog/product_upload');
 
     	$this->document->setTitle($this->language->get('heading_title')); 
 		
 		$this->load->model('catalog/product_upload');
 		
-    	if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+    	if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateInsert()) {
 			$this->model_catalog_product_upload->addProduct($this->request->post);
 			
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -712,21 +727,22 @@ class ControllerCatalogProductUpload extends Controller {
 			if (isset($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
-			
-			$this->redirect($this->url->link('catalog/product_upload', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+
+			$this->redirect($this->url->link('catalog/product_upload/getList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
     	}
 	
-    	$this->getList();	
+    	$this->getForm();	
   	}
 	
-  	public function edit() {
+  	public function update() {
+  		$this->language->load('catalog/product');
     	$this->language->load('catalog/product_upload');
 
     	$this->document->setTitle($this->language->get('heading_title'));
 		
 		$this->load->model('catalog/product_upload');
 	
-    	if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+    	if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateInsert()) {
 			$this->model_catalog_product_upload->editProduct($this->request->get['product_id'], $this->request->post);
 			
 			$this->session->data['success'] = $this->language->get('text_success');
@@ -764,12 +780,82 @@ class ControllerCatalogProductUpload extends Controller {
 			if (isset($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
+			$this->redirect($this->url->link('catalog/product_upload/getList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 		}
 
     	$this->getList();
   	} 
 
+  	public function editList() {
+       $this->document->setTitle($this->language->get('heading_title'));
+
+		$this->language->load('catalog/product');
+		$this->language->load('catalog/product_upload');
+
+		$this->load->model('catalog/product_upload');
+
+		if (isset($this->request->post['selected']) && $this->validateEdit()) {
+			  $url = '';
+
+			  $this->session->data['success'] = $this->language->get('text_success');
+
+			  if (isset($this->request->get['filter_name'])) {
+				  $url .= '&filter_name=' . $this->request->get['filter_name'];
+			  }
+
+			  if (isset($this->request->get['filter_model'])) {
+				  $url .= '&filter_model=' . $this->request->get['filter_model'];
+			  }
+
+			  if (isset($this->request->get['filter_price'])) {
+				  $url .= '&filter_price=' . $this->request->get['filter_price'];
+			  }
+
+			  if (isset($this->request->get['filter_quantity'])) {
+				  $url .= '&filter_quantity=' . $this->request->get['filter_quantity'];
+			  }
+
+			  if (isset($this->request->get['filter_status'])) {
+				  $url .= '&filter_status=' . $this->request->get['filter_status'];
+			  }
+
+			  if (isset($this->request->get['page'])) {
+				  $url .= '&page=' . $this->request->get['page'];
+			  }
+
+			  if (isset($this->request->get['sort'])) {
+				  $url .= '&sort=' . $this->request->get['sort'];
+			  }
+
+			  if (isset($this->request->get['order'])) {
+				  $url .= '&order=' . $this->request->get['order'];
+			  }
+
+			  foreach ($this->request->post['selected'] as $product_id) {
+
+				$price_str    = $product_id.'_price';
+				$quantity_str = $product_id.'_quantity';
+				$model_str    = $product_id.'_model';
+				$status_str   = $product_id.'_status';
+
+				$price    = $this->request->post[$price_str];
+				$quantity = $this->request->post[$quantity_str];
+				$model    = $this->request->post[$model_str];
+				$status   = $this->request->post[$status_str];
+
+				$data = array('price' => $price, 'quantity' => $quantity, 'model' => $model, 'status' => $status);
+
+				$this->model_catalog_product_upload->editList($product_id, $data);				
+			  }
+
+			  $this->redirect($this->url->link('catalog/product_upload/getList', 'token=' . $this->session->data['token'] . $url, 'SSL'));			  
+		}
+		$this->error['warning'] = $this->language->get('error_edit');
+    	$this->getList();
+  	}
+
   	public function delete() {
+  		$this->language->load('catalog/product');
     	$this->language->load('catalog/product_upload');
 
     	$this->document->setTitle($this->language->get('heading_title'));
@@ -817,13 +903,25 @@ class ControllerCatalogProductUpload extends Controller {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 			
-			$this->redirect($this->url->link('catalog/product_upload', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->redirect($this->url->link('catalog/product_upload/getList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 		}
-
+		$this->error['warning'] = $this->language->get('error_edit');
     	$this->getList();
   	}
 
   	protected function validateDelete() {
+    	if (!$this->user->hasPermission('modify', 'catalog/product')) {
+      		$this->error['warning'] = $this->language->get('error_permission');  
+    	}
+		
+		if (!$this->error) {
+	  		return true;
+		} else {
+	  		return false;
+		}
+  	}
+
+  	protected function validateEdit() {
     	if (!$this->user->hasPermission('modify', 'catalog/product')) {
       		$this->error['warning'] = $this->language->get('error_permission');  
     	}
@@ -859,10 +957,6 @@ class ControllerCatalogProductUpload extends Controller {
     	} else {
       		return false;
     	}
-  	}
-
-  	protected function validateEdit() {
-
   	}
 
 }// end class

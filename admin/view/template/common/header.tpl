@@ -270,10 +270,8 @@ $(document).ready(function(){
           </li>
         </ul>
       </li>
-      <!-- extras -->
-      <li id="extras"><a class="top"><?php echo $text_extras; ?></a>
-        <ul>
-          <li><a class="parent"><?php echo $text_blog; ?></a>
+      <!-- blog -->
+      <li id="blog"><a class="top"><?php echo $text_blog; ?></a>
               <ul>
                 <li><a href="<?php echo $add_blog; ?>"><?php echo $text_add_blog; ?></a></li>
                 <li><a href="<?php echo $blog_category; ?>"><?php echo $text_blog_category; ?></a></li>
@@ -282,12 +280,12 @@ $(document).ready(function(){
                 <li><a href="<?php echo $blog_feed; ?>"><?php echo $text_blog_feed; ?></a></li>
                 <li><a href="<?php echo $blog_configuration; ?>"><?php echo $text_blog_configuration; ?></a></li>
               </ul>
-          </li> 
-          <li><a class="parent"><?php echo $text_url_alias; ?></a>
-              <ul>
-                <li><a href="<?php echo $url_alias; ?>"><?php echo $text_manage_url_alias; ?></a></li>
-              </ul>
-          </li> 
+      </li>
+      <!-- extras -->
+      <li id="extras"><a class="top"><?php echo $text_extras; ?></a>
+        <ul>
+          <li><a href="<?php echo $url_alias; ?>"><?php echo $text_manage_url_alias; ?></a></li>
+          <li><a href="<?php echo $shipping_methods; ?>"><?php echo $text_shipping_methods; ?></a></li>
         </ul>
       </li>
       <!-- help -->

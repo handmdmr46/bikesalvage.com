@@ -19,19 +19,15 @@
   <div class="box">
     <div class="heading">
       <h1><img src="view/image/product.png" alt="" /> <?php echo $heading_title; ?></h1>
-      <div class="buttons"><a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a><a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a></div>
+      <div class="buttons">
+      	<a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a>
+      	<a href="<?php echo $product_list; ?>" class="button"><?php echo $button_product_list; ?></a>
+      	<a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a>
+    </div>
   </div><!-- .box -->
     
     <div class="content">
-    <?php 
-    /*echo $product_description[1]['name'];
-    echo '<br>';
-    echo $product_description[1]['description'];
-    echo '<br>';
-    print_r($shipping_type);
-    echo '<br>';
-    print_r($shipping_method);*/
-    ?>
+   
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
       
         <div id="languages">
@@ -143,8 +139,14 @@
               </tr>
               <!-- FEATURED IMAGE -->
               <tr>
-                <td><?php echo $entry_featured_image; ?></td>
-                <td><input type="text" name="image" value="<?php echo $image; ?>" id="image" size="100" placeholder="data/motorcycle/00_00_00/your-image-path" /></td>
+                <td><?php echo $entry_featured_image; ?></td>         
+                <td>
+              	  <div class="image">
+              	    <img src="<?php echo $thumb; ?>" alt="" id="thumb" /><br />                                 
+                    <a onclick="image_upload('image', 'thumb');"><?php echo $text_browse; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a onclick="$('#thumb').attr('src', '<?php echo $no_image; ?>'); $('#image').attr('value', '');"><?php echo $text_clear; ?></a>
+                  </div>
+                  &nbsp;&nbsp;  &nbsp;&nbsp;<input type="text" name="image" value="<?php echo $image; ?>" id="image" size="50" />
+                </td>
               </tr>
             </table>
             <!-- GALLERY IMAGES -->
@@ -159,14 +161,18 @@
               <?php $image_row = 0; ?>
               <?php foreach ($product_images as $product_image) { ?>
               <tbody id="image-row<?php echo $image_row; ?>">
-                <tr>
-                  <td class="left">
-                    <div class="image">
-                      <input type="text" name="product_image[<?php echo $image_row; ?>][image]" value="<?php echo $product_image['image']; ?>" id="image<?php echo $image_row; ?>" size="100" placeholder="data/motorcycle/00_00_00/your-image-path" />
-                    </div>
-                  </td>
-                  <td class="right"><input type="text" name="product_image[<?php echo $image_row; ?>][sort_order]" value="<?php echo $product_image['sort_order']; ?>" size="2" /></td>
-                  <td class="left"><a onclick="$('#image-row<?php echo $image_row; ?>').remove();" class="button"><?php echo $button_remove; ?></a></td>
+                <tr>                  
+	                <td class="left">
+	                	<div class="image">
+	                		<img src="<?php echo $product_image['thumb']; ?>" alt="" id="thumb<?php echo $image_row; ?>" /><br />
+	                		<a onclick="image_upload('image<?php echo $image_row; ?>', 'thumb<?php echo $image_row; ?>');"><?php echo $text_browse; ?></a>
+	                		&nbsp;&nbsp;|&nbsp;&nbsp;
+	                		<a onclick="$('#thumb<?php echo $image_row; ?>').attr('src', '<?php echo $no_image; ?>'); $('#image<?php echo $image_row; ?>').attr('value', '');"><?php echo $text_clear; ?></a>
+	                	</div>
+	                    &nbsp;&nbsp;  &nbsp;&nbsp;<input type="text" name="product_image[<?php echo $image_row; ?>][image]" value="<?php echo $product_image['image']; ?>" id="image<?php echo $image_row; ?>" size="50" />                                        
+	                </td>
+	                <td class="right"><input type="text" name="product_image[<?php echo $image_row; ?>][sort_order]" value="<?php echo $product_image['sort_order']; ?>" size="2" /></td>
+	                <td class="left"><a onclick="$('#image-row<?php echo $image_row; ?>').remove();" class="button"><?php echo $button_remove; ?></a></td>
                 </tr>
               </tbody>
               <?php $image_row++; ?>
@@ -187,243 +193,248 @@
     
 </div><!-- #content -->       
         
-
-
-<!-- this is for the text editor, probably needed -->
 <script type="text/javascript" src="view/javascript/ckeditor/ckeditor.js"></script> 
 
 <script type="text/javascript"><!--
-<?php foreach ($languages as $language) { ?>
-CKEDITOR.replace('description<?php echo $language['language_id']; ?>', {
-	filebrowserBrowseUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
-	filebrowserImageBrowseUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
-	filebrowserFlashBrowseUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
-	filebrowserUploadUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
-	filebrowserImageUploadUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
-	filebrowserFlashUploadUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>'
-});
-<?php } ?>
+	<?php foreach ($languages as $language) { ?>
+	CKEDITOR.replace('description<?php echo $language['language_id']; ?>', {
+		filebrowserBrowseUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
+		filebrowserImageBrowseUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
+		filebrowserFlashBrowseUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
+		filebrowserUploadUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
+		filebrowserImageUploadUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>',
+		filebrowserFlashUploadUrl: 'index.php?route=common/filemanager&token=<?php echo $token; ?>'
+	});
+	<?php } ?>
 //--></script> 
 
 <script type="text/javascript"><!--
-$.widget('custom.catcomplete', $.ui.autocomplete, {
-	_renderMenu: function(ul, items) {
-		var self = this, currentCategory = '';
-		
-		$.each(items, function(index, item) {
-			if (item.category != currentCategory) {
-				ul.append('<li class="ui-autocomplete-category">' + item.category + '</li>');
-				
-				currentCategory = item.category;
-			}
+	$.widget('custom.catcomplete', $.ui.autocomplete, {
+		_renderMenu: function(ul, items) {
+			var self = this, currentCategory = '';
 			
-			self._renderItem(ul, item);
-		});
-	}
-});
+			$.each(items, function(index, item) {
+				if (item.category != currentCategory) {
+					ul.append('<li class="ui-autocomplete-category">' + item.category + '</li>');
+					
+					currentCategory = item.category;
+				}
+				
+				self._renderItem(ul, item);
+			});
+		}
+	});
 
-// Manufacturer
-$('input[name=\'manufacturer\']').autocomplete({
-	delay: 500,
-	source: function(request, response) {
-		$.ajax({
-			url: 'index.php?route=catalog/manufacturer/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
-			dataType: 'json',
-			success: function(json) {		
-				response($.map(json, function(item) {
-					return {
-						label: item.name,
-						value: item.manufacturer_id
-					}
-				}));
-			}
-		});
-	}, 
-	select: function(event, ui) {
-		$('input[name=\'manufacturer\']').attr('value', ui.item.label);
-		$('input[name=\'manufacturer_id\']').attr('value', ui.item.value);
-	
-		return false;
-	},
-	focus: function(event, ui) {
-      return false;
-   }
-});
-
-// Category
-$('input[name=\'category\']').autocomplete({
-	delay: 500,
-	source: function(request, response) {
-		$.ajax({
-			url: 'index.php?route=catalog/category/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
-			dataType: 'json',
-			success: function(json) {		
-				response($.map(json, function(item) {
-					return {
-						label: item.name,
-						value: item.category_id
-					}
-				}));
-			}
-		});
-	}, 
-	select: function(event, ui) {
-		$('#product-category' + ui.item.value).remove();
+	// Manufacturer
+	$('input[name=\'manufacturer\']').autocomplete({
+		delay: 500,
+		source: function(request, response) {
+			$.ajax({
+				url: 'index.php?route=catalog/manufacturer/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+				dataType: 'json',
+				success: function(json) {		
+					response($.map(json, function(item) {
+						return {
+							label: item.name,
+							value: item.manufacturer_id
+						}
+					}));
+				}
+			});
+		}, 
+		select: function(event, ui) {
+			$('input[name=\'manufacturer\']').attr('value', ui.item.label);
+			$('input[name=\'manufacturer_id\']').attr('value', ui.item.value);
 		
-		$('#product-category').append('<div id="product-category' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" /><input type="hidden" name="product_category[]" value="' + ui.item.value + '" /></div>');
+			return false;
+		},
+		focus: function(event, ui) {
+	      return false;
+	   }
+	});
+
+	// Category
+	$('input[name=\'category\']').autocomplete({
+		delay: 500,
+		source: function(request, response) {
+			$.ajax({
+				url: 'index.php?route=catalog/category/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+				dataType: 'json',
+				success: function(json) {		
+					response($.map(json, function(item) {
+						return {
+							label: item.name,
+							value: item.category_id
+						}
+					}));
+				}
+			});
+		}, 
+		select: function(event, ui) {
+			$('#product-category' + ui.item.value).remove();
+			
+			$('#product-category').append('<div id="product-category' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" /><input type="hidden" name="product_category[]" value="' + ui.item.value + '" /></div>');
+
+			$('#product-category div:odd').attr('class', 'odd');
+
+			$('#product-category div:even').attr('class', 'even');
+					
+			return false;
+		},
+		focus: function(event, ui) {
+	      return false;
+	   }
+	});
+
+	$('#product-category div img').live('click', function() {
+		$(this).parent().remove();
 
 		$('#product-category div:odd').attr('class', 'odd');
-		$('#product-category div:even').attr('class', 'even');
-				
-		return false;
-	},
-	focus: function(event, ui) {
-      return false;
-   }
-});
 
-$('#product-category div img').live('click', function() {
-	$(this).parent().remove();
-	
-	$('#product-category div:odd').attr('class', 'odd');
-	$('#product-category div:even').attr('class', 'even');	
-});
+		$('#product-category div:even').attr('class', 'even');	
+	});
 
-// Filter
-$('input[name=\'filter\']').autocomplete({
-	delay: 500,
-	source: function(request, response) {
-		$.ajax({
-			url: 'index.php?route=catalog/filter/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
-			dataType: 'json',
-			success: function(json) {		
-				response($.map(json, function(item) {
-					return {
-						label: item.name,
-						value: item.filter_id
-					}
-				}));
-			}
-		});
-	}, 
-	select: function(event, ui) {
-		$('#product-filter' + ui.item.value).remove();
+	// Filter
+	$('input[name=\'filter\']').autocomplete({
+		delay: 500,
+		source: function(request, response) {
+			$.ajax({
+				url: 'index.php?route=catalog/filter/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+				dataType: 'json',
+				success: function(json) {		
+					response($.map(json, function(item) {
+						return {
+							label: item.name,
+							value: item.filter_id
+						}
+					}));
+				}
+			});
+		}, 
+		select: function(event, ui) {
+			$('#product-filter' + ui.item.value).remove();
+			
+			$('#product-filter').append('<div id="product-filter' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" /><input type="hidden" name="product_filter[]" value="' + ui.item.value + '" /></div>');
+
+			$('#product-filter div:odd').attr('class', 'odd');
+			$('#product-filter div:even').attr('class', 'even');
+					
+			return false;
+		},
+		focus: function(event, ui) {
+	      return false;
+	   }
+	});
+
+	$('#product-filter div img').live('click', function() {
+		$(this).parent().remove();
 		
-		$('#product-filter').append('<div id="product-filter' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" /><input type="hidden" name="product_filter[]" value="' + ui.item.value + '" /></div>');
-
 		$('#product-filter div:odd').attr('class', 'odd');
-		$('#product-filter div:even').attr('class', 'even');
-				
-		return false;
-	},
-	focus: function(event, ui) {
-      return false;
-   }
-});
+		$('#product-filter div:even').attr('class', 'even');	
+	});
 
-$('#product-filter div img').live('click', function() {
-	$(this).parent().remove();
-	
-	$('#product-filter div:odd').attr('class', 'odd');
-	$('#product-filter div:even').attr('class', 'even');	
-});
-
-// Downloads -- DONT NEED? -- in links tab
-/*$('input[name=\'download\']').autocomplete({
-	delay: 500,
-	source: function(request, response) {
-		$.ajax({
-			url: 'index.php?route=catalog/download/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
-			dataType: 'json',
-			success: function(json) {		
-				response($.map(json, function(item) {
-					return {
-						label: item.name,
-						value: item.download_id
-					}
-				}));
-			}
-		});
-	}, 
-	select: function(event, ui) {
-		$('#product-download' + ui.item.value).remove();
+	$('#product-download div img').live('click', function() {
+		$(this).parent().remove();
 		
-		$('#product-download').append('<div id="product-download' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" /><input type="hidden" name="product_download[]" value="' + ui.item.value + '" /></div>');
-
 		$('#product-download div:odd').attr('class', 'odd');
-		$('#product-download div:even').attr('class', 'even');
-				
-		return false;
-	},
-	focus: function(event, ui) {
-      return false;
-   }
-});
-*/
+		$('#product-download div:even').attr('class', 'even');	
+	});
 
-$('#product-download div img').live('click', function() {
-	$(this).parent().remove();
-	
-	$('#product-download div:odd').attr('class', 'odd');
-	$('#product-download div:even').attr('class', 'even');	
-});
+	// Related -- DONT NEED? -- in links tab
+	$('input[name=\'related\']').autocomplete({
+		delay: 500,
+		source: function(request, response) {
+			$.ajax({
+				url: 'index.php?route=catalog/product/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+				dataType: 'json',
+				success: function(json) {		
+					response($.map(json, function(item) {
+						return {
+							label: item.name,
+							value: item.product_id
+						}
+					}));
+				}
+			});
+		}, 
+		select: function(event, ui) {
+			$('#product-related' + ui.item.value).remove();
+			
+			$('#product-related').append('<div id="product-related' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" /><input type="hidden" name="product_related[]" value="' + ui.item.value + '" /></div>');
 
-// Related -- DONT NEED? -- in links tab
-$('input[name=\'related\']').autocomplete({
-	delay: 500,
-	source: function(request, response) {
-		$.ajax({
-			url: 'index.php?route=catalog/product/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
-			dataType: 'json',
-			success: function(json) {		
-				response($.map(json, function(item) {
-					return {
-						label: item.name,
-						value: item.product_id
-					}
-				}));
-			}
-		});
-	}, 
-	select: function(event, ui) {
-		$('#product-related' + ui.item.value).remove();
+			$('#product-related div:odd').attr('class', 'odd');
+			$('#product-related div:even').attr('class', 'even');
+					
+			return false;
+		},
+		focus: function(event, ui) {
+	      return false;
+	   }
+	});
+
+	$('#product-related div img').live('click', function() {
+		$(this).parent().remove();
 		
-		$('#product-related').append('<div id="product-related' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" /><input type="hidden" name="product_related[]" value="' + ui.item.value + '" /></div>');
-
 		$('#product-related div:odd').attr('class', 'odd');
-		$('#product-related div:even').attr('class', 'even');
-				
-		return false;
-	},
-	focus: function(event, ui) {
-      return false;
-   }
-});
-
-$('#product-related div img').live('click', function() {
-	$(this).parent().remove();
-	
-	$('#product-related div:odd').attr('class', 'odd');
-	$('#product-related div:even').attr('class', 'even');	
-}); 
+		$('#product-related div:even').attr('class', 'even');	
+	}); 
 //--></script> 
+
 <script type="text/javascript"><!--
-var image_row = 'image-row';
-
-function addImage() {
-    html  = '<tbody id="image-row' + image_row + '">';
-	html += '  <tr>';
-	html += '    <td class="left"><div class="image"><input type="text" name="product_image[' + image_row + '][image]" value="" id="image' + image_row + '" size="100" placeholder="data/motorcycle/00_00_00/your-image-path" /></div></td>';
-	html += '    <td class="right"><input type="text" name="product_image[' + image_row + '][sort_order]" value="" size="2" /></td>';
-	html += '    <td class="left"><a onclick="$(\'#image-row' + image_row  + '\').remove();" class="button"><?php echo $button_remove; ?></a></td>';
-	html += '  </tr>';
-	html += '</tbody>';
-	
-	$('#images tfoot').before(html);
-	
-	image_row++;
-}
-
+	function image_upload(field, thumb) {
+		$('#dialog').remove();
+		
+		$('#content').prepend('<div id="dialog" style="padding: 3px 0px 0px 0px;"><iframe src="index.php?route=common/filemanager&token=<?php echo $token; ?>&field=' + encodeURIComponent(field) + '" style="padding:0; margin: 0; display: block; width: 100%; height: 100%;" frameborder="no" scrolling="auto"></iframe></div>');
+		
+		$('#dialog').dialog({
+			title: '<?php echo $text_image_manager; ?>',
+			close: function (event, ui) {
+				if ($('#' + field).attr('value')) {
+					$.ajax({
+						url: 'index.php?route=common/filemanager/image&token=<?php echo $token; ?>&image=' + encodeURIComponent($('#' + field).attr('value')),
+						dataType: 'text',
+						success: function(text) {
+							$('#' + thumb).replaceWith('<img src="' + text + '" alt="" id="' + thumb + '" />');
+						}
+					});
+				}
+			},	
+			bgiframe: false,
+			width: 800,
+			height: 400,
+			resizable: false,
+			modal: false
+		});
+	};
 //--></script> 
 
+<script type="text/javascript"><!--
+	var image_row = <?php echo $image_row; ?>;
+
+	function addImage() {
+	    html  = '<tbody id="image-row' + image_row + '">';
+		html += '<tr>';
+		html += '<td class="left">';
+		html += '<div class="image">';
+		html += '<img src="<?php echo $no_image; ?>" alt="" id="thumb' + image_row + '" />';
+		html += '<br />';
+		html += '<a onclick="image_upload(\'image' + image_row + '\', \'thumb' + image_row + '\');"><?php echo $text_browse; ?></a>';
+		html += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+		html += '<a onclick="$(\'#thumb' + image_row + '\').attr(\'src\', \'<?php echo $no_image; ?>\'); $(\'#image' + image_row + '\').attr(\'value\', \'\');"><?php echo $text_clear; ?></a>';
+		html += '</div>';		
+		html += '&nbsp;&nbsp;  &nbsp;&nbsp;';
+		html += '<input type="text" name="product_image[' + image_row + '][image]" value="" id="image' + image_row + '" size="50" />';
+		html += '</td>';
+		html += '<td class="right"><input type="text" name="product_image[' + image_row + '][sort_order]" value="" size="2" /></td>';
+		html += '<td class="left"><a onclick="$(\'#image-row' + image_row  + '\').remove();" class="button"><?php echo $button_remove; ?></a></td>';
+		html += '</tr>';
+		html += '</tbody>';
+		
+		$('#images tfoot').before(html);
+		
+		image_row++;
+	}
+//--></script> 
+
+ 
 <?php echo $footer; ?>
