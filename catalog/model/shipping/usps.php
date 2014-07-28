@@ -5,6 +5,19 @@ class ModelShippingUsps extends Model {
 
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('usps_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
 
+		// Custom Shipping Methods
+		$product_ids = array();
+		
+		$product_info = $this->cart->getProducts();
+		
+		foreach($product_info as $result) {
+			$product_ids[] = $result['product_id']; 
+		}
+		
+		$this->load->model('extras/product_shipping');
+		
+		$product_shipping_methods = $this->model_extras_product_shipping->getProductShippingInfo($product_ids);
+
 		if (!$this->config->get('usps_geo_zone_id')) {
 			$status = true;
 		} elseif ($query->num_rows) {
@@ -353,8 +366,32 @@ class ModelShippingUsps extends Model {
 					);
 
 					if ($rate_response || $intl_rate_response) {
-						if ($address['iso_code_2'] == 'US') {
-							$allowed = array(0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17, 18, 19, 22, 23, 25, 27, 28);
+						if ($address['iso_code_2'] == 'US') { /* Domestic Mail Service */
+							// $allowed = array(0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17, 18, 19, 22, 23, 25, 27, 28);	
+
+							// Custom Shipping Methods
+							$allowed = array();																			
+									
+							foreach ($product_shipping_methods as $result) {
+								$allowed[] = $result['key_id'];
+							}
+							
+							// Shipping method hireacy
+							if (in_array(4,$allowed)) { 		// 4 = Parcel Post
+								$allowed = array(4);										
+							}elseif (in_array(1,$allowed)) {	// 1 = Priority Mail
+								$allowed = array(1);										
+							}elseif (in_array(22,$allowed)) {	// 22 = Large Flat Rate Box
+								$allowed = array(22);										
+							}elseif (in_array(17,$allowed)) {	// 17 = Regular Flat Rate Box
+								$allowed = array(17);										
+							}elseif (in_array(16,$allowed)) {	// 16 = Flat Rate Envelope
+								$allowed = array(16);										
+							}elseif (in_array(0,$allowed)) {	// 0 = First Class Mail
+								$allowed = array(0);								
+							}else{
+								$allowed = array(1);			// no method assigned, set it to priority mail
+							}							
 
 							$package = $rate_response->getElementsByTagName('Package')->item(0);
 
@@ -411,8 +448,29 @@ class ModelShippingUsps extends Model {
 									'error'      => $error->getElementsByTagName('Description')->item(0)->nodeValue
 								);
 							}
-						} else {
-							$allowed = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21);
+						} else { /* International Mail Service */							
+							// $allowed = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21);
+
+							// Custom Shipping Methods
+							$allowed = array();
+								
+							foreach ($product_shipping_methods as $result) {
+								$allowed[] = $result['key_id'];
+							}
+							
+							if (in_array(2,$allowed)) {				// priority mail
+								$allowed = array(2);								
+							} elseif (in_array(11,$allowed)) {		// flat rate box large
+								$allowed = array(11);								
+							} elseif (in_array(9,$allowed)) {		// flat rate box
+								$allowed = array(9);								
+							} elseif (in_array(8,$allowed)) {		// flat rate envelope
+								$allowed = array(8);								
+							} elseif (in_array(15,$allowed)) {		// first class
+								$allowed = array(15);							
+							} else {
+								$allowed = array(2);				// no method assigned, set it to priority international mail
+							}
 
 							$package = $intl_rate_response->getElementsByTagName('Package')->item(0);
 

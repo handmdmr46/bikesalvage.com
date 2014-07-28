@@ -314,19 +314,6 @@ class ModelCatalogProductUpload extends Model {
 		return $query->rows;
 	}
 	
-	public function getProductShippingMethods($product_id) {
-		
-		$shipping_method_data = array();
-		
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_shipping WHERE product_id = '" . (int)$product_id . "'");
-		
-		foreach ($query->rows as $result) {
-			$shipping_method_data[] = $result['shipping_id'];
-		}
-		
-		return $shipping_method_data;
-	}
-	
 	/*public function getCategoryNames($product_id) {
 		
 		$product_category_info = array();

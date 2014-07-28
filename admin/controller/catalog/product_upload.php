@@ -150,7 +150,7 @@ class ControllerCatalogProductUpload extends Controller {
 		} else {
 			$this->data['error_date_available'] = '';
 		}
-			
+		
 		// Sucess
 		if (isset($this->session->data['success'])) {
 			$this->data['success'] = $this->session->data['success'];		
@@ -158,6 +158,7 @@ class ControllerCatalogProductUpload extends Controller {
 		} else {
 			$this->data['success'] = '';
 		}
+		
 		
 		// URL Request & Breadcrumbs
 		$url = '';
@@ -330,18 +331,15 @@ class ControllerCatalogProductUpload extends Controller {
 			}
 		}
 				
-		// Shipping methods
+		// Shipping Methods
 		$this->load->model('shipping/custom_shipping');
-		
-		// this is for the view
+
 		$this->data['shipping_method'] = $this->model_shipping_custom_shipping->getShippingMethods();
 		
-		//example <input type="checkbox" value="1" name="shipping_type[]">
-		//value="shipping_id" returned from view and stored in shipping_type. This is from <input name="shipping_type[]"> in the view
 		if (isset($this->request->post['shipping_type'])) {
 			$this->data['shipping_type'] = $this->request->post['shipping_type'];
 		} elseif (isset($this->request->get['product_id'])) {
-			$this->data['shipping_type'] = $this->model_catalog_product_upload->getProductShippingMethods($this->request->get['product_id']);
+			$this->data['shipping_type'] = $this->model_shipping_custom_shipping->getProductShippingMethods($this->request->get['product_id']);
 		} else {
 			$this->data['shipping_type'] = array(); 
 		}

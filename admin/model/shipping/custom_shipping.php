@@ -18,35 +18,19 @@ class ModelShippingCustomShipping extends Model {
 		}
 		
 		return $shipping_methods;
-		
 	}
 	
-	public function getProductShippingMethod($product_id) {
+	public function getProductShippingMethods($product_id) {
 		
-		$product_shipping_method = array();
+		$shipping_method_data = array();
 		
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "shipping_method 
-		                            LEFT JOIN " . DB_PREFIX . "product_to_shipping p2s ON p2s.shipping_id = p2s.shipping_id 
-		                           WHERE product_id = '" . (int)$product_id . "'");
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_shipping WHERE product_id = '" . (int)$product_id . "'");
 		
 		foreach ($query->rows as $result) {
-			
-			$product_shipping_method[] = array(
-				'shipping_id'		=> 	$result['shipping_id'],
-				'method_name'		=>	$result['method_name'],
-				'zone'				=>	$result['zone'],
-				'group'				=>	$result['group'],
-				'key'				=>	$result['key'],
-				'value'				=> 	$result['value'],
-				'product_id'		=>	$result['product_id']
-			);
+			$shipping_method_data[] = $result['shipping_id'];
 		}
 		
-		return $product_shipping_method;
-		
+		return $shipping_method_data;
 	}
-	
-	//$product_id = $this->db->getLastId();
-	
 	
 }// end class
