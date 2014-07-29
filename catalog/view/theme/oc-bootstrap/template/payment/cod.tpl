@@ -1,5 +1,5 @@
 <div class="pull-right">
-	<div class="wait success" style="display: none; background-image:none;"><b>Please wait, your order is being processed.....</b><img src="catalog/view/theme/childtheme/image/loading.gif" alt="" width="20" height="20" /></div>
+	<div class="wait attention" style="display: none;"><b>Please wait, your order is being processed.....</b><img src="catalog/view/theme/default/image/loading.gif" alt="" width="20" height="20" /></div>
 	<input type="button" value="<?php echo $button_confirm; ?>" id="button-confirm" class="btn btn-info" />
 </div>
 
