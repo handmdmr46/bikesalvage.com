@@ -88,8 +88,8 @@ class ModelInventoryStockControl extends Model {
 		return $product_data;
 	}
 
-	public function getUnlinkedProducts($start, $limit) {
-		$sql = "SELECT   pd.name,
+	public function getUnlinkedProducts($data = array()) {
+		/*$sql = "SELECT   pd.name,
  					 	 pd.product_id
 			    FROM     " . DB_PREFIX . "product_description pd
 				WHERE    pd.product_id IN (
@@ -97,18 +97,31 @@ class ModelInventoryStockControl extends Model {
                    					   	   FROM   " . DB_PREFIX . "product p
                    					   	   WHERE  p.affiliate_id = '0'
                    					   	   AND 	  p.linked = '0'                   					   	   
-                   					   	   )
-				ORDER BY pd.name DESC";
+                   					   	   )";*/
+		$sql = "SELECT    * 
+		        FROM      " . DB_PREFIX . "product p 
+		        LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)
+		        WHERE     p.affiliate_id = '0'
+		        AND       p.linked = '0'";
 
-		if(isset($start) || isset($limit)) {
-			if($start < 0) {
-				$start = 0;
+		/*if (!empty($data['filter_name'])) {
+			$sql .= " AND pd.name LIKE '" . $this->db->escape($data['filter_name']) . "%'";
+		}*/
+		if (!empty($data['filter_name'])) {
+			$sql .= " AND pd.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		$sql .=	" ORDER BY pd.name DESC";
+
+		if(isset($data['start']) || isset($data['limit'])) {
+			if($data['start'] < 0) {
+				$data['start'] = 0;
 			}
-			if($limit < 1) {
-				$limit = 20;
+			if($data['limit'] < 1) {
+				$data['limit'] = 20;
 			}
 
-		    $sql .= " LIMIT " . (int)$start . "," . (int)$limit;
+		    $sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
 
 		$query_product = $this->db->query($sql);
@@ -325,7 +338,7 @@ class ModelInventoryStockControl extends Model {
 		$ebay_item_id = $this->db->query("SELECT ebay_item_id FROM " . DB_PREFIX . "ebay_listing WHERE product_id = '" . (int)$product_id . "'");
 		return $ebay_item_id->row['ebay_item_id'];
 	}
-	
+
 	// tested working
 	public function reviseEbayItemQuantity($ebay_item_id, $new_quantity) {
 		$call_name = 'ReviseInventoryStatus';

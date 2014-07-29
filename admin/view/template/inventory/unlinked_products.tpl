@@ -37,11 +37,17 @@
                     </td>
                     <td class="left width200"><?php echo $text_ebay_item_id; ?></td>
                     <td class="center width75"><?php echo $text_product_id; ?></td>
-                    <td><?php echo $text_product_title; ?></td>
-
+                    <td><?php echo $text_product_title; ?></td>                    
                 </tr>
             </thead>
             <tbody>
+              <tr class="filter">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><input type="text" name="filter_name" value="<?php echo $filter_name; ?>" /><a onclick="filter();" class="button" style="float:right;"><?php echo $button_filter; ?></a></td>
+                <!-- <td align="right"><a onclick="filter();" class="button"><?php echo $button_filter; ?></a></td> -->
+              </tr>
               <?php if($unlinked_products) { ?>
               <?php foreach($unlinked_products as $product) { ?>
               <tr>
@@ -82,6 +88,19 @@
     document.getElementById(id + '_select').setAttribute('checked','checked');
   }
 
+  function filter() {
+    url = 'index.php?route=inventory/unlinked_products&token=<?php echo $token; ?>';
+    
+    var filter_name = $('input[name=\'filter_name\']').attr('value');
+    
+    if (filter_name) {
+      url += '&filter_name=' + encodeURIComponent(filter_name);
+    } 
+
+    location = url;
+  }
+
 //--></script>
+
 
 <?php echo $footer; ?>

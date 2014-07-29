@@ -61,9 +61,12 @@
               </tbody>
             </table>
       </form>
+      
+      <div class="pagination"><?php echo $pagination; ?></div>
+
     </div><!-- .content -->
 
-    <div class="pagination"><?php echo $pagination; ?></div>
+    
 
   </div><!-- .box -->
 
