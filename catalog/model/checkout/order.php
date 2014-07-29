@@ -707,18 +707,16 @@ class ModelCheckoutOrder extends Model {
 			}	
 			
 			// Send Affiliates Order Alert Email
-			foreach ($order_product_query->rows as $product) {
+			/*foreach ($order_product_query->rows as $product) {
 				if ($product['affiliate_id'] != 0) {
 					// $affiliate_email = $this->getAffiliateEmail($product['affiliate_id']);
 
 					// start build affiliate order emails here....
 				}
 
-			}
+			}*/
 		}
-		
-		$this->load->model('affiliate/dashboard_order_total');
-		$this->model_affiliate_dashboard_order_total->getAffiliateOrders();
+	
 	}
 	
 	public function update($order_id, $order_status_id, $comment = '', $notify = false) {

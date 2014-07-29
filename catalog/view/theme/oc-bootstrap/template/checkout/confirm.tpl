@@ -13,8 +13,8 @@
             </thead>
             <tbody>
                 <?php foreach ($products as $product) { ?>  
-                    <?php //if($product['recurring']): ?>
-                        <!-- <tr>
+                    <?php if($product['recurring']): ?>
+                        <tr>
                             <td colspan="6" style="border:none;">
                                 <span class="glyphicon glyphicon-repeat"></span> 
                                 <span style="float:left;line-height:18px; margin-left:10px;"> 
@@ -22,8 +22,8 @@
                                 </span>
                                 <?php echo $product['profile_description'] ?>
                             </td>
-                        </tr> -->
-                    <?php //endif; ?>
+                        </tr>
+                    <?php endif; ?>
                     <tr>
                         <td class="name">
                             <a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a>

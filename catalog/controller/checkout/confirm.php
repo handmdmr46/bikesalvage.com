@@ -273,10 +273,7 @@ class ControllerCheckoutConfirm extends Controller {
 			}
 			
 			$product_data = array();
-			$affiliate_id = array();
-			foreach ($this->cart->getProducts() as $product) {
-				$affiliate_id[] = $product['affiliate_id'];
-
+			foreach ($this->cart->getProducts() as $product) {				
 				// Options
 				$option_data = array();
 				foreach ($product['option'] as $option) {
@@ -296,33 +293,6 @@ class ControllerCheckoutConfirm extends Controller {
 						'type'                    => $option['type']
 					);					
 				}
-
-				// Recourring Payments/Products ? - dont know how this works but just kept it here incase
-				//                                  was added with the new opencart install 1.5.6
-				$profile_description = '';
-
-				if ($product['recurring']) {
-					$frequencies = array(
-						'day' => $this->language->get('text_day'),
-						'week' => $this->language->get('text_week'),
-						'semi_month' => $this->language->get('text_semi_month'),
-						'month' => $this->language->get('text_month'),
-						'year' => $this->language->get('text_year'),
-					);
-
-					if ($product['recurring_trial']) {
-						$recurring_price = $this->currency->format($this->tax->calculate($product['recurring_trial_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
-						$profile_description = sprintf($this->language->get('text_trial_description'), $recurring_price, $product['recurring_trial_cycle'], $frequencies[$product['recurring_trial_frequency']], $product['recurring_trial_duration']) . ' ';
-					}
-
-					$recurring_price = $this->currency->format($this->tax->calculate($product['recurring_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
-
-					if ($product['recurring_duration']) {
-						$profile_description .= sprintf($this->language->get('text_payment_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);
-					} else {
-						$profile_description .= sprintf($this->language->get('text_payment_until_canceled_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);
-					}
-				}
 	           			     
 				$product_data[] = array(
 					'product_id'          => $product['product_id'],
@@ -335,10 +305,7 @@ class ControllerCheckoutConfirm extends Controller {
 					'price'               => $product['price'],
 					'total'               => $product['total'],
 					'tax'                 => $this->tax->getTax($product['price'], $product['tax_class_id']),
-					'reward'              => $product['reward'],
-					'recurring'           => $product['recurring'],    // added recurring
-					'profile_name'        => $product['profile_name'], // added recurring
-					'profile_description' => $profile_description,     // added recurring
+					'reward'              => $product['reward'],					
 					'affiliate_id'        => $product['affiliate_id']  // added affiliate_id
 				); 
 
@@ -411,7 +378,6 @@ class ControllerCheckoutConfirm extends Controller {
 			
 			$this->data['products'] = array();
 			foreach ($this->cart->getProducts() as $product) {
-				
 				// Options
 				$option_data = array();	           
 				foreach ($product['option'] as $option) {
@@ -427,18 +393,46 @@ class ControllerCheckoutConfirm extends Controller {
 						'value' => (utf8_strlen($value) > 20 ? utf8_substr($value, 0, 20) . '..' : $value)
 					);
 				}  
+
+				// Recurring
+				$profile_description = '';
+				if ($product['recurring']) {
+					$frequencies = array(
+						'day' => $this->language->get('text_day'),
+						'week' => $this->language->get('text_week'),
+						'semi_month' => $this->language->get('text_semi_month'),
+						'month' => $this->language->get('text_month'),
+						'year' => $this->language->get('text_year'),
+					);
+
+					if ($product['recurring_trial']) {
+						$recurring_price = $this->currency->format($this->tax->calculate($product['recurring_trial_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
+						$profile_description = sprintf($this->language->get('text_trial_description'), $recurring_price, $product['recurring_trial_cycle'], $frequencies[$product['recurring_trial_frequency']], $product['recurring_trial_duration']) . ' ';
+					}
+
+					$recurring_price = $this->currency->format($this->tax->calculate($product['recurring_price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')));
+
+					if ($product['recurring_duration']) {
+						$profile_description .= sprintf($this->language->get('text_payment_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);
+					} else {
+						$profile_description .= sprintf($this->language->get('text_payment_until_canceled_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);
+					}
+				}
 	 
 				$this->data['products'][] = array(
-					'product_id'    => $product['product_id'],
-					'name'          => $product['name'],
-					'model'         => $product['model'],
-					'option'        => $option_data,
-					'quantity'      => $product['quantity'],
-					'subtract'      => $product['subtract'],
-					'price'         => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'))),
-					'total'         => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']),
-					'href'          => $this->url->link('product/product', 'product_id=' . $product['product_id']),
-					'affiliate_id'  => $product['affiliate_id']
+					'product_id'          => $product['product_id'],
+					'name'                => $product['name'],
+					'model'               => $product['model'],
+					'option'              => $option_data,
+					'quantity'            => $product['quantity'],
+					'subtract'            => $product['subtract'],
+					'price'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'))),
+					'total'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']),
+					'href'                => $this->url->link('product/product', 'product_id=' . $product['product_id']),
+					'recurring'           => $product['recurring'],
+					'profile_name'        => $product['profile_name'],
+					'profile_description' => $profile_description,
+					'affiliate_id'        => $product['affiliate_id']
 				); 
 			} 
 			

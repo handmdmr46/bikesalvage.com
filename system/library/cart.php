@@ -1,5 +1,9 @@
 <?php
 class Cart {
+	/**
+	* Modified: 07/29/2014 added affiliate_id to getProducts()
+	*
+	*/
 	private $config;
 	private $db;
 	private $data = array();
@@ -260,7 +264,7 @@ class Cart {
 					$this->data[$key] = array(
 						'key'                       => $key,
 						'product_id'                => $product_query->row['product_id'],
-						'affiliate_id'                => $product_query->row['affiliate_id'],
+						'affiliate_id'              => $product_query->row['affiliate_id'],
 						'name'                      => $product_query->row['name'],
 						'model'                     => $product_query->row['model'],
 						'shipping'                  => $product_query->row['shipping'],
