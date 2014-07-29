@@ -411,7 +411,7 @@ class ControllerSaleOrderMaster extends Controller {
 			$order_id = 0;
 		}
 
-		$order_info = $this->model_sale_order->getMasterOrder($order_id);
+		$order_info = $this->model_sale_order->getOrder($order_id);
 
 		if ($order_info) {
 			$this->language->load('sale/order');
