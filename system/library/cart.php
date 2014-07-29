@@ -260,6 +260,7 @@ class Cart {
 					$this->data[$key] = array(
 						'key'                       => $key,
 						'product_id'                => $product_query->row['product_id'],
+						'affiliate_id'                => $product_query->row['affiliate_id'],
 						'name'                      => $product_query->row['name'],
 						'model'                     => $product_query->row['model'],
 						'shipping'                  => $product_query->row['shipping'],

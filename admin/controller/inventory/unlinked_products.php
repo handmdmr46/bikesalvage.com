@@ -81,7 +81,7 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	      $this->data['page'] = 1;
 	    }
 
-	    $limit = 1000;
+	    $limit = 100;
 
 	    $data = array(
 			'filter_name'	  => $filter_name, 
@@ -94,8 +94,7 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
 	    // Variables	    
-		$total                           = $this->model_inventory_stock_control->getTotalUnlinkedProducts();
-		// $this->data['unlinked_products'] = $this->model_inventory_stock_control->getUnlinkedProducts($start, $limit);
+		$total                           = $this->model_inventory_stock_control->getTotalUnlinkedProducts($data);
 		$this->data['unlinked_products'] = $this->model_inventory_stock_control->getUnlinkedProducts($data);
 
 	    // Pagination
@@ -127,8 +126,12 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 
 			$url = '';
 
+			if (isset($this->request->get['filter_name'])) {
+			  $url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+		    }
+
 			if (isset($this->request->get['page'])) {
-			$url .= '&page=' . $this->request->get['page'];
+			  $url .= '&page=' . $this->request->get['page'];
 			}
 
 			if (isset($this->request->post['selected']) /*&& $this->validateLinkProduct() == 1*/) {
@@ -146,7 +149,11 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 			$this->redirect($this->url->link('inventory/unlinked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	}
 
-	/*protected function validateLinkProduct() {
+	/** Not Used - need to add validation to the link product method
+	*              same for linked_products.php
+	*
+	*/
+	protected function validateLinkProduct() {
 		$boolean = 1;
 
 		foreach($this->request->post['selected'] as $pid) {	
@@ -159,7 +166,7 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 			
 		}
 		return $boolean;
-	}*/
+	}
 
 
 

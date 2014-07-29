@@ -40,21 +40,41 @@ class ModelInventoryStockControl extends Model {
 		return $call_names;
 	}
 
-	public function getTotalLinkedProducts() {
-		//bikesalvage
-		$count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "ebay_listing");
+	public function getTotalLinkedProducts($data= array()) {
+		/*$count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "ebay_listing");
 
-		return $count->row['total'];
+		return $count->row['total'];*/
+		$sql = "SELECT COUNT(DISTINCT el.product_id) AS total FROM " . DB_PREFIX . "ebay_listing el LEFT JOIN " . DB_PREFIX . "product_description pd ON (el.product_id = pd.product_id)";
+		
+		$sql .= " WHERE affiliate_id = '0'";
+
+		if (!empty($data['filter_name'])) {
+			$sql .= " AND pd.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
 	}
 
-	public function getTotalUnlinkedProducts() {
-		//bikesalvage
-		$count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "product WHERE `linked` = '0' AND `affiliate_id` = '0' AND `status` = '0'");
+	public function getTotalUnlinkedProducts($data= array()) {
+		// $count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "product WHERE `linked` = '0' AND `affiliate_id` = '0' AND `status` = '0'");
+		// return $count->row['total'];
 
-		return $count->row['total'];
+		$sql = "SELECT COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)";
+		
+		$sql .= " WHERE `linked` = '0' AND `affiliate_id` = '0' AND `status` = '0'";
+
+		if (!empty($data['filter_name'])) {
+			$sql .= " AND pd.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
 	}
 
-	public function getLinkedProducts($start, $limit) {
+	public function getLinkedProducts($data= array()) {
 		$sql = "SELECT    el.product_id,
 	  			  		  el.ebay_item_id,
           		  		  pd.name
@@ -62,15 +82,21 @@ class ModelInventoryStockControl extends Model {
 				LEFT JOIN " . DB_PREFIX . "product_description pd ON (el.product_id = pd.product_id)
 				WHERE     el.affiliate_id = '0'";
 
-		if(isset($start) || isset($limit)) {
-				if($start < 0) {
-					$start = 0;
-				}
-				if($limit < 1) {
-					$limit = 20;
-				}
+		if (!empty($data['filter_name'])) {
+			$sql .= " AND pd.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
 
-			    $sql .= " LIMIT " . (int)$start . "," . (int)$limit;
+		$sql .=	" ORDER BY pd.name DESC";
+
+		if(isset($data['start']) || isset($data['limit'])) {
+			if($data['start'] < 0) {
+				$data['start'] = 0;
+			}
+			if($data['limit'] < 1) {
+				$data['limit'] = 20;
+			}
+
+		    $sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
 
 		$query = $this->db->query($sql);
@@ -104,9 +130,6 @@ class ModelInventoryStockControl extends Model {
 		        WHERE     p.affiliate_id = '0'
 		        AND       p.linked = '0'";
 
-		/*if (!empty($data['filter_name'])) {
-			$sql .= " AND pd.name LIKE '" . $this->db->escape($data['filter_name']) . "%'";
-		}*/
 		if (!empty($data['filter_name'])) {
 			$sql .= " AND pd.name LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
 		}
