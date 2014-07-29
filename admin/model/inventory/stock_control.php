@@ -325,6 +325,7 @@ class ModelInventoryStockControl extends Model {
 		$ebay_item_id = $this->db->query("SELECT ebay_item_id FROM " . DB_PREFIX . "ebay_listing WHERE product_id = '" . (int)$product_id . "'");
 		return $ebay_item_id->row['ebay_item_id'];
 	}
+	
 	// tested working
 	public function reviseEbayItemQuantity($ebay_item_id, $new_quantity) {
 		$call_name = 'ReviseInventoryStatus';

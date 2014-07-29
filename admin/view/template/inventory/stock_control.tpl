@@ -23,7 +23,28 @@ Admin template for testing ebay calls from opencart
     <?php } ?>
 
     <div class="box">
+<?php 
+// print manufacturer names
+foreach ($test as $t) {
+	echo $t['name'] . ' ' . $t['manufacturer_id'] . "<br>";
+}
 
+//print category by manufacturer
+echo 'HONDA <br>';
+foreach ($honda_test as $h) {
+	echo $h['name'] . ' ' . $h['category_id'] . ' ' . $h['manufacturer_id'] . "<br>";
+}
+
+echo 'YAMAHA <br>';
+foreach ($yamaha_test as $h) {
+	echo $h['name'] . "<br>";
+}
+
+
+
+
+
+?>
         <div class="heading">
             <h1><img src="view/image/download.png" alt="" /> <?php echo $heading_title_ebay_profile; ?></h1>
             <h1 class="wait" style="margin-left:1700px; display: none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></h1>

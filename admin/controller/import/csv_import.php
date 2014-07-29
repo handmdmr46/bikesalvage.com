@@ -164,6 +164,7 @@ class ControllerImportCsvImport extends Controller {
 			'application/txt',
        );
 
+	   // for view
 	   $this->data['manufacturers'] = $this->model_import_csv_import->getManufacturers();
 	   $this->data['domestic_shipping'] = $this->model_import_csv_import->getDomesticShippingMethods();
 	   $this->data['international_shipping'] = $this->model_import_csv_import->getInternationalShippingMethods();
@@ -256,6 +257,27 @@ class ControllerImportCsvImport extends Controller {
 						  } else {
 							  $this->data['csv'][$key]['manufacturer_id'] = 7;
 						  }
+
+
+						  // Dynamic Manufacturer
+						  /*$manufacturers = $this->model_import_csv_import->getManufacturerInfo();
+						  foreach ($manufacturers as $manufacturer) {
+						  	if (stripos($this->data['csv'][$key]['title'],$manufacturer['name']) !== false) {
+						  		$this->data['csv'][$key]['manufacturer_id'] = $manufacturer['manufacturer_id'];
+						  	} else {
+						  		$this->data['csv'][$key]['manufacturer_id'] = ''; // here we need to get the manufacturer_id of the "All Other's" manufacturer
+						  	}
+						  }*/
+
+						  // Dynamic Categories
+						  /*$categories = $this->model_import_csv_import->getCategoryInfoByManufacturerId($this->data['csv'][$key]['manufacturer_id']);
+						  foreach ($categories as $category) {
+						  	if (strpos($this->data['csv'][$key]['title'], $category['name']) !== false) {
+						  		$this->data['csv'][$key]['category_id'] = $category['category_id'];
+						  	} else {
+						  		$this->data['csv'][$key]['category_id'] = ''; // should we have a "Not Categorized" category here?
+						  	}
+						  }*/
 
 						  // Set Category ID from Title and Manufacturer ID
 						  if ($this->data['csv'][$key]['manufacturer_id'] == 1) {#Honda

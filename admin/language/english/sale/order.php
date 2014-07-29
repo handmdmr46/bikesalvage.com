@@ -1,6 +1,7 @@
 <?php
 // Heading
 $_['heading_title']                           = 'Orders';
+$_['heading_title_master']                    = 'Master Orders';
 
 // Text
 
