@@ -68,7 +68,7 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	      $url .= '&page=' . $this->request->get['page'];
 	    }
 
-	    $limit = 50;
+	    $limit = 100;
 	    $start = ($page - 1) * $limit;
 
 	    // Buttons

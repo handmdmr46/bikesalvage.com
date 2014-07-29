@@ -17,6 +17,7 @@
   <?php } ?>
 
   <div class="box">
+
     <div class="heading">
       <h1><img src="view/image/download.png" alt="" /> <?php echo $heading_title; ?></h1>
       <h1 class="wait" style="margin-left:1700px; display: none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></h1>
@@ -63,9 +64,9 @@
 
       </form>
 
-    </div><!-- .content -->
+      <div class="pagination"><?php echo $pagination; ?></div>
 
-    <div class="pagination"><?php echo $pagination; ?></div>
+    </div><!-- .content -->
 
   </div><!-- .box -->
 
