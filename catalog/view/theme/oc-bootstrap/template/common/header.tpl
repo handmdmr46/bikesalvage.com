@@ -77,6 +77,7 @@
     <?php } ?>
 	<?php echo $google_analytics; ?>
     <style type="text/css">
+    /* Bikesalvage Custom menu CSS */
     body{
         background-image: url("admin/view/image/patterns/14.png");
         background-position: top left;
@@ -110,7 +111,16 @@
         color: #ffffff;
     }
     nav.main-navbar ul.nav li ul li a {
-        color: #333333;
+        color: #999;
+    }
+    nav.main-navbar ul.nav li ul li a.manufacturer {
+        color: #999;
+        font-size: 12px;
+    }
+    nav.main-navbar ul.nav li ul .menu-manufacturer {
+        color: #999;
+        font-weight: bold;
+        padding-left: 10px;
     }
     nav.main-navbar ul.nav li a.see-all {
         color: #296bbd;
@@ -503,7 +513,7 @@
        
             <nav class="main-navbar navbar navbar-inverse" role="navigation">
                 <div class="navbar-header">
-                    <span class="visible-xs navbar-brand"><?php echo $this->language->get('text_category'); ?></span>
+                    <span class="visible-xs navbar-brand"><?php echo $this->language->get('text_menu'); ?></span>
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
@@ -512,31 +522,6 @@
                     </button>
                 </div>
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
-                    <!-- Categories -->
-                    <!-- <ul class="nav navbar-nav">
-                        <?php foreach ($categories as $category) { ?>
-                            <?php if ($category['children']) { ?>
-                                <li class="dropdown">
-                                    <a href="<?php echo $category['href']; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $category['name']; ?></a>
-                                    <div class="dropdown-menu">
-                                        <?php for ($i = 0; $i < count($category['children']);) { ?>
-                                            <ul class="list-unstyled">
-                                                <?php $j = $i + ceil(count($category['children']) / $category['column']); ?>
-                                                <?php for (; $i < $j; $i++) { ?>
-                                                    <?php if (isset($category['children'][$i])) { ?>
-                                                    <li><a href="<?php echo $category['children'][$i]['href']; ?>"><?php echo $category['children'][$i]['name']; ?></a></li>
-                                                    <?php } ?>
-                                                <?php } ?>
-                                             </ul>
-                                        <?php } ?>
-                                        <a href="<?php echo $category['href']; ?>" class="see-all"><?php echo $this->language->get('text_all'); ?> <?php echo $category['name']; ?></a>
-                                    </div>
-                                </li>
-                            <?php } else { ?>
-                                <li><a href="<?php echo $category['href']; ?>"><?php echo $category['name']; ?></a></li>
-                            <?php } ?>
-                        <?php } ?>
-                    </ul> -->
                     <!-- Home -->
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
@@ -618,16 +603,19 @@
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Models</a>
-                            <div class="dropdown-menu">                                
+                            <div class="dropdown-menu">
+                                                               
                                     <?php foreach ($models as $model) { ?>
-                                        <?php if ($model['model_data']) { ?>                                        
-                                            <ul class="list-unstyled"><blockquote><?php echo $model['manufacturer']; ?></blockquote>
-                                                <?php foreach ($model['model_data'] as $cat) { ?>
-                                                    <li><a href="<?php echo $cat['href']; ?>"><?php echo $cat['name']; ?></a></li>
-                                                <?php } ?>
-                                            </ul>
+                                        <?php if ($model['model_data']) { ?>  
+                                            <ul class="list-unstyled"> 
+                                            <p class="menu-manufacturer"><?php echo $model['manufacturer']; ?></p>                                          
+                                            <?php foreach ($model['model_data'] as $cat) { ?>
+                                                <li><a class="manufacturer" href="<?php echo $cat['href']; ?>"><?php echo $cat['name']; ?></a></li>
+                                            <?php } ?>  
+                                             </ul>    
                                         <?php } ?>
-                                    <?php } ?>                                
+                                    <?php } ?>  
+                                                         
                             </div>
                         </li>                         
                     </ul>

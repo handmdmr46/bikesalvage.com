@@ -15,7 +15,8 @@
     <div class="heading">
       <h1><img src="view/image/product.png" alt="" /> <?php echo $heading_title; ?></h1>
       <div class="buttons">
-      	<a href="<?php echo $insert; ?>" class="button"><?php echo $button_insert; ?></a><a onclick="$('form').submit();" class="button"><?php echo $button_delete; ?></a>
+      	<a href="<?php echo $insert; ?>" class="button"><?php echo $button_insert; ?></a>
+        <a onclick="$('form').submit();" class="button"><?php echo $button_delete; ?></a>
       	<a onclick="$('#form').attr('action', '<?php echo $edit_list; ?>'); $('#form').submit();" class="button"><?php echo $button_edit_list; ?></a>
      </div>
     </div>
@@ -80,10 +81,12 @@
             <?php if ($products) { ?>
             <?php foreach ($products as $product) { ?>
             <tr>
-              <td style="text-align: center;"><?php if ($product['selected']) { ?>
-                <input type="checkbox" name="selected[]" value="<?php echo $product['product_id']; ?>" id="<?php echo $product['product_id']; ?>_select" checked="checked" />
+              <td style="text-align: center;">
+                <?php echo $product['product_id']; ?>
+                <?php if ($product['selected']) { ?>
+                  <input type="checkbox" name="selected[]" value="<?php echo $product['product_id']; ?>" id="<?php echo $product['product_id']; ?>_select" checked="checked" />
                 <?php } else { ?>
-                <input type="checkbox" name="selected[]" value="<?php echo $product['product_id']; ?>" id="<?php echo $product['product_id']; ?>_select" />
+                  <input type="checkbox" name="selected[]" value="<?php echo $product['product_id']; ?>" id="<?php echo $product['product_id']; ?>_select" />
                 <?php } ?></td>
               <!-- Image -->
               <td class="center">

@@ -324,10 +324,10 @@ ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 ALTER TABLE `oc_setting`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 
-/*ALTER TABLE `oc_product`
+ALTER TABLE `oc_product`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0',
 ADD COLUMN  `csv_import` int(11) NOT NULL DEFAULT'0',
-ADD COLUMN  `linked` int(11) NOT NULL DEFAULT '0';*/
+ADD COLUMN  `linked` int(11) NOT NULL DEFAULT '0';
 
 ALTER TABLE `oc_order_product`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0',
@@ -354,9 +354,9 @@ ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 ALTER TABLE `oc_order_download`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 
-/*ALTER TABLE `oc_category`
-ADD COLUMN  `manufacturer_id` int(11) NOT NULL DEFAULT'0';*/
+ALTER TABLE `oc_category`
+ADD COLUMN  `manufacturer_id` int(11) NOT NULL DEFAULT'0';
 
-/*ALTER TABLE `oc_ebay_listing`
-ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';*/
+ALTER TABLE `oc_ebay_listing`
+ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 

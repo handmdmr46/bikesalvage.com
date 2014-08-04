@@ -17,6 +17,7 @@
   <?php } ?>
 
   <div class="box">
+
     <div class="heading">
       <h1><img src="view/image/download.png" alt="" /> <?php echo $heading_title; ?></h1>
       <h1 class="wait" style="margin-left:1700px; display: none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></h1>
@@ -36,11 +37,16 @@
                     </td>
                     <td class="left width200"><?php echo $text_ebay_item_id; ?></td>
                     <td class="center width75"><?php echo $text_product_id; ?></td>
-                    <td><?php echo $text_product_title; ?></td>
-
+                    <td><?php echo $text_product_title; ?></td>                    
                 </tr>
             </thead>
             <tbody>
+              <tr class="filter">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><input type="text" name="filter_name" value="<?php echo $filter_name; ?>" /><a onclick="filter();" class="button" style="float:right;"><?php echo $button_filter; ?></a></td>                
+              </tr>
               <?php if($unlinked_products) { ?>
               <?php foreach($unlinked_products as $product) { ?>
               <tr>
@@ -63,9 +69,9 @@
 
       </form>
 
-    </div><!-- .content -->
+      <div class="pagination"><?php echo $pagination; ?></div>
 
-    <div class="pagination"><?php echo $pagination; ?></div>
+    </div><!-- .content -->
 
   </div><!-- .box -->
 
@@ -81,6 +87,19 @@
     document.getElementById(id + '_select').setAttribute('checked','checked');
   }
 
+  function filter() {
+    url = 'index.php?route=inventory/unlinked_products&token=<?php echo $token; ?>';
+    
+    var filter_name = $('input[name=\'filter_name\']').attr('value');
+    
+    if (filter_name) {
+      url += '&filter_name=' + encodeURIComponent(filter_name);
+    } 
+
+    location = url;
+  }
+
 //--></script>
+
 
 <?php echo $footer; ?>

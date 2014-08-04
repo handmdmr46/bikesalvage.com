@@ -2,6 +2,7 @@
 class ControllerPaymentCod extends Controller {
 	protected function index() {
 		$this->data['button_confirm'] = $this->language->get('button_confirm');
+		$this->data['text_wait']      = $this->language->get('text_wait');
 
 		$this->data['continue'] = $this->url->link('checkout/success');
 

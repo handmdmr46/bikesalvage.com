@@ -10,10 +10,31 @@ class ModelImportCsvImport extends Model {
 		return $query->row['name'];
 	}
 
+	public function getManufacturerInfo() {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "manufacturer");
+
+		return $query->rows;
+	}
+
 	public function getCategoryName($category_id) {
 		$query = $this->db->query("SELECT `name` FROM " . DB_PREFIX . "category_description WHERE `category_id` = '" . (int)$category_id . "'");
 
 		return $query->row['name'];
+	}
+
+	/**
+	* 5 = American & HD, 8 = British & European, 
+	* 3 = Suzuki       , 1 = Honda
+	* 4 = Yamaha       , 7 = Harley Davison
+	* 2 = Kawasaki     , 
+	*
+	*/
+	public function getCategoryInfoByManufacturerId($manufacturer_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_description cd 
+								   LEFT JOIN " . DB_PREFIX . "category c ON cd.category_id = c.category_id
+								   WHERE c.manufacturer_id = '" . (int)$manufacturer_id . "'");
+
+		return $query->rows;
 	}
 
 	public function getProductCategories($manufacturer_id) {

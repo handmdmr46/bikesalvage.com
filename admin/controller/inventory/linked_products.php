@@ -12,6 +12,23 @@ class ControllerInventoryLinkedProducts extends Controller {
 	}
 
 	protected function init() {
+		// Filter
+		if (isset($this->request->get['filter_name'])) {
+			$filter_name = $this->request->get['filter_name'];
+		} else {
+			$filter_name = null;
+		}
+
+		$url = '';
+
+		if (isset($this->request->get['filter_name'])) {
+			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+		}
+
+		if (isset($this->request->get['page'])) {
+	      $url .= '&page=' . $this->request->get['page'];
+	    }
+
 		// Breadcrumbs
 	    $this->data['breadcrumbs'] = array();
 
@@ -23,7 +40,7 @@ class ControllerInventoryLinkedProducts extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title_linked_products'),
-       		'href'      => $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'], 'SSL'),
+       		'href'      => $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'),
        		'separator' => ' :: '
 		);
 
@@ -35,6 +52,7 @@ class ControllerInventoryLinkedProducts extends Controller {
 		$this->data['text_ebay_item_id']  = $this->language->get('text_ebay_item_id');
 		$this->data['text_product_id']    = $this->language->get('text_product_id');
 		$this->data['text_product_title'] = $this->language->get('text_product_title');
+		$this->data['button_filter']      = $this->language->get('button_filter');
 
 		// Error
 	    if (isset($this->session->data['error'])) {
@@ -61,18 +79,17 @@ class ControllerInventoryLinkedProducts extends Controller {
 	      $this->data['page'] = 1;
 	    }
 
-	    $url = '';
-
-	    if (isset($this->request->get['page'])) {
-	      $url .= '&page=' . $this->request->get['page'];
-	    }
-
 	    $limit = 100;
-	    $start = ($page - 1) * $limit;
+
+	    $data = array(
+			'filter_name'	  => $filter_name, 
+			'start'           => ($page - 1) * $limit,
+			'limit'           => $limit
+		);
 
 	    // Variables	    
-	    $total                    		 = $this->model_inventory_stock_control->getTotalLinkedProducts();
-	    $this->data['linked_products']   = $this->model_inventory_stock_control->getLinkedProducts($start, $limit);
+	    $total                    		 = $this->model_inventory_stock_control->getTotalLinkedProducts($data);
+	    $this->data['linked_products']   = $this->model_inventory_stock_control->getLinkedProducts($data);
 
 	    // Buttons
 	    $this->data['edit'] = $this->url->link('inventory/linked_products/edit', 'token=' . $this->session->data['token'] . $url, 'SSL');
@@ -85,9 +102,11 @@ class ControllerInventoryLinkedProducts extends Controller {
 	    $pagination->page  = $page;
 	    $pagination->limit = $limit;
 	    $pagination->text  = $this->language->get('text_pagination');
-	    $pagination->url   = $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token']  . '&page={page}' , 'SSL');
+	    $pagination->url   = $this->url->link('inventory/linked_products', 'token=' . $this->session->data['token'] . $url . '&page={page}' , 'SSL');
 
 	    $this->data['pagination'] = $pagination->render();
+
+	    $this->data['filter_name'] = $filter_name;
 
 	    $this->template = 'inventory/linked_products.tpl';
 
@@ -97,8 +116,6 @@ class ControllerInventoryLinkedProducts extends Controller {
 	    );
 
 	    $this->response->setOutput($this->render());
-
-
 	}
 
 	public function edit() {
@@ -107,6 +124,10 @@ class ControllerInventoryLinkedProducts extends Controller {
 		$this->load->model('inventory/stock_control');
 
 	    $url = '';
+
+	    if (isset($this->request->get['filter_name'])) {
+			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+		}
 
 	    if (isset($this->request->get['page'])) {
 	        $url .= '&page=' . $this->request->get['page'];
@@ -134,6 +155,10 @@ class ControllerInventoryLinkedProducts extends Controller {
 		$this->load->model('inventory/stock_control');
 
 	    $url = '';
+
+	    if (isset($this->request->get['filter_name'])) {
+			$url .= '&filter_name=' . urlencode(html_entity_decode($this->request->get['filter_name'], ENT_QUOTES, 'UTF-8'));
+		}
 
 	    if (isset($this->request->get['page'])) {
 	        $url .= '&page=' . $this->request->get['page'];

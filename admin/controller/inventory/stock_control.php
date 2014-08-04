@@ -12,6 +12,30 @@ class ControllerInventoryStockControl extends Controller {
 	}
 
 	protected function init() {
+		// TESTING
+		$this->load->model('import/csv_import');
+		$this->data['test'] = $this->model_import_csv_import->getManufacturerInfo();
+
+		/**
+		* 5 = American & HD, 8 = British & European, 
+		* 3 = Suzuki       , 1 = Honda
+		* 4 = Yamaha       , 7 = Harley Davison
+		* 2 = Kawasaki     , 
+		*
+		*/
+
+		$this->data['suzuki_test'] = $this->model_import_csv_import->getCategoryInfoByManufacturerId(3);
+
+		$this->data['yamaha_test'] = $this->model_import_csv_import->getCategoryInfoByManufacturerId(4);
+
+		$this->data['honda_test'] = $this->model_import_csv_import->getCategoryInfoByManufacturerId(1);
+
+
+
+
+
+
+
 		// Breadcrumbs
 	    $this->data['breadcrumbs'] = array();
 
