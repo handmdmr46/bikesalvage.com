@@ -1,6 +1,7 @@
 <?php
 // Heading
 $_['heading_title']                           = 'Orders';
+$_['heading_title_master']                    = 'Master Orders';
 
 // Text
 
@@ -199,4 +200,5 @@ $_['error_upload']                            = 'Upload required!';
 $_['error_filename']                          = 'Filename must be between 3 and 128 characters!';
 $_['error_filetype']                          = 'Invalid file type!';
 $_['error_action']                            = 'Warning: Could not complete this action!';
+$_['tab_stock_control']                       = 'Stock Control';
 ?>

@@ -376,15 +376,6 @@ class ControllerCatalogManufacturer extends Controller {
 			$this->data['image'] = '';
 		}
 
-		// Manufacturer Link
-		if (isset($this->request->post['link'])) {
-			$this->data['link'] = $this->request->post['link'];
-		} elseif (!empty($manufacturer_info)) {
-			$this->data['link'] = $manufacturer_info['link'];
-		} else {
-			$this->data['link'] = '';
-		}
-
 		$this->load->model('tool/image');
 
 		if (isset($this->request->post['image']) && file_exists(DIR_IMAGE . $this->request->post['image'])) {
