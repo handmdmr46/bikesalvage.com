@@ -57,10 +57,6 @@
               <td><input type="text" name="keyword" value="<?php echo $keyword; ?>" /></td>
             </tr>
             <tr>
-              <td><?php echo $entry_link; ?></td>
-              <td><input type="text" name="link" value="<?php echo $link; ?>" /></td>
-            </tr>
-            <tr>
               <td><?php echo $entry_image; ?></td>
               <td valign="top"><div class="image"><img src="<?php echo $thumb; ?>" alt="" id="thumb" />
                 <input type="hidden" name="image" value="<?php echo $image; ?>" id="image" />

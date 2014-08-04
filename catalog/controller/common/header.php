@@ -105,6 +105,8 @@ class ControllerCommonHeader extends Controller {
         $this->data['text_contact'] = $this->language->get('text_contact');
         $this->data['text_telephone'] = $this->language->get('text_telephone');
         $this->data['text_fax'] = $this->language->get('text_fax');
+        // responsive header
+        $this->data['text_menu'] = $this->language->get('text_menu');
 
         if (isset($this->request->get['blogpath'])) {
 		  $parts = explode('_', (string)$this->request->get['blogpath']);
@@ -132,7 +134,6 @@ class ControllerCommonHeader extends Controller {
 		$this->load->model('setting/store');
 
 		$this->data['stores'] = array();
-
 		if ($this->config->get('config_shared') && $status) {
 			$this->data['stores'][] = $server . 'catalog/view/javascript/crossdomain.php?session_id=' . $this->session->getId();
 
@@ -155,91 +156,21 @@ class ControllerCommonHeader extends Controller {
 		$this->load->model('catalog/product');
 		$this->load->model('catalog/information');
 		$this->load->model('catalog/manufacturer');
-		/*$this->load->model('extras/blog_category');
-		$this->load->model('extras/blog');*/
 
-		// Blog Menu				
-		/*$this->data['blog_categories'] = array();
-		$blog_categories = $this->model_extras_blog_category->getBlogCategories(0);		
-		foreach ($blog_categories as $blog_category) {
-			if ($blog_category['top']) {
-				
-				$children_data = array();				
-				$children = $this->model_extras_blog_category->getBlogCategories($blog_category['blog_category_id']);
-				
-				foreach ($children as $child) {
-					$data = array(
-						'filter_blog_category_id'  => $child['blog_category_id'],
-						'filter_sub_blog_category' => true	
-					);		
-						
-					if ($this->config->get('config_product_count')) {
-						$blog_total = $this->model_extras_blog->getTotalBlogs($data);						
-						$child['name'] .= ' (' . $blog_total . ')';
-					}
-								
-					$children_data[] = array(
-						'name'  => $child['name'],
-						'href'  => $this->url->link('extras/blog_category', 'blogpath=' . $blog_category['blog_category_id'] . '_' . $child['blog_category_id'])	
-					);					
-				}
-				
-				// Level 1
-				$this->data['blog_categories'][] = array(
-					'name'     => $blog_category['name'],
-					'children' => $children_data,
-					'blogpath' => $blog_category['blog_category_id'],
-					'column'   => $blog_category['column'] ? $blog_category['column'] : 1,
-					'href'     => $this->url->link('extras/blog_category', 'blogpath=' . $blog_category['blog_category_id'])
-				);
-			}
-		}*/
-		// categories
-		$this->data['categories'] = array();
-		$this->data['test'] = $this->model_catalog_category->getCategories(0);
-		$categories = $this->model_catalog_category->getCategories(0);
-		foreach ($categories as $category) {
-			if ($category['top']) {
-				// Level 2
-				$children_data = array();
-
-				$children = $this->model_catalog_category->getCategories($category['category_id']);
-
-				foreach ($children as $child) {
-					$data = array(
-						'filter_category_id'  => $child['category_id'],
-						'filter_sub_category' => true
-					);
-
-					$product_total = $this->model_catalog_product->getTotalProducts($data);
-
-					$children_data[] = array(
-						'name'  => $child['name'] . ($this->config->get('config_product_count') ? ' (' . $product_total . ')' : ''),
-						'href'  => $this->url->link('product/category', 'path=' . $category['category_id'] . '_' . $child['category_id'])
-					);						
-				}
-
-				// Level 1
-				$this->data['categories'][] = array(
-					'name'     => $category['name'],
-					'children' => $children_data,
-					'column'   => $category['column'] ? $category['column'] : 1,
-					'href'     => $this->url->link('product/category', 'path=' . $category['category_id'])
-				);
-			}
-		}
 		// models
-		// $this->data['test'] = $this->model_catalog_category->getCategoriesByManufacturerId(2);
 		$this->data['models'] = array();
 		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
 		foreach ($manufacturers as $manufacturer) {
 			$model_data = array();
 			$categories = $this->model_catalog_category->getCategoriesByManufacturerId($manufacturer['manufacturer_id']);
-			foreach($categories as $result) {
-				$model_data[] = array(
-					'name' => $result['name'],
-					'href' => $this->url->link('product/category', 'path=' . $result['category_id'])
-				);
+			foreach($categories as $result) {				
+				$total = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => $result['category_id']));				
+				if($total > 0) {
+					$model_data[] = array(
+						'name' => $result['name'] . ($this->config->get('config_product_count') ? ' (' . $total . ')' : ''),
+						'href' => $this->url->link('product/category', 'path=' . $result['category_id'])
+					);
+				}
 			}
 			$this->data['models'][] = array(
 				'manufacturer' => $manufacturer['name'],
@@ -258,6 +189,7 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
+
 		// manufacturers
 		$manufacturers = $this->model_catalog_manufacturer->getManufacturers();
 		foreach($manufacturers as $result) {
@@ -300,5 +232,6 @@ class ControllerCommonHeader extends Controller {
 
 		$this->render();
 	} 	
-}
+
+}// end class
 ?>
