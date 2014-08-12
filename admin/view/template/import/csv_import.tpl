@@ -17,7 +17,14 @@
   <?php } ?>
 
   <div class="box">
+<?php  
 
+print_r($test); 
+foreach($test as $t) {
+  var_dump($t['manufacturer_id']) . "<br>";
+  var_dump($t['name']) . "<br>";
+}
+?>
     <div class="heading">
       <h1><img src="admin/view/image/download.png" alt="" /> <?php echo $heading_title_csv_import; ?></h1>
   

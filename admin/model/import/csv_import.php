@@ -164,7 +164,7 @@ class ModelImportCsvImport extends Model {
 
 		$product_id = $this->db->getLastId();
 
-		$manufacturer_name = $this->getManufacturerName((int)$data['manufacturer_id']);
+		
 
 		// product decription
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product_description
@@ -172,9 +172,13 @@ class ModelImportCsvImport extends Model {
 								 `language_id` = '1',
 								 `name` = '" . $this->db->escape($data['title']) . "',
 								 `description` = '" . $this->db->escape(TRIM($data['description'])) . "',
-								 `meta_description` = '" . $this->db->escape($data['title']) . "',
-								 `meta_keyword` = '" . $manufacturer_name . "',
-								 `tag` = '" . $manufacturer_name . "'");
+								 `meta_description` = '" . $this->db->escape($data['title']) . "'");
+
+		if ((int)$data['manufacturer_id'] > 0) {
+			$manufacturer_name = $this->getManufacturerName((int)$data['manufacturer_id']);
+			$this->db->query("UPDATE " . DB_PREFIX . "product_description SET meta_keyword = '" . $this->db->escape($manufacturer_name) . "', tag = '" . $this->db->escape($manufacturer_name) . "'");
+		}
+
 		$isFirst = true;
 		foreach($image_array as $image) {
 			if($isFirst) {
@@ -263,13 +267,9 @@ class ModelImportCsvImport extends Model {
 			    LEFT JOIN  " . DB_PREFIX . "product_to_category ptc ON p.product_id = ptc.product_id
 			    LEFT JOIN  " . DB_PREFIX . "category_description cd ON ptc.category_id = cd.category_id
 			    LEFT JOIN  " . DB_PREFIX . "manufacturer m ON p.manufacturer_id = m.manufacturer_id
-			    WHERE      p.product_id IN (
-			    							SELECT p.product_id
-			    							FROM   " . DB_PREFIX . "product p
-			    							WHERE  p.status = '0'
-			    							AND    p.affiliate_id = '0'
-			    							AND    p.csv_import = '1'
-			    							)";
+			    WHERE  p.status = '0'
+			    AND    p.affiliate_id = '0'
+			    AND    p.csv_import = '1'";
 
 	    if(isset($start) || isset($limit)) {
 			if($start < 0) {
