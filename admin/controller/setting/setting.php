@@ -23,6 +23,7 @@ class ControllerSettingSetting extends Controller {
 			$this->redirect($this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
+		// Language
 		$this->data['heading_title'] = $this->language->get('heading_title');
 
 		$this->data['text_select'] = $this->language->get('text_select');
@@ -154,6 +155,7 @@ class ControllerSettingSetting extends Controller {
 		$this->data['tab_fraud'] = $this->language->get('tab_fraud');
 		$this->data['tab_server'] = $this->language->get('tab_server');
 
+		// Error
 		if (isset($this->error['warning'])) {
 			$this->data['error_warning'] = $this->error['warning'];
 		} else {
@@ -316,6 +318,7 @@ class ControllerSettingSetting extends Controller {
 			$this->data['error_encryption'] = '';
 		}		
 
+		// Breadcrumbs
 		$this->data['breadcrumbs'] = array();
 
 		$this->data['breadcrumbs'][] = array(
@@ -330,6 +333,7 @@ class ControllerSettingSetting extends Controller {
 			'separator' => ' :: '
 		);
 
+		// Success
 		if (isset($this->session->data['success'])) {
 			$this->data['success'] = $this->session->data['success'];
 
@@ -338,8 +342,8 @@ class ControllerSettingSetting extends Controller {
 			$this->data['success'] = '';
 		}
 
+		// Buttons
 		$this->data['action'] = $this->url->link('setting/setting', 'token=' . $this->session->data['token'], 'SSL');
-
 		$this->data['cancel'] = $this->url->link('setting/store', 'token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['token'] = $this->session->data['token'];

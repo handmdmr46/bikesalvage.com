@@ -16,4 +16,5 @@ $_['text_models']                = 'Models';
 $_['text_see_all_manufacturers'] = 'See All Manufacturers';
 $_['text_see_all_models']        = 'See All Models';
 $_['text_menu']                  = 'Navagation Menu:';
+$_['text_review']                = 'Reviews';
 ?>

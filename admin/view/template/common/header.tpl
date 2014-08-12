@@ -287,6 +287,8 @@ $(document).ready(function(){
         <ul>
           <li><a href="<?php echo $url_alias; ?>"><?php echo $text_manage_url_alias; ?></a></li>
           <li><a href="<?php echo $shipping_methods; ?>"><?php echo $text_shipping_methods; ?></a></li>
+          <li><a href="<?php echo $setting; ?>"><?php echo $text_shipping_methods; ?></a></li>
+          <li><a href="<?php echo $review_store; ?>"><?php echo $text_review_store; ?></a></li>
         </ul>
       </li>
       <!-- help -->

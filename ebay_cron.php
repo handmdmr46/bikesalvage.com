@@ -50,7 +50,7 @@ $ebay_call = new EbayCall($dev_id, $app_id, $cert_id, $compatability, $site_id, 
 // format output example: 2014-07-29T01:20:07.000Z
 date_default_timezone_set('America/Los_Angeles');
 
-$timeFrom = date('Y-m-d\TH:i:s\.', time() - 3800). '000Z'; // 3600 = 1 hour (added 200ms to prevent any chance of overlap times)
+$timeFrom = date('Y-m-d\TH:i:s\.', time() - 3600). '000Z'; // 3600 = 1 hour (added 200ms to prevent any chance of overlap times)
 $timeTo   = date('Y-m-d\TH:i:s\.') . '000Z';
 
 $xml = '<?xml version="1.0" encoding="utf-8"?>';

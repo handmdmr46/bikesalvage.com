@@ -8,6 +8,8 @@ class ControllerExtrasBlog extends Controller {
 		$this->load->model('extras/blog');
 		
 		$this->load->model('tool/image');
+
+		// $this->load->script('catalog/view/javascript/jquery/jquery-1.7.1.min.js');
 		
 		$this->getBlogs();
   	}
@@ -118,6 +120,9 @@ class ControllerExtrasBlog extends Controller {
     	$this->language->load('extras/blog');
 		$this->load->model('extras/blog');
 		
+		// added jQuery for blog comments to work on new theme
+		$this->document->addScript('catalog/view/javascript/jquery/jquery-1.7.1.min.js');
+
 		if (file_exists('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css')) {
 			$this->document->addStyle('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css');
 		} else {

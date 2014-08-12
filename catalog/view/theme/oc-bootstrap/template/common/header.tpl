@@ -508,8 +508,6 @@
                 <?php } ?>
             <?php } ?>
 		</header>
-        
-       <?php //print_r($models); ?>
        
             <nav class="main-navbar navbar navbar-inverse" role="navigation">
                 <div class="navbar-header">
@@ -618,6 +616,12 @@
                                                          
                             </div>
                         </li>                         
+                    </ul>
+                    <!-- Reviews -->
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="<?php echo $review; ?>"><?php echo $text_review; ?></a>
+                        </li>
                     </ul>
                 </div>
             </nav>
