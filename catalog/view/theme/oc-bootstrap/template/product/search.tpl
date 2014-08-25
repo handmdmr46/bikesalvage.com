@@ -98,7 +98,8 @@
             <div class="product-filter">
                 <div class="display">
                     <div class="btn-group">
-                        <a id="list-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_list'); ?>"><span class="glyphicon glyphicon-th-list"></span></a> <a id="grid-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_grid'); ?>"><span class="glyphicon glyphicon-th"></span></a>
+                        <a id="list-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_list'); ?>" onclick="showDescription()"><span class="glyphicon glyphicon-th-list"></span></a> 
+                        <a id="grid-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_grid'); ?>" onclick="hideDescription()"><span class="glyphicon glyphicon-th"></span></a>
                     </div>
                 </div>
                 <div class="limit">
@@ -146,10 +147,10 @@
                                         </a>
                                     </div>
                                 <?php } ?>
-                                <div class="name">
+                                <div class="description">
                                     <a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a>
-                                </div>
-                                <div class="description"><?php echo $product['description']; ?></div>
+                                </div>                                
+                                <div class="description description2" style="display:none;"><?php echo $product['description']; ?></div>
                                 <?php if ($product['price']) { ?>
                                     <div class="price">
                                         <?php if (!$product['special']) { 
@@ -186,7 +187,16 @@
         <?php echo $content_bottom; ?>
     </div>
 </div>
-<?php echo $footer; ?>
+
+<script type="text/javascript"><!--
+    function showDescription() {
+    $('.description2').show();
+    }
+
+    function hideDescription() {
+    $('.description2').hide();
+    }
+//--></script>
 
 <script type="text/javascript"><!--
 
@@ -228,58 +238,59 @@
     });
 
     $('select[name=\'manufacturer_id\']').trigger('change');
-
 //--></script>
 
 <script type="text/javascript"><!--
-$('#button-search').on('click', function() {
-	url = 'index.php?route=product/search';
-	
-	var search = $('#content input[name=\'search\']').prop('value');
-	
-	if (search) {
-		url += '&search=' + encodeURIComponent(search);
-	}
+    $('#button-search').on('click', function() {
+    url = 'index.php?route=product/search';
 
-	var category_id = $('#content select[name=\'category_id\']').prop('value');
-	if (category_id > 0) {
-		url += '&category_id=' + encodeURIComponent(category_id);
-	}
+    var search = $('#content input[name=\'search\']').prop('value');
+
+    if (search) {
+        url += '&search=' + encodeURIComponent(search);
+    }
+
+    var category_id = $('#content select[name=\'category_id\']').prop('value');
+    if (category_id > 0) {
+        url += '&category_id=' + encodeURIComponent(category_id);
+    }
 
     // added manufacturer_id - this adds manufacturer_id to the $_GET array??
     var manufacturer_id = $('#content select[name=\'manufacturer_id\']').prop('value');
     if (manufacturer_id > 0) {
         url += '&manufacturer_id=' + encodeURIComponent(manufacturer_id);
     }
-	
+
     // search in subcategories
-	var sub_category = $('#content input[name=\'sub_category\']:checked').prop('value');
-	if (sub_category) {
-		url += '&sub_category=true';
-	}
-	
-    // search in description	
-	var filter_description = $('#content input[name=\'description\']:checked').prop('value');
-	if (filter_description) {
-		url += '&description=true';
-	}
+    var sub_category = $('#content input[name=\'sub_category\']:checked').prop('value');
+    if (sub_category) {
+        url += '&sub_category=true';
+    }
 
-	location = url;
-});
+    // search in description    
+    var filter_description = $('#content input[name=\'description\']:checked').prop('value');
+    if (filter_description) {
+        url += '&description=true';
+    }
 
-$('#content input[name=\'search\']').on('keydown', function(e) {
-	if (e.keyCode == 13) {
-		$('#button-search').trigger('click');
-	}
-});
+    location = url;
+    });
 
-$('select[name=\'category_id\']').on('change', function() {
-	if (this.value == '0') {
-		$('input[name=\'sub_category\']').prop('disabled', true);
-	} else {
-		$('input[name=\'sub_category\']').prop('disabled', false);
-	}
-});
+    $('#content input[name=\'search\']').on('keydown', function(e) {
+    if (e.keyCode == 13) {
+        $('#button-search').trigger('click');
+    }
+    });
 
-$('select[name=\'category_id\']').trigger('change');
+    $('select[name=\'category_id\']').on('change', function() {
+    if (this.value == '0') {
+        $('input[name=\'sub_category\']').prop('disabled', true);
+    } else {
+        $('input[name=\'sub_category\']').prop('disabled', false);
+    }
+    });
+
+    $('select[name=\'category_id\']').trigger('change');
 --></script>
+
+<?php echo $footer; ?>
