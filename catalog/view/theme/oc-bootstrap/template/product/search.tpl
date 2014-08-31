@@ -203,13 +203,7 @@
             // $('#form').submit();
         }
     });*/
-$(document).ready(function() {
-  $(window).keydown(function(event){
-    // if(event.keyCode == 13) {
-      $('#button-search').trigger('click');
-    // }
-  });
-});
+
 //--></script> 
 
 <script type="text/javascript"><!--

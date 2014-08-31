@@ -331,9 +331,19 @@ class ModelCheckoutOrder extends Model {
 					}
 				}
 				// all other affiliates
-				if($order_product['affiliate_id'] > 1) {
+				if($order_product['affiliate_id'] > 0) {
+					// eBay Stock Control
 					//if(config('affiliate_stock_control_status') > 0 ) { //make ebayCall }
-                    
+
+					//Commission Control
+					if ($this->config->has('config_commission')) {
+						$commission_rate = $this->config->get('config_commission');
+					} else {
+						$commission_rate = 4.00;
+					}
+					$commission = ($commission_rate / 100) * $order_product['price'];
+					$commission = $commission * $order_product['quantity'];
+                    $this->db->query("UPDATE " . DB_PREFIX . "order_product SET commission = '" . (int)$commission . "' WHERE product_id = '" . (int)$order_product['product_id'] . "'");
 				}
 
 				// adjust product quantity
