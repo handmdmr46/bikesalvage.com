@@ -344,7 +344,8 @@ ADD COLUMN  `linked` int(11) NOT NULL DEFAULT '0';
 
 ALTER TABLE `oc_order_product`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0',
-ADD COLUMN  `ebay_response` varchar(500) NOT NULL DEFAULT'no response';
+ADD COLUMN  `ebay_response` varchar(500) NOT NULL DEFAULT'no response',
+ADD COLUMN  `commission` decimal(5,2) NOT NULL DEFAULT '0.00';
 
 ALTER TABLE `oc_order_total`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
@@ -372,4 +373,8 @@ ADD COLUMN  `manufacturer_id` int(11) NOT NULL DEFAULT'0';
 
 ALTER TABLE `oc_ebay_listing`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
+
+ALTER TABLE `oc_affiliate`
+ADD COLUMN  `commission_balance` decimal(15,2) NOT NULL DEFAULT '0.00';
+
 

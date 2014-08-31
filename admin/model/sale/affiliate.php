@@ -219,6 +219,7 @@ class ModelSaleAffiliate extends Model {
 
 	public function deleteTransaction($order_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "affiliate_transaction WHERE order_id = '" . (int)$order_id . "'");
+		//
 	}
 
 	public function getTransactions($affiliate_id, $start = 0, $limit = 10) {

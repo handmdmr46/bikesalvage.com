@@ -1,11 +1,6 @@
 <?php
 // Heading
-$_['heading_title_approval']         = 'Affiliate Approvals';
-$_['heading_title_import']           = 'Affiliate Imports';
-$_['heading_title_setting']          = 'Affiliate Settings';
-$_['heading_title_profile']          = 'Affiliate Profiles';
-$_['heading_title_sale']             = 'Affiliate Sales';
-
+$_['heading_title']             = 'Affiliates';
 
 // Text
 $_['text_success']              = 'Success: You have modified affiliates!';
@@ -17,7 +12,9 @@ $_['text_paypal']               = 'PayPal';
 $_['text_bank']                 = 'Bank Transfer';
 $_['text_edit']                 = 'Edit';
 $_['text_view']                 = 'View';
-
+$_['text_manage'] = 'Manage';
+$_['text_product'] = 'Products';
+$_['text_sale'] = 'Sales';
 
 // Column
 $_['column_name']               = 'Affiliate Name';
@@ -30,11 +27,13 @@ $_['column_date_added']         = 'Date Added';
 $_['column_description']        = 'Description';
 $_['column_amount']             = 'Amount';
 $_['column_action']             = 'Action';
-$_['column_import_pending']		= 'Import Pending';
-$_['column_import_status']		= 'Import\'s Pending';
-
-
-
+$_['column_import_pending']     = 'Import Pending';
+$_['column_import_status']      = 'Import\'s Pending';
+$_['column_model']              = 'Model';
+$_['column_price']              = 'Price';
+$_['column_quantity']           = 'Quantity';
+$_['column_image']              = 'Image';
+$_['column_product_name'] = 'Product Name';
 
 // Entry
 $_['entry_firstname']           = 'First Name:';
@@ -81,4 +80,8 @@ $_['error_postcode']            = 'Postcode must be between 2 and 10 characters 
 $_['error_country']             = 'Please select a country!';
 $_['error_zone']                = 'Please select a region / state!';
 $_['error_code']                = 'Tracking Code required!';
+
+//Tab
+$_['tab_product']               = 'Products';
+$_['tab_sale']                  = 'Sales';
 ?>

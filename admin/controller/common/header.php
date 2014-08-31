@@ -132,11 +132,9 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_manage_url_alias']   = $this->language->get('text_manage_url_alias');
 		
 		// Affiliate  -- comment this out for use, this is for testing -- under development --
-		$this->data['text_affiliate_setting']  = $this->language->get('text_affiliate_setting');
-		$this->data['text_affiliate_profile']  = $this->language->get('text_affiliate_profile');
-		$this->data['text_affiliate_import']   = $this->language->get('text_affiliate_import');
-		$this->data['text_affiliate_sale']     = $this->language->get('text_affiliate_sale');
-		$this->data['text_affiliate_approval'] = $this->language->get('text_affiliate_approval');
+		// $this->data['text_affiliate_setting']  = $this->language->get('text_affiliate_setting');
+		// $this->data['text_affiliate_sale']     = $this->language->get('text_affiliate_sale');
+		// $this->data['text_affiliate_approval'] = $this->language->get('text_affiliate_approval');
 		$this->data['text_affiliate']          = $this->language->get('text_affiliate');
 		
 		// Import
@@ -276,11 +274,10 @@ class ControllerCommonHeader extends Controller {
 			
 
 			// Affiliate  
-			$this->data['affiliate_approval']          = $this->url->link('affiliate/approval', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_import']            = $this->url->link('affiliate/import', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_profile']           = $this->url->link('affiliate/profile', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_setting']           = $this->url->link('affiliate/setting', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_sale']              = $this->url->link('affiliate/sale', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['affiliates']          = $this->url->link('affiliate/affiliate', 'token=' . $this->session->data['token'], 'SSL');
+			// $this->data['affiliate_approval']          = $this->url->link('affiliate/approval', 'token=' . $this->session->data['token'], 'SSL');
+			// $this->data['affiliate_setting']           = $this->url->link('affiliate/setting', 'token=' . $this->session->data['token'], 'SSL');
+			// $this->data['affiliate_sale']              = $this->url->link('affiliate/sale', 'token=' . $this->session->data['token'], 'SSL');
 			
 			// Import
 			$this->data['csv_import']                  = $this->url->link('import/csv_import', 'token=' . $this->session->data['token'], 'SSL');

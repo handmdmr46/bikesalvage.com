@@ -528,8 +528,8 @@ class ControllerCatalogProductUpload extends Controller {
 		$this->load->model('catalog/product');
 		
 		$results = array();
-		$product_total = $this->model_catalog_product->getTotalProducts($data);			
-		$results = $this->model_catalog_product->getProducts($data);
+		$product_total = $this->model_catalog_product->getTotalAdminProducts($data);			
+		$results = $this->model_catalog_product->getAdminProducts($data);
 				    	
 		if ($results) {
 			foreach ($results as $result) {
@@ -555,7 +555,8 @@ class ControllerCatalogProductUpload extends Controller {
 					'quantity'   => $result['quantity'],
 					'status'     => ($result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled')),
 					'selected'   => isset($this->request->post['selected']) && in_array($result['product_id'], $this->request->post['selected']),
-					'action'     => $action
+					'action'     => $action,
+					'affiliate_id' => $result['affiliate_id']
 				);
     		}
 		} 

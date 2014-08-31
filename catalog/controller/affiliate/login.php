@@ -4,7 +4,8 @@ class ControllerAffiliateLogin extends Controller {
 
 	public function index() {
 		if ($this->affiliate->isLogged()) {  
-			$this->redirect($this->url->link('affiliate/account', '', 'SSL'));
+			$this->session->data['token'] = md5(mt_rand());
+			$this->redirect($this->url->link('affiliate/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->language->load('affiliate/login');
@@ -18,7 +19,8 @@ class ControllerAffiliateLogin extends Controller {
 			if (isset($this->request->post['redirect']) && (strpos($this->request->post['redirect'], $this->config->get('config_url')) !== false || strpos($this->request->post['redirect'], $this->config->get('config_ssl')) !== false)) {
 				$this->redirect(str_replace('&amp;', '&', $this->request->post['redirect']));
 			} else {
-				$this->redirect($this->url->link('affiliate/account', '', 'SSL'));
+				$this->session->data['token'] = md5(mt_rand());
+				$this->redirect($this->url->link('affiliate/dashboard', 'token=' . $this->session->data['token'], 'SSL'));
 			} 
 		}
 
@@ -44,7 +46,7 @@ class ControllerAffiliateLogin extends Controller {
 
 		$this->data['heading_title'] = $this->language->get('heading_title');
 
-		$this->data['text_description'] = sprintf($this->language->get('text_description'), $this->config->get('config_name'), $this->config->get('config_name'), $this->config->get('config_commission') . '%');
+		$this->data['text_description'] = sprintf($this->language->get('text_description'), $this->config->get('config_name'), $this->config->get('config_commission') . '%');
 		$this->data['text_new_affiliate'] = $this->language->get('text_new_affiliate');
 		$this->data['text_register_account'] = $this->language->get('text_register_account');
 		$this->data['text_returning_affiliate'] = $this->language->get('text_returning_affiliate');

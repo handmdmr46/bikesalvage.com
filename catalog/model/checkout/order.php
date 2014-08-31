@@ -312,21 +312,28 @@ class ModelCheckoutOrder extends Model {
 				############# STOCK CONTROL ################
 				############################################			
 				
-				$ebay_item_id = $this->getEbayItemId($order_product['product_id']);
-				$ebay_item_quantity = $this->getEbayItemQuantity($ebay_item_id);
-				$new_ebay_item_quantity = $ebay_item_quantity - $order_product['quantity'];
+				if($order_product['affiliate_id'] < 1) { // only make ebay call to admin products here
+					$ebay_item_id = $this->getEbayItemId($order_product['product_id']);
+					$ebay_item_quantity = $this->getEbayItemQuantity($ebay_item_id);
+					$new_ebay_item_quantity = $ebay_item_quantity - $order_product['quantity'];
 
-				$ebay_response = 'FAILED REQUEST - Please adjust your stock manually for this item';
+					$ebay_response = 'FAILED REQUEST - Please adjust your stock manually for this item';
 
-				// ebay item stock control
-				if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity < 1) {
-					$ebay_response = 'EBAY ITEM ENDED - ItemID: ' . $ebay_item_id . ' - Response:';
-					$ebay_response .= $this->endEbayItem($ebay_item_id);
+					// ebay item stock control
+					if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity < 1) {
+						$ebay_response = 'EBAY ITEM ENDED - ItemID: ' . $ebay_item_id . ' - Response:';
+						$ebay_response .= $this->endEbayItem($ebay_item_id);
+					}
+
+					if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity >= 1) {
+						$ebay_response = 'REVISED EBAY ITEM QUANTITY - ItemID: ' . $ebay_item_id . ' - Response: ';
+						$ebay_response .= $this->reviseEbayItemQuantity($ebay_item_id, $new_ebay_item_quantity);
+					}
 				}
-
-				if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity >= 1) {
-					$ebay_response = 'REVISED EBAY ITEM QUANTITY - ItemID: ' . $ebay_item_id . ' - Response: ';
-					$ebay_response .= $this->reviseEbayItemQuantity($ebay_item_id, $new_ebay_item_quantity);
+				// all other affiliates
+				if($order_product['affiliate_id'] > 1) {
+					//if(config('affiliate_stock_control_status') > 0 ) { //make ebayCall }
+                    
 				}
 
 				// adjust product quantity
