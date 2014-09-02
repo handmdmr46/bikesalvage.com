@@ -64,6 +64,7 @@ $_['entry_bank_account_name']   = 'Account Name:';
 $_['entry_bank_account_number'] = 'Account Number:';
 $_['entry_amount']              = 'Amount:';
 $_['entry_description']         = 'Description:';
+$_['entry_transaction_status'] = 'Transaction Status:';
 
 // Error
 $_['error_permission']          = 'Warning: You do not have permission to modify affiliates!';

@@ -224,6 +224,16 @@
               <td><input type="text" name="amount" value="" /></td>
             </tr>
             <tr>
+              <td><?php echo $entry_transaction_status; ?></td>
+              <td>
+                <select name="transaction_status_id">
+                  <?php foreach ($transaction_statuses as $status) { ?>
+                    <option value="<?php echo $status['order_status_id']; ?>"><?php echo $status['name']; ?></option>
+                  <?php } ?>
+                </select>
+              </td>
+          </tr>
+            <tr>
               <td colspan="2" style="text-align: right;"><a id="button-reward" class="button" onclick="addTransaction();"><span><?php echo $button_add_transaction; ?></span></a></td>
             </tr>
           </table>
@@ -306,7 +316,9 @@
   		url: 'index.php?route=affiliate/affiliate/transaction&token=<?php echo $token; ?>&affiliate_id=<?php echo $affiliate_id; ?>',
   		type: 'post',
   		dataType: 'html',
-  		data: 'description=' + encodeURIComponent($('#tab-transaction input[name=\'description\']').val()) + '&amount=' + encodeURIComponent($('#tab-transaction input[name=\'amount\']').val()),
+  		data: 'description=' + encodeURIComponent($('#tab-transaction input[name=\'description\']').val()) 
+              + '&amount=' + encodeURIComponent($('#tab-transaction input[name=\'amount\']').val()) 
+              + '&status=' + encodeURIComponent($('#tab-transaction input[name=\'order_status\']').val()),
   		beforeSend: function() {
   			$('.success, .warning').remove();
   			$('#button-transaction').attr('disabled', true);

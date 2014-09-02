@@ -342,8 +342,10 @@ class ModelCheckoutOrder extends Model {
 						$commission_rate = 4.00;
 					}
 					$commission = ($commission_rate / 100) * $order_product['price'];
+					
 					$commission = $commission * $order_product['quantity'];
-                    $this->db->query("UPDATE " . DB_PREFIX . "order_product SET commission = '" . (int)$commission . "' WHERE product_id = '" . (int)$order_product['product_id'] . "'");
+					
+                    $this->db->query("UPDATE " . DB_PREFIX . "order_product SET commission = '" . (float)$commission . "' WHERE product_id = '" . (int)$order_product['product_id'] . "' AND order_id = '" . (int)$order_product['order_id'] . "'");
 				}
 
 				// adjust product quantity

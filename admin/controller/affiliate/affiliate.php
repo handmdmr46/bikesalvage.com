@@ -201,6 +201,7 @@ class ControllerAffiliateAffiliate extends Controller {
 		$this->data['entry_status']              = $this->language->get('entry_status');
 		$this->data['entry_amount']              = $this->language->get('entry_amount');
 		$this->data['entry_description']         = $this->language->get('entry_description');
+		$this->data['entry_transaction_status'] = $this->language->get('entry_transaction_status');
 		
 		$this->data['button_save']               = $this->language->get('button_save');
 		$this->data['button_cancel']             = $this->language->get('button_cancel');
@@ -578,6 +579,16 @@ class ControllerAffiliateAffiliate extends Controller {
 			$this->data['confirm'] = $this->request->post['confirm'];
 		} else {
 			$this->data['confirm'] = '';
+		}
+
+		$this->load->model('localisation/order_status');
+
+		$this->data['transaction_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+
+		if (isset($this->request->post['transaction_status'])) { 
+			$this->data['transaction_status'] = $this->request->post['transaction_status'];
+		} else {
+			$this->data['transaction_status'] = '';
 		}
 
 		$this->template = 'affiliate/affiliate_manage_form.tpl';
@@ -4184,7 +4195,7 @@ class ControllerAffiliateAffiliate extends Controller {
 		$this->load->model('affiliate/affiliate');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->user->hasPermission('modify', 'affiliate/affiliate')) { 
-			$this->model_affiliate_affiliate->addTransaction($this->request->get['affiliate_id'], $this->request->post['description'], $this->request->post['amount']);
+			$this->model_affiliate_affiliate->addTransaction($this->request->get['affiliate_id'], $this->request->post['description'], $this->request->post['amount'], $this->request->post['status']);
 
 			$this->data['success'] = $this->language->get('text_success');
 		} else {
