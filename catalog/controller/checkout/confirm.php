@@ -118,10 +118,10 @@ class ControllerCheckoutConfirm extends Controller {
 					*/
 					$this->load->model('total/' . $result['code']);
 					/*
-					* $this->load->model('total/shipping');
-					* $this->load->model('total/sub_total');
+					**** $this->load->model('total/shipping'); ****
+					**** $this->load->model('total/sub_total'); ****					
+					**** $this->load->model('total/total'); ****
 					* $this->load->model('total/tax');
-					* $this->load->model('total/total');
 					* $this->load->model('total/credit');
 					* $this->load->model('total/handling');
 					* $this->load->model('total/low_order_fee');
@@ -131,10 +131,10 @@ class ControllerCheckoutConfirm extends Controller {
 					*/
 					$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
 					/*
-					* $this->model_total_shipping->getTotal($total_data, $total, $taxes);
-					* $this->model_total_sub_total->getTotal($total_data, $total, $taxes);
-					* $this->model_total_tax->getTotal($total_data, $total, $taxes);
-					* $this->model_total_total->getTotal($total_data, $total, $taxes);
+					**** $this->model_total_shipping->getTotal($total_data, $total, $taxes); ****
+					**** $this->model_total_sub_total->getTotal($total_data, $total, $taxes); ****
+					**** $this->model_total_total->getTotal($total_data, $total, $taxes); ****
+					* $this->model_total_tax->getTotal($total_data, $total, $taxes);					
 					* $this->model_total_credit->getTotal($total_data, $total, $taxes);
 					* $this->model_total_handling->getTotal($total_data, $total, $taxes);
 					* $this->model_total_low_order_fee->getTotal($total_data, $total, $taxes);
@@ -273,7 +273,7 @@ class ControllerCheckoutConfirm extends Controller {
 			}
 			
 			$product_data = array();
-			foreach ($this->cart->getProducts() as $product) {				
+			foreach ($this->cart->getProducts() as $product) {
 				// Options
 				$option_data = array();
 				foreach ($product['option'] as $option) {
@@ -331,7 +331,7 @@ class ControllerCheckoutConfirm extends Controller {
 			
 			$data['products']       = $product_data;
 			$data['vouchers']       = $voucher_data;
-			$data['totals']         = $total_data;
+			$data['totals']         = $total_data; // order totals
 			$data['comment']        = $this->session->data['comment'];
 			$data['total']          = $total;
 			$data['language_id']    = $this->config->get('config_language_id');

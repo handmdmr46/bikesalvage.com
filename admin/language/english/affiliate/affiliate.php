@@ -12,9 +12,14 @@ $_['text_paypal']               = 'PayPal';
 $_['text_bank']                 = 'Bank Transfer';
 $_['text_edit']                 = 'Edit';
 $_['text_view']                 = 'View';
-$_['text_manage'] = 'Manage';
-$_['text_product'] = 'Products';
-$_['text_sale'] = 'Sales';
+$_['text_manage']               = 'Manage';
+$_['text_product']              = 'Products';
+$_['text_sale']                 = 'Sales';
+$_['text_transaction_total2']    = 'Transaction Total:';
+$_['text_commission_total']     = 'Commission Total:';
+$_['text_balance_due']          = 'Balance Due:';
+$_['text_order_product_total']  = 'Order Product Total:';
+$_['text_total_due']                = 'Total:';
 
 // Column
 $_['column_name']               = 'Affiliate Name';
@@ -33,7 +38,7 @@ $_['column_model']              = 'Model';
 $_['column_price']              = 'Price';
 $_['column_quantity']           = 'Quantity';
 $_['column_image']              = 'Image';
-$_['column_product_name'] = 'Product Name';
+$_['column_product_name']       = 'Product Name';
 
 // Entry
 $_['entry_firstname']           = 'First Name:';
@@ -64,7 +69,7 @@ $_['entry_bank_account_name']   = 'Account Name:';
 $_['entry_bank_account_number'] = 'Account Number:';
 $_['entry_amount']              = 'Amount:';
 $_['entry_description']         = 'Description:';
-$_['entry_transaction_status'] = 'Transaction Status:';
+$_['entry_transaction_status']  = 'Transaction Status:';
 
 // Error
 $_['error_permission']          = 'Warning: You do not have permission to modify affiliates!';
@@ -85,4 +90,5 @@ $_['error_code']                = 'Tracking Code required!';
 //Tab
 $_['tab_product']               = 'Products';
 $_['tab_sale']                  = 'Sales';
+$_['button_edit_transaction']   = 'Edit Transaction';
 ?>

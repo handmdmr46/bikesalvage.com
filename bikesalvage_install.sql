@@ -378,5 +378,6 @@ ALTER TABLE `oc_affiliate`
 ADD COLUMN  `commission_balance` decimal(15,4) NOT NULL DEFAULT '0.0000';
 
 ALTER TABLE `oc_affiliate_transaction`
-ADD COLUMN  `transaction_status_id` int(11) NOT NULL DEFAULT '2';
+ADD COLUMN  `status_id` int(11) NOT NULL DEFAULT '0',
+ADD COLUMN  `last_modified` datetime NOT NULL;
 

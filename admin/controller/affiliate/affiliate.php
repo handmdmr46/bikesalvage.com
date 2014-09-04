@@ -4194,8 +4194,11 @@ class ControllerAffiliateAffiliate extends Controller {
 
 		$this->load->model('affiliate/affiliate');
 
+		$affiliate_id = $this->request->get['affiliate_id'];
+		$this->session->data['affiliate_id'] = $affiliate_id;
+
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->user->hasPermission('modify', 'affiliate/affiliate')) { 
-			$this->model_affiliate_affiliate->addTransaction($this->request->get['affiliate_id'], $this->request->post['description'], $this->request->post['amount'], $this->request->post['status']);
+			$this->model_affiliate_affiliate->addTransaction($affiliate_id, $this->request->post['description'], $this->request->post['amount'], $this->request->post['status']);
 
 			$this->data['success'] = $this->language->get('text_success');
 		} else {
@@ -4209,11 +4212,18 @@ class ControllerAffiliateAffiliate extends Controller {
 		}
 
 		$this->data['text_no_results'] = $this->language->get('text_no_results');
-		$this->data['text_balance'] = $this->language->get('text_balance');
+		$this->data['text_total_due'] = $this->language->get('text_total_due');
+		$this->data['text_balance_due'] = $this->language->get('text_balance_due');
+		$this->data['text_transaction_total2'] = $this->language->get('text_transaction_total2');
+		$this->data['text_commission_total'] = $this->language->get('text_commission_total');
+		$this->data['text_order_product_total'] = $this->language->get('text_order_product_total');
+		$this->data['text_select'] = $this->language->get('text_select');
 
 		$this->data['column_date_added'] = $this->language->get('column_date_added');
 		$this->data['column_description'] = $this->language->get('column_description');
 		$this->data['column_amount'] = $this->language->get('column_amount');
+		$this->data['column_status'] = $this->language->get('column_status');
+		$this->data['button_edit'] = $this->language->get('button_edit');
 
 		if (isset($this->request->get['page'])) {
 			$page = $this->request->get['page'];
@@ -4223,17 +4233,33 @@ class ControllerAffiliateAffiliate extends Controller {
 
 		$this->data['transactions'] = array();
 
+		$this->load->model('localisation/order_status');
+
+		$this->data['transaction_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+
+		$this->data['edit_transaction'] = $this->url->link('affiliate/affiliate/editTransaction', 'token=' . $this->session->data['token'], 'SSL');
+
 		$results = $this->model_affiliate_affiliate->getTransactions($this->request->get['affiliate_id'], ($page - 1) * 10, 10);
 
 		foreach ($results as $result) {
 			$this->data['transactions'][] = array(
-				'amount'      => $this->currency->format($result['amount'], $this->config->get('config_currency')),
-				'description' => $result['description'],
-				'date_added'  => date($this->language->get('date_format_short'), strtotime($result['date_added']))
+				'affiliate_transaction_id' => $result['affiliate_transaction_id'],
+				'amount'                   => $this->currency->format($result['amount'], $this->config->get('config_currency')),
+				'description'              => $result['description'],
+				'status_id'                => $result['status_id'],
+				'selected'                 => isset($this->request->post['selected']) && in_array($result['affiliate_transaction_id'], $this->request->post['selected']),
+				'date_added'               => date($this->language->get('date_format_short'), strtotime($result['date_added']))
 			);
 		}
+		$total = $this->model_affiliate_affiliate->getTransactionTotal($this->request->get['affiliate_id']);
+		$commission_total = $this->model_affiliate_affiliate->getCommissionBalanceByAffiliateId($this->request->get['affiliate_id']);
+		$product_total = $this->model_affiliate_affiliate->getOrderProductBalanceByAffiliateId($this->request->get['affiliate_id']);
 
-		$this->data['balance'] = $this->currency->format($this->model_affiliate_affiliate->getTransactionTotal($this->request->get['affiliate_id']), $this->config->get('config_currency'));
+		$this->data['total_transaction'] = $this->currency->format($total, $this->config->get('config_currency'));
+		$this->data['total_commission'] = $this->currency->format($commission_total, $this->config->get('config_currency'));
+		$this->data['total_order_product'] = $this->currency->format($product_total, $this->config->get('config_currency'));
+		$this->data['balance_due'] = $this->currency->format(($product_total + $commission_total) - $total, $this->config->get('config_currency'));
+		$this->data['total'] = $this->currency->format($product_total + $commission_total, $this->config->get('config_currency'));
 
 		$transaction_total = $this->model_affiliate_affiliate->getTotalTransactions($this->request->get['affiliate_id']);
 
@@ -4249,6 +4275,39 @@ class ControllerAffiliateAffiliate extends Controller {
 		$this->template = 'affiliate/affiliate_transaction.tpl';		
 
 		$this->response->setOutput($this->render());
+	}
+
+	public function editTransaction() {
+		$this->language->load('affiliate/affiliate');
+
+		$this->load->model('affiliate/affiliate');
+
+		// $affiliate_id = $this->request->get['affiliate_id'];
+		$affiliate_id = $this->session->data['affiliate_id'];
+
+		if (isset($this->request->post['selected']) && $this->validate()) {
+			foreach ($this->request->post['selected'] as $transaction_id) {
+
+				$status_str      = $transaction_id . '_status';
+				$description_str = $transaction_id . '_description';
+
+				$status = $this->request->post[$status_str];
+				$description = $this->request->post[$description_str];
+
+				$data = array('status_id' => $status, 'description' => $description);
+
+				$this->model_affiliate_affiliate->editTransaction($affiliate_id, $transaction_id, $data);
+			}
+
+			$this->session->data['success'] = $this->language->get('text_success');
+
+			$url = '&affiliate_id=' . $affiliate_id;
+
+			$this->redirect($this->url->link('affiliate/affiliate/getManageForm', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+		}
+
+		$this->getManageForm();
+
 	}
 
 	public function autocomplete() {

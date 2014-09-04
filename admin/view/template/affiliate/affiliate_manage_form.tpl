@@ -11,7 +11,9 @@
   <div class="box">
     <div class="heading">
       <h1><img src="view/image/customer.png" alt="" /> <?php echo $heading_title; ?></h1>
-      <div class="buttons"><a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a><a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a></div>
+      <div class="buttons">
+        <a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a>
+        <a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a></div>
     </div>
     <div class="content">
       <div id="htabs" class="htabs">
@@ -212,7 +214,6 @@
             </tbody>
           </table>
         </div>
-
         <div id="tab-transaction">
           <table class="form">
             <tr>
@@ -226,7 +227,7 @@
             <tr>
               <td><?php echo $entry_transaction_status; ?></td>
               <td>
-                <select name="transaction_status_id">
+                <select name="status">
                   <?php foreach ($transaction_statuses as $status) { ?>
                     <option value="<?php echo $status['order_status_id']; ?>"><?php echo $status['name']; ?></option>
                   <?php } ?>
@@ -317,8 +318,8 @@
   		type: 'post',
   		dataType: 'html',
   		data: 'description=' + encodeURIComponent($('#tab-transaction input[name=\'description\']').val()) 
-              + '&amount=' + encodeURIComponent($('#tab-transaction input[name=\'amount\']').val()) 
-              + '&status=' + encodeURIComponent($('#tab-transaction input[name=\'order_status\']').val()),
+              + '&amount=' + encodeURIComponent($('#tab-transaction input[name=\'amount\']').val())
+              + '&status=' + encodeURIComponent($('#tab-transaction select[name=\'status\']').val()),
   		beforeSend: function() {
   			$('.success, .warning').remove();
   			$('#button-transaction').attr('disabled', true);
@@ -331,11 +332,13 @@
   		success: function(html) {
   			$('#transaction').html(html);
   			
-  			$('#tab-transaction input[name=\'amount\']').val('');
   			$('#tab-transaction input[name=\'description\']').val('');
+        $('#tab-transaction input[name=\'amount\']').val('');
+        $('#tab-transaction select[name=\'status\']').val('');
   		}
   	});
   }
+
 //--></script> 
 
 <!-- Tabs -->

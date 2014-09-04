@@ -101,7 +101,35 @@ class ModelCheckoutOrder extends Model {
 										mask = '" . $this->db->escape($download['mask']) . "', 
 										remaining = '" . (int)($download['remaining'] * $product['quantity']) . "'");
 			}	
+
 		}
+
+		$total_data = array();
+		$total = 0;
+		$taxes = $this->cart->getTaxes();
+
+		$this->load->model('total/total');
+		$this->load->model('total/sub_total');
+		$this->load->model('total/shipping');
+
+		$query = $this->db->query("SELECT affiliate_id FROM " . DB_PREFIX . "affiliate");
+
+		foreach($query->rows as $affiliate) {	
+			$this->model_total_sub_total->getAffiliateTotal($total_data, $total, $affiliate['affiliate_id']);
+			$this->model_total_shipping->getAffiliateTotal($total_data, $total, $affiliate['affiliate_id']);
+			$this->model_total_total->getAffiliateTotal($total_data, $total, $affiliate['affiliate_id']);
+		}
+
+		// Totals	
+		foreach ($data['totals'] as $total) {
+			$this->db->query("INSERT INTO " . DB_PREFIX . "order_total 
+								SET order_id = '" . (int)$order_id . "', 
+								    code = '" . $this->db->escape($total['code']) . "', 
+									title = '" . $this->db->escape($total['title']) . "', 
+									text = '" . $this->db->escape($total['text']) . "', 
+									`value` = '" . (float)$total['value'] . "', 
+									sort_order = '" . (int)$total['sort_order'] . "'");
+		}	
 		
 		// Vouchers
 		foreach ($data['vouchers'] as $voucher) {
@@ -118,17 +146,6 @@ class ModelCheckoutOrder extends Model {
 									amount = '" . (float)$voucher['amount'] . "'");
 		}
 		
-		// Totals	
-		foreach ($data['totals'] as $total) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "order_total 
-								SET order_id = '" . (int)$order_id . "', 
-								    code = '" . $this->db->escape($total['code']) . "', 
-									title = '" . $this->db->escape($total['title']) . "', 
-									text = '" . $this->db->escape($total['text']) . "', 
-									`value` = '" . (float)$total['value'] . "', 
-									sort_order = '" . (int)$total['sort_order'] . "'");
-		}	
-
 		return $order_id;
 	}
 

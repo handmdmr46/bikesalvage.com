@@ -271,11 +271,17 @@ class ModelAffiliateAffiliate extends Model {
 		return $query->row['total'];
 	}
 		
-	public function addTransaction($affiliate_id, $description = '', $amount = '', $order_id = 0) {
+	public function addTransaction($affiliate_id, $description = '', $amount = '', $status_id = 0, $order_id = 0) {
 		$affiliate_info = $this->getAffiliate($affiliate_id);
 		
 		if ($affiliate_info) { 
-			$this->db->query("INSERT INTO " . DB_PREFIX . "affiliate_transaction SET affiliate_id = '" . (int)$affiliate_id . "', order_id = '" . (float)$order_id . "', description = '" . $this->db->escape($description) . "', amount = '" . (float)$amount . "', date_added = NOW()");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "affiliate_transaction 
+				               SET affiliate_id = '" . (int)$affiliate_id . "', 
+				                   order_id = '" . (float)$order_id . "', 
+				                   description = '" . $this->db->escape($description) . "', 
+				                   amount = '" . (float)$amount . "', 
+				                   status_id = '" . (int)$status_id . "',
+				                   date_added = NOW()");
 		
 			$this->language->load('mail/affiliate');
 							
@@ -298,6 +304,16 @@ class ModelAffiliateAffiliate extends Model {
 			$mail->send();
 		}
 	}
+
+	public function editTransaction($affiliate_id, $transaction_id, $data) {
+			if (isset($data['status_id']) && isset($data['description'])) {
+				$this->db->query("UPDATE " . DB_PREFIX . "affiliate_transaction 
+					              SET    description = '" . $this->db->escape($data['description']) . "', 				                 
+					                     status_id = '" . (int)$data['status_id'] . "',
+					                     last_modified = NOW()
+					              WHERE  affiliate_transaction_id = '" . (int)$transaction_id . "'");
+			}
+	}
 	
 	public function deleteTransaction($order_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "affiliate_transaction WHERE order_id = '" . (int)$order_id . "'");
@@ -316,6 +332,18 @@ class ModelAffiliateAffiliate extends Model {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "affiliate_transaction WHERE affiliate_id = '" . (int)$affiliate_id . "' ORDER BY date_added DESC LIMIT " . (int)$start . "," . (int)$limit);
 	
 		return $query->rows;
+	}
+
+	public function getCommissionBalanceByAffiliateId($affiliate_id) {
+		$query = $this->db->query("SELECT SUM(commission) AS balance FROM " . DB_PREFIX . "order_product WHERE affiliate_id = '" . (int)$affiliate_id . "'");
+
+		return $query->row['balance'];
+	}
+
+	public function getOrderProductBalanceByAffiliateId($affiliate_id) {
+		$query = $this->db->query("SELECT SUM(total) AS balance FROM " . DB_PREFIX . "order_product WHERE affiliate_id = '" . (int)$affiliate_id . "'");
+
+		return $query->row['balance'];
 	}
 
 	public function getTotalTransactions($affiliate_id) {

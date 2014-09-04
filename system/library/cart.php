@@ -379,6 +379,18 @@ class Cart {
 		return $weight;
 	}
 
+	public function getWeightByAffiliateId($affiliate_id) {
+		$weight = 0;
+
+		foreach ($this->getProducts() as $product) {
+			if ($product['shipping'] && $product['affiliate_id'] == $affiliate_id) {
+				$weight += $this->weight->convert($product['weight'], $product['weight_class_id'], $this->config->get('config_weight_class_id'));
+			}
+		}
+
+		return $weight;
+	}
+
 	public function getSubTotal() {
 		$total = 0;
 

@@ -267,7 +267,12 @@ class ModelCatalogProductUpload extends Model {
 	
     public function editList($product_id, $data) {
 	  if (isset($data['price']) && isset($data['quantity']) && isset($data['model']) && isset($data['status'])) {
-		  $this->db->query("UPDATE " . DB_PREFIX . "product SET price = '" . (float)$data['price'] . "', quantity = '" . (int)$data['quantity'] . "', model = '" . $this->db->escape($data['model']) . "', status = '" . (int)$data['status'] . "' WHERE product_id = '" . (int)$product_id . "'");
+		  $this->db->query("UPDATE " . DB_PREFIX . "product 
+		  	                SET    price = '" . (float)$data['price'] . "', 
+		  	                       quantity = '" . (int)$data['quantity'] . "', 
+		  	                       model = '" . $this->db->escape($data['model']) . "', 
+		  	                       status = '" . (int)$data['status'] . "' 
+		  	                WHERE  product_id = '" . (int)$product_id . "'");
 	  }
     }
 	

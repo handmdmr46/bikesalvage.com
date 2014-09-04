@@ -7,5 +7,6 @@ $_['text_approve_services']     = 'Upon logging in, you will be able to generate
 $_['text_approve_thanks']       = 'Thanks,';
 $_['text_transaction_subject']  = '%s - Affiliate Commission';
 $_['text_transaction_received'] = 'You have received %s commission!';
+$_['text_transaction_received_update'] = 'The transaction for %s commission has been updated, to view your commission transactions log into your dashboard and select sales/transactions.';
 $_['text_transaction_total']    = 'Your total amount of commission is now %s.';
 ?>

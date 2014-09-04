@@ -12,6 +12,14 @@
     <?php echo $column_right; ?>
     <div id="content" class="col-md-8">
         <?php echo $content_top; ?>
+
+<?php
+echo '<h3>$_SESSION[\'shipping_methods\']</h3>';
+print_r($_SESSION['shipping_methods']);
+echo '<h3>$_SESSION[\'shipping_methods\'][\'usps\'][\'quote\']</h3>';
+print_r($_SESSION['shipping_methods']['usps']['quote']);
+?>
+
         <h1><?php echo $heading_title; ?></h1>
         <div class="checkout">
             <div id="checkout">
