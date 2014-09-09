@@ -45,11 +45,66 @@ class ControllerCheckoutShippingMethod extends Controller {
 			array_multisort($sort_order, SORT_ASC, $quote_data);
 
 			$this->session->data['shipping_methods'] = $quote_data;
-		}
 
+			// $affiliate_quote_data = array();
+			$affiliate_ids = array();
+
+			foreach ($this->cart->getProducts() as $product) {
+				if ($product['affiliate_id'] > 0) {
+					$affiliate_ids[] = $product['affiliate_id'];
+				}
+			}
+
+			$this->data['is_affiliate_products'] = false;
+			$this->data['affiliate_ids'] = array_unique($affiliate_ids);
+			$affiliate_shipping = array();
+			if (!empty($affiliate_ids)) {				
+				foreach(array_unique($affiliate_ids) as $affiliate_id) {
+					// get quote for each affiliate
+					foreach ($results as $result) {
+						if ($this->config->get($result['code'] . '_status')) {
+							$this->load->model('shipping/' . $result['code']);
+
+							$quote = $this->{'model_shipping_' . $result['code']}->getAffiliateQuote($shipping_address, $affiliate_id); 
+
+							if ($quote) {
+								$quote_data[$result['code']] = array( 
+									'title'        => $quote['title'],
+									'quote'        => $quote['quote'], 
+									'sort_order'   => $quote['sort_order'],
+									'error'        => $quote['error'],
+									'affiliate_id' => $affiliate_id
+								);
+							}
+						}
+			        }
+
+			        $sort_order = array();
+
+					foreach ($quote_data as $key => $value) {
+						$sort_order[$key] = $value['sort_order'];
+					}
+
+					array_multisort($sort_order, SORT_ASC, $quote_data);
+
+
+					$this->session->data['shipping_methods_' . $affiliate_id] = $quote_data;
+					$this->data['shipping_methods_' . $affiliate_id] = $this->session->data['shipping_methods_' . $affiliate_id];
+					$affiliate_shipping[] = $this->data['shipping_methods_' . $affiliate_id];
+				}
+
+				$this->data['is_affiliate_products'] = true;
+				$this->data['affiliate_shipping'] = $affiliate_shipping;				
+			} 
+
+		} // end  ---- if (!empty($shipping_address)) ----
+
+		// $this->data['admin_addresse'] = $this->config->get('config_address');
+		// $this->data['admin_name'] = $this->config->get('config_owner');
+		// $this->data['text_sold_by_admin'] = sprintf($this->language->get('text_sold_by_admin'), $this->config->get('config_owner'));
 		$this->data['text_shipping_method'] = $this->language->get('text_shipping_method');
 		$this->data['text_comments'] = $this->language->get('text_comments');
-
+		$this->data['text_other_sellers'] = $this->language->get('text_other_sellers');
 		$this->data['button_continue'] = $this->language->get('button_continue');
 
 		if (empty($this->session->data['shipping_methods'])) {

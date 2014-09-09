@@ -524,11 +524,16 @@ class ModelShippingUsps extends Model {
 			}
 
 			if ($quote_data) {
-				$title = $this->language->get('text_title');
+				// $title = $this->language->get('text_title');
 
-				if ($this->config->get('usps_display_weight')) {
+				/*if ($this->config->get('usps_display_weight')) {
 					$title .= ' (' . $this->language->get('text_weight') . ' ' . $this->weight->format($weight, $this->config->get('usps_weight_class_id')) . ')';
-				}
+				}*/
+
+				$weight = $this->weight->convert($this->cart->getWeightByAffiliateId(0), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
+				$title = '<b>Seller:</b> ' . $this->config->get('config_owner');
+				$title .= ' <b>Shipped From:</b> ' . $this->config->get('config_address');
+				$title .= ' <b>Package Weight:</b> ' . $this->weight->format($weight, $this->config->get('usps_weight_class_id')) . 'lbs';
 
 				$method_data = array(
 					'code'       => 'usps',
@@ -544,10 +549,6 @@ class ModelShippingUsps extends Model {
 	}
 
 	public function getAffiliateQuote($address, $affiliate_id) {
-		/**
-		* Modified: Custom Shipping Methods
-		*
-		*/
 		$this->language->load('shipping/usps');
 
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('usps_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");		
@@ -576,10 +577,10 @@ class ModelShippingUsps extends Model {
 			$postcode = str_replace(' ', '', $address['postcode']);
 
 			if ($address['iso_code_2'] == 'US') {
-				$xml  = '<RateV4Request USERID="' . $this->config->get('usps_user_id_' . $affiliate_id) . '">';
+				$xml  = '<RateV4Request USERID="' . $this->config->get($affiliate_id . '_usps_user_id') . '">';
 				$xml .= '	<Package ID="1">';
 				$xml .=	'		<Service>ALL</Service>';
-				$xml .=	'		<ZipOrigination>' . substr($this->config->get('usps_postcode_' . $affiliate_id), 0, 5) . '</ZipOrigination>';
+				$xml .=	'		<ZipOrigination>' . substr($this->config->get($affiliate_id . '_usps_postcode'), 0, 5) . '</ZipOrigination>';
 				$xml .=	'		<ZipDestination>' . substr($postcode, 0, 5) . '</ZipDestination>';
 				$xml .=	'		<Pounds>' . $pounds . '</Pounds>';
 				$xml .=	'		<Ounces>' . $ounces . '</Ounces>';
@@ -590,13 +591,13 @@ class ModelShippingUsps extends Model {
 				}
 
 				$xml .=	'		<Container>' . $this->config->get('usps_container') . '</Container>';
-				$xml .=	'		<Size>' . $this->config->get('usps_size_' . $affiliate_id) . '</Size>';
-				$xml .= '		<Width>' . $this->config->get('usps_width_' . $affiliate_id) . '</Width>';
-				$xml .= '		<Length>' . $this->config->get('usps_length_' . $affiliate_id) . '</Length>';
-				$xml .= '		<Height>' . $this->config->get('usps_height_' . $affiliate_id) . '</Height>';
+				$xml .=	'		<Size>' . $this->config->get('usps_size') . '</Size>';
+				$xml .= '		<Width>' . $this->config->get($affiliate_id . '_usps_width') . '</Width>';
+				$xml .= '		<Length>' . $this->config->get($affiliate_id . '_usps_length') . '</Length>';
+				$xml .= '		<Height>' . $this->config->get($affiliate_id . '_usps_height') . '</Height>';
 
 				// Calculate girth based on usps calculation
-				$xml .= '		<Girth>' . (round(((float)$this->config->get('usps_length_' . $affiliate_id) + (float)$this->config->get('usps_width_' . $affiliate_id) * 2 + (float)$this->config->get('usps_height_' . $affiliate_id) * 2), 1)) . '</Girth>';
+				$xml .= '		<Girth>' . (round(((float)$this->config->get($affiliate_id . '_usps_length') + (float)$this->config->get($affiliate_id . '_usps_width') * 2 + (float)$this->config->get($affiliate_id . '_usps_height') * 2), 1)) . '</Girth>';
 
 
 				$xml .=	'		<Machinable>' . ($this->config->get('usps_machinable') ? 'true' : 'false') . '</Machinable>';
@@ -828,7 +829,7 @@ class ModelShippingUsps extends Model {
 				);
 
 				if (isset($country[$address['iso_code_2']])) {
-					$xml  = '<IntlRateV2Request USERID="' . $this->config->get('usps_user_id_' . $affiliate_id) . '">';
+					$xml  = '<IntlRateV2Request USERID="' . $this->config->get($affiliate_id . '_usps_user_id') . '">';
 					$xml .=	'	<Package ID="1">';
 					$xml .=	'		<Pounds>' . $pounds . '</Pounds>';
 					$xml .=	'		<Ounces>' . $ounces . '</Ounces>';
@@ -846,10 +847,10 @@ class ModelShippingUsps extends Model {
 					}
 
 					$xml .=	'		<Container>' . $this->config->get('usps_container') . '</Container>';
-					$xml .=	'		<Size>' . $this->config->get('usps_size_' . $affiliate_id) . '</Size>';
-					$xml .= '		<Width>' . $this->config->get('usps_width_' . $affiliate_id) . '</Width>';
-					$xml .= '		<Length>' . $this->config->get('usps_length_' . $affiliate_id) . '</Length>';
-					$xml .= '		<Height>' . $this->config->get('usps_height_' . $affiliate_id) . '</Height>';
+					$xml .=	'		<Size>' . $this->config->get('usps_size') . '</Size>';
+					$xml .= '		<Width>' . $this->config->get($affiliate_id . '_usps_width') . '</Width>';
+					$xml .= '		<Length>' . $this->config->get($affiliate_id . '_usps_length') . '</Length>';
+					$xml .= '		<Height>' . $this->config->get($affiliate_id . '_usps_height') . '</Height>';
 					$xml .= '		<Girth>' . $this->config->get('usps_girth') . '</Girth>';
 					$xml .= '		<CommercialFlag>N</CommercialFlag>';
 					$xml .=	'	</Package>';
@@ -906,10 +907,8 @@ class ModelShippingUsps extends Model {
 					}
 
 					if ($rate_response || $intl_rate_response) {
-						if ($address['iso_code_2'] == 'US') { /* Domestic Mail Service */
-							// $allowed = array(0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17, 18, 19, 22, 23, 25, 27, 28);	
+						if ($address['iso_code_2'] == 'US') { 	
 							
-							// Shipping method hireacy
 							if (in_array(4,$allowed)) { 		// 4 = Parcel Post
 								$allowed = array(4);										
 							}elseif (in_array(1,$allowed)) {	// 1 = Priority Mail
@@ -981,10 +980,8 @@ class ModelShippingUsps extends Model {
 									'error'      => $error->getElementsByTagName('Description')->item(0)->nodeValue
 								);
 							}
-						} else { /* International Mail Service */							
-							// $allowed = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21);
-
-							// Custom Shipping Methods
+						} else { 
+							/* International Mail Service */														
 							$allowed = array();
 								
 							foreach ($product_shipping_methods as $result) {
@@ -1046,13 +1043,12 @@ class ModelShippingUsps extends Model {
 			if ($quote_data) {
 				$title = $this->language->get('text_title');
 
-				if ($this->config->get('usps_display_weight')) {
-					$title .= ' (' . $this->language->get('text_weight') . ' ' . $this->weight->format($weight, $this->config->get('usps_weight_class_id')) . ')';
-				}
+				$title_data = array();
+				$title_data[] = $this->getAffiliateShippingInfo($affiliate_id);
 
 				$method_data = array(
 					'code'       => 'usps',
-					'title'      => $title,
+					'title'      => $title_data,
 					'quote'      => $quote_data,
 					'sort_order' => $this->config->get('usps_sort_order'),
 					'error'      => false
@@ -1063,6 +1059,27 @@ class ModelShippingUsps extends Model {
 		return $method_data;
 	}
 
+	function getAffiliateShippingInfo($affiliate_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "affiliate a WHERE a.affiliate_id = '" . (int)$affiliate_id . "'");
+			                                                  
+		$zone = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone z WHERE z.zone_id = '" . (int)$query->row['zone_id'] . "'");
 
-}
+		$weight = $this->weight->convert($this->cart->getWeightByAffiliateId($affiliate_id), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
+
+		$address = array(
+			'firstname'  => $query->row['firstname'],
+			'lastname'   => $query->row['lastname'],
+			'state_name' => $zone->row['name'],
+			'state_code' => $zone->row['code'],
+			'city'       => $query->row['city'],
+			'postcode'   => $query->row['postcode'],
+			'address_1'  => $query->row['address_1'],
+			'address_2'  => $query->row['address_2'],
+			'weight'     => $this->weight->format($weight, $this->config->get('usps_weight_class_id'))
+		);
+
+		return $address;
+	}
+
+}// end class
 ?>
