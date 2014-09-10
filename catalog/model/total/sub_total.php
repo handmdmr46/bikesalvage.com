@@ -24,20 +24,8 @@ class ModelTotalSubTotal extends Model {
 
 	public function getAffiliateTotal(&$total_data, &$total, &$taxes, $affiliate_id) {
 		$this->language->load('total/sub_total');
-		
-		// $sub_total = $this->cart->getSubTotal();
 
-		$query = $this->db->query("SELECT affiliate_id FROM " . DB_PREFIX . "affiliate");
-
-			
-		foreach($this->cart->getProducts() as $product)	{		
-					
-			if($product['affiliate_id'] == $affiliate_id) {
-				$sub_total += $product['total'];
-			}
-
-		}
-		
+		$sub_total = $this->cart->getAffiliateSubTotal($affiliate_id);
 		
 		$total_data[] = array( 
 			'code'       => 'sub_total',

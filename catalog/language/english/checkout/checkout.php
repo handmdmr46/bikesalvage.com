@@ -100,4 +100,8 @@ $_['error_no_payment']                        = 'Warning: No Payment options are
 $_['text_trial']                              = '%s every %s %s for %s payments then ';
 $_['text_recurring']                          = '%s every %s %s';
 $_['text_length']                             = ' for %s payments';
+$_['text_seller']                             = '<b>Seller:</b> ';
+$_['text_shipped_from']                       = '<b class="pad-left15">Shipped From:</b> ';
+$_['text_package_weight']                     = '<b class="pad-left15">Package Weight:</b> ';
+$_['text_lbs']                                = 'lbs';
 ?>

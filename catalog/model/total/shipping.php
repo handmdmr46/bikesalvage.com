@@ -28,6 +28,13 @@ class ModelTotalShipping extends Model {
 
 	public function getAffiliateTotal(&$total_data, &$total, &$taxes, $affiliate_id) {
 		if ($this->cart->hasShipping() && isset($this->session->data['shipping_method'])) {
+
+			foreach ($this->session->data['shipping_methods'] as $key => $value) {
+				$code = $key;
+			}
+
+			
+
 			$total_data[] = array( 
 				'code'       => 'shipping',
 				'title'      => $this->session->data['shipping_method']['title'],
@@ -48,7 +55,7 @@ class ModelTotalShipping extends Model {
 				}
 			}
 
-			$total += $this->session->data['shipping_method']['cost'];
+			$total += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost']; 
 		}			
 	}
 }

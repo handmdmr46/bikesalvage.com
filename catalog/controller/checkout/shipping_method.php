@@ -12,7 +12,15 @@ class ControllerCheckoutShippingMethod extends Controller {
 		}
 
 		if (!empty($shipping_address)) {
-			// Shipping Methods
+			// Admin Products
+			$admin_products = array();
+			foreach($this->cart->getProducts() as $product) {
+				if ($product['affiliate_id'] < 1) {
+					$admin_products[] = $product['name'];
+				}
+			}
+
+			// Admin Shipping Methods
 			$quote_data = array();
 
 			$this->load->model('setting/extension');
@@ -30,7 +38,8 @@ class ControllerCheckoutShippingMethod extends Controller {
 							'title'      => $quote['title'],
 							'quote'      => $quote['quote'], 
 							'sort_order' => $quote['sort_order'],
-							'error'      => $quote['error']
+							'error'      => $quote['error'],
+							'products'   => $admin_products
 						);
 					}
 				}
@@ -46,7 +55,6 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 			$this->session->data['shipping_methods'] = $quote_data;
 
-			// $affiliate_quote_data = array();
 			$affiliate_ids = array();
 
 			foreach ($this->cart->getProducts() as $product) {
@@ -58,8 +66,17 @@ class ControllerCheckoutShippingMethod extends Controller {
 			$this->data['is_affiliate_products'] = false;
 			$this->data['affiliate_ids'] = array_unique($affiliate_ids);
 			$affiliate_shipping = array();
+
 			if (!empty($affiliate_ids)) {				
 				foreach(array_unique($affiliate_ids) as $affiliate_id) {
+					// get affiliate products
+					$affiliate_products = array();
+					foreach($this->cart->getProducts() as $product) {
+						if ($product['affiliate_id'] == $affiliate_id) {
+							$affiliate_products[] = $product['name'];
+						}
+					}
+
 					// get quote for each affiliate
 					foreach ($results as $result) {
 						if ($this->config->get($result['code'] . '_status')) {
@@ -73,7 +90,8 @@ class ControllerCheckoutShippingMethod extends Controller {
 									'quote'        => $quote['quote'], 
 									'sort_order'   => $quote['sort_order'],
 									'error'        => $quote['error'],
-									'affiliate_id' => $affiliate_id
+									'affiliate_id' => $affiliate_id,
+									'products'	   => $affiliate_products					
 								);
 							}
 						}
@@ -87,25 +105,24 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 					array_multisort($sort_order, SORT_ASC, $quote_data);
 
-
 					$this->session->data['shipping_methods_' . $affiliate_id] = $quote_data;
-					$this->data['shipping_methods_' . $affiliate_id] = $this->session->data['shipping_methods_' . $affiliate_id];
-					$affiliate_shipping[] = $this->data['shipping_methods_' . $affiliate_id];
+					$affiliate_shipping[] = $quote_data;
 				}
 
 				$this->data['is_affiliate_products'] = true;
 				$this->data['affiliate_shipping'] = $affiliate_shipping;				
 			} 
 
-		} // end  ---- if (!empty($shipping_address)) ----
+		} 
 
-		// $this->data['admin_addresse'] = $this->config->get('config_address');
-		// $this->data['admin_name'] = $this->config->get('config_owner');
-		// $this->data['text_sold_by_admin'] = sprintf($this->language->get('text_sold_by_admin'), $this->config->get('config_owner'));
 		$this->data['text_shipping_method'] = $this->language->get('text_shipping_method');
-		$this->data['text_comments'] = $this->language->get('text_comments');
-		$this->data['text_other_sellers'] = $this->language->get('text_other_sellers');
-		$this->data['button_continue'] = $this->language->get('button_continue');
+		$this->data['text_comments']        = $this->language->get('text_comments');
+		$this->data['text_other_sellers']   = $this->language->get('text_other_sellers');
+		$this->data['button_continue']      = $this->language->get('button_continue');
+		$this->data['text_seller']          = $this->language->get('text_seller');
+		$this->data['text_shipped_from']    = $this->language->get('text_shipped_from');
+		$this->data['text_package_weight']  = $this->language->get('text_package_weight');
+		$this->data['text_lbs']             = $this->language->get('text_lbs');
 
 		if (empty($this->session->data['shipping_methods'])) {
 			$this->data['error_warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));

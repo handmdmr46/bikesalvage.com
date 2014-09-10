@@ -26,14 +26,13 @@ class ModelShippingFlat extends Model {
 				'text'         => $this->currency->format($this->tax->calculate($this->config->get('flat_cost'), $this->config->get('flat_tax_class_id'), $this->config->get('config_tax')))
 			);
 			
-			$weight = $this->weight->convert($this->cart->getWeightByAffiliateId(0), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
-			$title  = '<b>Seller:</b> ' . $this->config->get('config_owner');
-			$title  .= ' <b>Shipped From:</b> ' . $this->config->get('config_address');
-			$title  .= ' <b>Package Weight:</b> ' . $this->weight->format($weight, $this->config->get('usps_weight_class_id')) . 'lbs';
+			$title_data = array();
+
+			$title_data[] = $this->getAdminShippingInfo();
 
 			$method_data = array(
 				'code'       => 'flat',
-				'title'      => $title,
+				'title'      => $title_data,
 				'quote'      => $quote_data,
 				'sort_order' => $this->config->get('flat_sort_order'),
 				'error'      => false
@@ -75,14 +74,14 @@ class ModelShippingFlat extends Model {
 
 			$title_data = array();
 
-			$title_data[] = $this->getAffiliateShippingInfo($affiliate_id);
+			$title_data[] = $this->getAffiliateShippingInfo($affiliate_id);			
 
 			$method_data = array(
 				'code'       => 'flat',
 				'title'      => $title_data,
 				'quote'      => $quote_data,
 				'sort_order' => $this->config->get('flat_sort_order'),
-				'error'      => false
+				'error'      => false,
 			);
 		}
 
@@ -109,6 +108,18 @@ class ModelShippingFlat extends Model {
 		);
 
 		return $address;
+	}
+
+	function getAdminShippingInfo() {
+		$weight = $this->weight->convert($this->cart->getWeightByAffiliateId(0), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
+
+		$info = array(
+			'name'    => $this->config->get('config_owner'),
+			'address' => $this->config->get('config_address'),
+			'weight'  => $this->weight->format($weight, $this->config->get('usps_weight_class_id'))
+		);
+
+		return $info;
 	}
 
 

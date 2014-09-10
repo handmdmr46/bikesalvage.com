@@ -14,10 +14,22 @@
         <?php echo $content_top; ?>
 
 <?php
-echo '<h3>$_SESSION[\'shipping_methods\']</h3>';
+/*echo '<h3>$_SESSION[\'shipping_methods\']</h3>';
 print_r($_SESSION['shipping_methods']);
+
 echo '<h3>$_SESSION[\'shipping_methods\'][\'usps\'][\'quote\']</h3>';
 print_r($_SESSION['shipping_methods']['usps']['quote']);
+*/
+
+
+// print_r($_SESSION['shipping_method']['cost']);
+// print_r($_SESSION['shipping_method']);
+// print_r($_SESSION['shipping_methods_7']['flat']['quote']['flat']['cost']);
+// print_r($_SESSION['shipping_methods']['flat']['title']);
+print_r($_SESSION['shipping_methods']);
+foreach($_SESSION['shipping_methods'] as $k => $v) {
+	echo $k;
+}
 ?>
 
         <h1><?php echo $heading_title; ?></h1>

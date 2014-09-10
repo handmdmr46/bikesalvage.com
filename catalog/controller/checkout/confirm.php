@@ -308,7 +308,6 @@ class ControllerCheckoutConfirm extends Controller {
 					'reward'              => $product['reward'],					
 					'affiliate_id'        => $product['affiliate_id']  // added affiliate_id
 				); 
-
 			}
 			
 			// Gift Voucher
@@ -333,7 +332,7 @@ class ControllerCheckoutConfirm extends Controller {
 			$data['vouchers']       = $voucher_data;
 			$data['totals']         = $total_data; // order totals
 			$data['comment']        = $this->session->data['comment'];
-			$data['total']          = $total;
+			$data['total']          = $total;// order
 			$data['language_id']    = $this->config->get('config_language_id');
 			$data['currency_id']    = $this->currency->getId();
 			$data['currency_code']  = $this->currency->getCode();
@@ -367,7 +366,60 @@ class ControllerCheckoutConfirm extends Controller {
 						
 			// Add Master Order 
 			$this->load->model('checkout/order');
-			$this->session->data['order_id'] = $this->model_checkout_order->addMasterOrder($data);
+			$order_id = $this->model_checkout_order->addMasterOrder($data);
+			$this->session->data['order_id'] = $order_id;
+
+			// Affiliate Order Totals
+			$affiliate_ids   = array();
+		
+			foreach ($this->cart->getProducts() as $product) {
+				if ($product['affiliate_id'] > 0) {
+					$affiliate_ids[] = $product['affiliate_id'];
+				}
+			}
+
+			$this->load->model('affiliate/dashboard_order_total');
+
+			if ($affiliate_ids) {
+				foreach(array_unique($affiliate_ids) as $affiliate_id) {
+					$affiliate_total      = 0;
+					$affiliate_total_data = array();
+					$affiliate_taxes      = array();
+					$affiliate_taxes      = $this->cart->getAffiliateTaxes($affiliate_id);
+
+					foreach ($this->session->data['shipping_methods'] as $key => $value) {
+					  $code = $key;
+				    }
+
+					$this->model_total_shipping->getAffiliateTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes, $affiliate_id, $code);				
+					$this->model_total_sub_total->getAffiliateTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes, $affiliate_id);				
+					$this->model_total_total->getTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes);				
+				
+					$sort_order = array(); 
+			  
+					foreach ($affiliate_total_data as $key => $value) {
+						$sort_order[$key] = $value['sort_order'];
+					}
+		
+					array_multisort($sort_order, SORT_ASC, $affiliate_total_data);
+
+					$this->model_affiliate_dashboard_order_total->setAffiliateOrderTotals($affiliate_total_data, $affiliate_id, $order_id);
+					
+					// Update order totals for additional affiliate shipping quotes
+					foreach ($total_data as $key => $value) {
+						if ($value['code'] == 'shipping') {
+							$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
+							$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
+						}
+						if ($value['code'] == 'total') {
+							$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
+							$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
+						}
+
+						$this->model_affiliate_dashboard_order_total->updateOrderTotals($total_data, $order_id);
+					}
+				}
+			}		
 			
 		    // Display product total's -- confirm.tpl --	
 			$this->data['column_name']     = $this->language->get('column_name');
@@ -427,7 +479,7 @@ class ControllerCheckoutConfirm extends Controller {
 					'quantity'            => $product['quantity'],
 					'subtract'            => $product['subtract'],
 					'price'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'))),
-					'total'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']),
+					'total'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']), 
 					'href'                => $this->url->link('product/product', 'product_id=' . $product['product_id']),
 					'recurring'           => $product['recurring'],
 					'profile_name'        => $product['profile_name'],
