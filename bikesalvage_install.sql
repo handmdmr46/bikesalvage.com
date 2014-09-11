@@ -381,3 +381,5 @@ ALTER TABLE `oc_affiliate_transaction`
 ADD COLUMN  `status_id` int(11) NOT NULL DEFAULT '0',
 ADD COLUMN  `last_modified` datetime NOT NULL;
 
+ALTER TABLE `oc_return`
+ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';

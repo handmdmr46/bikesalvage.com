@@ -15,11 +15,11 @@ $_['text_view']                 = 'View';
 $_['text_manage']               = 'Manage';
 $_['text_product']              = 'Products';
 $_['text_sale']                 = 'Sales';
-$_['text_transaction_total2']    = 'Transaction Total:';
-$_['text_commission_total']     = 'Commission Total:';
-$_['text_balance_due']          = 'Balance Due:';
-$_['text_order_product_total']  = 'Order Product Total:';
-$_['text_total_due']                = 'Total:';
+$_['text_transaction_total']    = 'Transaction:';
+$_['text_commission_total']     = 'Commission:';
+$_['text_balance_due']          = 'Balance:';
+$_['text_order_product_total']  = 'Sales:';
+$_['text_total_due']            = 'Total:';
 
 // Column
 $_['column_name']               = 'Affiliate Name';

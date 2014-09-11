@@ -4214,7 +4214,7 @@ class ControllerAffiliateAffiliate extends Controller {
 		$this->data['text_no_results'] = $this->language->get('text_no_results');
 		$this->data['text_total_due'] = $this->language->get('text_total_due');
 		$this->data['text_balance_due'] = $this->language->get('text_balance_due');
-		$this->data['text_transaction_total2'] = $this->language->get('text_transaction_total2');
+		$this->data['text_transaction_total'] = $this->language->get('text_transaction_total');
 		$this->data['text_commission_total'] = $this->language->get('text_commission_total');
 		$this->data['text_order_product_total'] = $this->language->get('text_order_product_total');
 		$this->data['text_select'] = $this->language->get('text_select');
@@ -4259,7 +4259,7 @@ class ControllerAffiliateAffiliate extends Controller {
 		$this->data['total_commission'] = $this->currency->format($commission_total, $this->config->get('config_currency'));
 		$this->data['total_order_product'] = $this->currency->format($product_total, $this->config->get('config_currency'));
 		$this->data['balance_due'] = $this->currency->format(($product_total + $commission_total) - $total, $this->config->get('config_currency'));
-		$this->data['total'] = $this->currency->format($product_total + $commission_total, $this->config->get('config_currency'));
+		$this->data['total'] = $this->currency->format($product_total - $commission_total, $this->config->get('config_currency'));
 
 		$transaction_total = $this->model_affiliate_affiliate->getTotalTransactions($this->request->get['affiliate_id']);
 
