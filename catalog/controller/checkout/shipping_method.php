@@ -64,13 +64,12 @@ class ControllerCheckoutShippingMethod extends Controller {
 			$affiliate_ids                       = array_unique($affiliate_ids);
 			$this->data['affiliate_ids']         = $affiliate_ids;
 			$affiliate_shipping                  = array();
-			$affiliate_products                  = array();
 			$this->data['is_affiliate_products'] = false;
 
 			if (!empty($affiliate_ids)) {	
 
 				foreach($affiliate_ids as $affiliate_id) {
-					
+					$affiliate_products                  = array();
 					foreach($this->cart->getProducts() as $product) {
 						if ($product['affiliate_id'] == $affiliate_id) {
 							$affiliate_products[] = $product['name'];
