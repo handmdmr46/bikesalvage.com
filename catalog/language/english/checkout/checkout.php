@@ -30,7 +30,7 @@ $_['text_shipping_method']                    = 'Please select the preferred shi
 $_['text_sold_by_admin']                      = 'Sold by: %s';
 $_['text_payment_method']                     = 'Please select the preferred payment method to use on this order.';
 $_['text_comments']                           = 'Add Comments About Your Order';
-$_['text_other_sellers']                      = '<div class="alert alert-info">NOTICE: Your shopping cart contains products from more than one seller. Please select the preferred shipping method to use for each seller.</div>';
+$_['text_other_sellers']                      = 'NOTICE: Your shopping may cart contains products from more than one seller. Please select the preferred shipping method to use for each seller(s).';
 $_['text_recurring_item']                     = 'Recurring item';
 $_['text_payment_profile']                    = 'Payment Profile';
 $_['text_trial_description']                  = '%s every %d %s(s) for %d payment(s) then';

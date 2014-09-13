@@ -14,9 +14,15 @@ class ControllerCheckoutShippingMethod extends Controller {
 		if (!empty($shipping_address)) {
 			// Admin Products
 			$admin_products = array();
+			$affiliate_ids = array();
+			$this->data['is_admin'] = false;
 			foreach($this->cart->getProducts() as $product) {
 				if ($product['affiliate_id'] < 1) {
 					$admin_products[] = $product['name'];
+					$this->data['is_admin'] = true;
+				}
+				if ($product['affiliate_id'] > 0) {
+					$affiliate_ids[] = $product['affiliate_id'];
 				}
 			}
 
@@ -55,29 +61,22 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 			$this->session->data['shipping_methods'] = $quote_data;
 
-			$affiliate_ids = array();
-
-			foreach ($this->cart->getProducts() as $product) {
-				if ($product['affiliate_id'] > 0) {
-					$affiliate_ids[] = $product['affiliate_id'];
-				}
-			}
-
+			$affiliate_ids                       = array_unique($affiliate_ids);
+			$this->data['affiliate_ids']         = $affiliate_ids;
+			$affiliate_shipping                  = array();
+			$affiliate_products                  = array();
 			$this->data['is_affiliate_products'] = false;
-			$this->data['affiliate_ids'] = array_unique($affiliate_ids);
-			$affiliate_shipping = array();
 
-			if (!empty($affiliate_ids)) {				
-				foreach(array_unique($affiliate_ids) as $affiliate_id) {
-					// get affiliate products
-					$affiliate_products = array();
+			if (!empty($affiliate_ids)) {	
+
+				foreach($affiliate_ids as $affiliate_id) {
+					
 					foreach($this->cart->getProducts() as $product) {
 						if ($product['affiliate_id'] == $affiliate_id) {
 							$affiliate_products[] = $product['name'];
 						}
 					}
-
-					// get quote for each affiliate
+					
 					foreach ($results as $result) {
 						if ($this->config->get($result['code'] . '_status')) {
 							$this->load->model('shipping/' . $result['code']);
@@ -106,11 +105,11 @@ class ControllerCheckoutShippingMethod extends Controller {
 					array_multisort($sort_order, SORT_ASC, $quote_data);
 
 					$this->session->data['shipping_methods_' . $affiliate_id] = $quote_data;
-					$affiliate_shipping[] = $quote_data;
+					$affiliate_shipping[]                                     = $quote_data;
 				}
 
 				$this->data['is_affiliate_products'] = true;
-				$this->data['affiliate_shipping'] = $affiliate_shipping;				
+				$this->data['affiliate_shipping']    = $affiliate_shipping;				
 			} 
 
 		} 
@@ -187,8 +186,12 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 		// Validate minimum quantity requirments.			
 		$products = $this->cart->getProducts();
-
+		$affiliate_ids = array();
 		foreach ($products as $product) {
+			if ($product['affiliate_id'] > 0) {
+				$affiliate_ids[] = $product['affiliate_id'];
+			}
+
 			$product_total = 0;
 
 			foreach ($products as $product_2) {
@@ -204,14 +207,26 @@ class ControllerCheckoutShippingMethod extends Controller {
 			}				
 		}
 
+		$affiliate_ids = array_unique($affiliate_ids);
+
+		// This works
 		if (!$json) {
 			if (!isset($this->request->post['shipping_method'])) {
-				$json['error']['warning'] = $this->language->get('error_shipping');
+				$is_admin = false;
+			}
+
+			if (!$is_admin) {
+				if (!$affiliate_ids) {
+					$json['error']['warning'] = $this->language->get('error_shipping');					
+				} else {
+					$this->request->post['shipping_method'] = $this->request->post['shipping_method_' . $affiliate_ids[0]];
+				}
+
 			} else {
 				$shipping = explode('.', $this->request->post['shipping_method']);
 
 				if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {			
-					$json['error']['warning'] = $this->language->get('error_shipping');
+					$json['error']['warning'] = $this->language->get('error_shipping');					
 				}
 			}
 
@@ -223,6 +238,28 @@ class ControllerCheckoutShippingMethod extends Controller {
 				$this->session->data['comment'] = strip_tags($this->request->post['comment']);
 			}							
 		}
+
+		// Original code version
+		/*if (!$json) {
+			if (!isset($this->request->post['shipping_method_9'])) {
+				// $json['error']['warning'] = $this->language->get('error_shipping');
+				$json['error']['warning'] = 'testing';
+			} else {
+				$shipping = explode('.', $this->request->post['shipping_method_9']);
+
+				if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {			
+					$json['error']['warning'] = $this->language->get('error_shipping');
+				}
+			}
+
+			if (!$json) {
+				$shipping = explode('.', $this->request->post['shipping_method_9']);
+
+				$this->session->data['shipping_method'] = $this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
+
+				$this->session->data['comment'] = strip_tags($this->request->post['comment']);
+			}							
+		}*/
 
 		$this->response->setOutput(json_encode($json));	
 	}
