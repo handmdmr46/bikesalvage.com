@@ -213,15 +213,7 @@ $(document).ready(function(){
         </ul>
       </li>
       <!-- affiliates -->
-      <li id="affiliate"><a class="top"><?php echo $text_affiliate; ?></a>
-        <ul>
-          <li><a href="<?php echo $affiliate_approval; ?>"><?php echo $text_affiliate_approval; ?></a></li>
-          <li><a href="<?php echo $affiliate_import; ?>"><?php echo $text_affiliate_import; ?></a></li>
-          <li><a href="<?php echo $affiliate_profile; ?>"><?php echo $text_affiliate_profile; ?></a></li>
-          <li><a href="<?php echo $affiliate_setting; ?>"><?php echo $text_affiliate_setting; ?></a></li>
-          <li><a href="<?php echo $affiliate_sale; ?>"><?php echo $text_affiliate_sale; ?></a></li>
-        </ul>
-      </li>
+      <li id="affiliate"><a class="top" href="<?php echo $affiliates; ?>"><?php echo $text_affiliate; ?></a></li>
       <!-- import -->
       <li id="import"><a class="top"><?php echo $text_import; ?></a>
         <ul>
@@ -287,6 +279,8 @@ $(document).ready(function(){
         <ul>
           <li><a href="<?php echo $url_alias; ?>"><?php echo $text_manage_url_alias; ?></a></li>
           <li><a href="<?php echo $shipping_methods; ?>"><?php echo $text_shipping_methods; ?></a></li>
+          <li><a href="<?php echo $setting; ?>"><?php echo $text_shipping_methods; ?></a></li>
+          <li><a href="<?php echo $review_store; ?>"><?php echo $text_review_store; ?></a></li>
         </ul>
       </li>
       <!-- help -->

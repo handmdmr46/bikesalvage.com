@@ -25,6 +25,7 @@ class Affiliate {
 				$this->telephone = $affiliate_query->row['telephone'];
 				$this->fax = $affiliate_query->row['fax'];
 				$this->code = $affiliate_query->row['code'];
+				$this->commission = $affiliate_query->row['commission'];
 
 				$this->db->query("UPDATE " . DB_PREFIX . "affiliate SET ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE affiliate_id = '" . (int)$this->session->data['affiliate_id'] . "'");
 			} else {
@@ -94,6 +95,10 @@ class Affiliate {
 
 	public function getCode() {
 		return $this->code;
+	}
+
+	public function getCommission() {
+		return $this->commission;
 	}
 }
 ?>

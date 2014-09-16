@@ -162,7 +162,20 @@ CREATE TABLE IF NOT EXISTS `blog_video` (
   `video` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `sort_order` int(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`blog_video_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2410 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2410;
+
+CREATE TABLE IF NOT EXISTS `oc_store_review` (
+  `review_id` int(11) NOT NULL AUTO_INCREMENT,
+  `author` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `email` varchar(96) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `website` varchar(128) COLLATE utf8_bin NOT NULL,
+  `text` text COLLATE utf8_bin NOT NULL,
+  `rating` int(1) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`review_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 /* affiliates */
 
@@ -331,10 +344,12 @@ ADD COLUMN  `linked` int(11) NOT NULL DEFAULT '0';
 
 ALTER TABLE `oc_order_product`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0',
-ADD COLUMN  `ebay_response` varchar(500) NOT NULL DEFAULT'no response';
+ADD COLUMN  `ebay_response` varchar(500) NOT NULL DEFAULT'no response',
+ADD COLUMN  `commission` decimal(15,4) NOT NULL DEFAULT '0.0000';
 
 ALTER TABLE `oc_order_total`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
+ADD COLUMN  `master_total` tinyint(1) NOT NULL DEFAULT'0';
 
 ALTER TABLE `oc_order_voucher`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
@@ -360,3 +375,13 @@ ADD COLUMN  `manufacturer_id` int(11) NOT NULL DEFAULT'0';
 ALTER TABLE `oc_ebay_listing`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 
+ALTER TABLE `oc_affiliate`
+ADD COLUMN  `commission_balance` decimal(15,4) NOT NULL DEFAULT '0.0000',
+ADD COLUMN  `other_email` text NOT NULL;
+
+ALTER TABLE `oc_affiliate_transaction`
+ADD COLUMN  `status_id` int(11) NOT NULL DEFAULT '0',
+ADD COLUMN  `last_modified` datetime NOT NULL;
+
+ALTER TABLE `oc_return`
+ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';

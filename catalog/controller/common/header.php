@@ -99,14 +99,16 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_see_all_models'] = $this->language->get('text_see_all_models');
 		$this->data['text_see_all_manufacturers'] = $this->language->get('text_see_all_manufacturers');
 		//blog
-		$this->data['text_blog'] = $this->language->get('text_blog');
-        $this->data['text_product_rss'] = $this->language->get('text_product_rss');
-        $this->data['text_blog_rss'] = $this->language->get('text_blog_rss');
-        $this->data['text_contact'] = $this->language->get('text_contact');
-        $this->data['text_telephone'] = $this->language->get('text_telephone');
-        $this->data['text_fax'] = $this->language->get('text_fax');
+		$this->data['text_blog']        = $this->language->get('text_blog');
+		$this->data['text_product_rss'] = $this->language->get('text_product_rss');
+		$this->data['text_blog_rss']    = $this->language->get('text_blog_rss');
+		$this->data['text_contact']     = $this->language->get('text_contact');
+		$this->data['text_telephone']   = $this->language->get('text_telephone');
+		$this->data['text_fax']         = $this->language->get('text_fax');
         // responsive header
-        $this->data['text_menu'] = $this->language->get('text_menu');
+        $this->data['text_menu']        = $this->language->get('text_menu');
+        // reviews
+        $this->data['text_review']      = $this->language->get('text_review');
 
         if (isset($this->request->get['blogpath'])) {
 		  $parts = explode('_', (string)$this->request->get['blogpath']);
@@ -203,20 +205,21 @@ class ControllerCommonHeader extends Controller {
 		
 		
 		// others
-		$this->data['home'] = $this->url->link('common/home');
+		$this->data['home']              = $this->url->link('common/home');
 		$this->data['all_manufacturers'] = $this->url->link('product/manufacturer');
-		$this->data['parts_search'] = $this->url->link('product/search');
-		$this->data['affiliates'] = $this->url->link('affiliate/dashboard');
-		$this->data['blog'] = $this->url->link('extras/blog');
-		$this->data['contact'] = $this->url->link('information/contact');
-		$this->data['return'] = $this->url->link('account/return/insert', '', 'SSL');
-		$this->data['sitemap'] = $this->url->link('information/sitemap');
-
+		$this->data['parts_search']      = $this->url->link('product/search');
+		$this->data['affiliates']        = $this->url->link('affiliate/dashboard');
+		$this->data['blog']              = $this->url->link('extras/blog');
+		$this->data['contact']           = $this->url->link('information/contact');
+		$this->data['return']            = $this->url->link('account/return/insert', '', 'SSL');
+		$this->data['sitemap']           = $this->url->link('information/sitemap');
+		$this->data['review']            = $this->url->link('review/reviews');
+		
 		// extras
-		$this->data['manufacturer'] = $this->url->link('product/manufacturer');
-		$this->data['voucher'] = $this->url->link('account/voucher', '', 'SSL');
-		$this->data['affiliate'] = $this->url->link('affiliate/account', '', 'SSL');
-		$this->data['special'] = $this->url->link('product/special');
+		$this->data['manufacturer']      = $this->url->link('product/manufacturer');
+		$this->data['voucher']           = $this->url->link('account/voucher', '', 'SSL');
+		$this->data['affiliate']         = $this->url->link('affiliate/account', '', 'SSL');
+		$this->data['special']           = $this->url->link('product/special');
 
 		$this->children = array(
 			'module/language',

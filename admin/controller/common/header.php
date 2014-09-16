@@ -119,7 +119,7 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_paypal_express_search']       = $this->language->get('text_paypal_search');
 		$this->data['text_recurring_profile']           = $this->language->get('text_recurring_profile');
 
-		// blog
+		// Blog
 		$this->data['text_extras']             = $this->language->get('text_extras');
 		$this->data['text_blog']               = $this->language->get('text_blog');
 		$this->data['text_blog_category']      = $this->language->get('text_blog_category');
@@ -132,11 +132,9 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_manage_url_alias']   = $this->language->get('text_manage_url_alias');
 		
 		// Affiliate  -- comment this out for use, this is for testing -- under development --
-		$this->data['text_affiliate_setting']  = $this->language->get('text_affiliate_setting');
-		$this->data['text_affiliate_profile']  = $this->language->get('text_affiliate_profile');
-		$this->data['text_affiliate_import']   = $this->language->get('text_affiliate_import');
-		$this->data['text_affiliate_sale']     = $this->language->get('text_affiliate_sale');
-		$this->data['text_affiliate_approval'] = $this->language->get('text_affiliate_approval');
+		// $this->data['text_affiliate_setting']  = $this->language->get('text_affiliate_setting');
+		// $this->data['text_affiliate_sale']     = $this->language->get('text_affiliate_sale');
+		// $this->data['text_affiliate_approval'] = $this->language->get('text_affiliate_approval');
 		$this->data['text_affiliate']          = $this->language->get('text_affiliate');
 		
 		// Import
@@ -153,12 +151,15 @@ class ControllerCommonHeader extends Controller {
 		$this->data['text_ebay_log']           = $this->language->get('text_ebay_log');
 
 		// Extras
+		$this->data['text_url_alias']          = $this->language->get('text_url_alias');
 		$this->data['text_shipping_methods']   = $this->language->get('text_shipping_methods');
+		$this->data['text_settings']           = $this->language->get('text_settings');
+		$this->data['text_review_store']       = $this->language->get('text_review_store');
 
 		// Sales
 		$this->data['text_order_master']       = $this->language->get('text_order_master');
 
-		// product upload
+		// Product Upload
 		$this->data['text_product_upload']     = $this->language->get('text_product_upload');
 
 		if (!$this->user->isLogged() || !isset($this->request->get['token']) || !isset($this->session->data['token']) || ($this->request->get['token'] != $this->session->data['token'])) {
@@ -273,11 +274,10 @@ class ControllerCommonHeader extends Controller {
 			
 
 			// Affiliate  
-			$this->data['affiliate_approval']          = $this->url->link('affiliate/approval', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_import']            = $this->url->link('affiliate/import', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_profile']           = $this->url->link('affiliate/profile', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_setting']           = $this->url->link('affiliate/setting', 'token=' . $this->session->data['token'], 'SSL');
-			$this->data['affiliate_sale']              = $this->url->link('affiliate/sale', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['affiliates']          = $this->url->link('affiliate/affiliate', 'token=' . $this->session->data['token'], 'SSL');
+			// $this->data['affiliate_approval']          = $this->url->link('affiliate/approval', 'token=' . $this->session->data['token'], 'SSL');
+			// $this->data['affiliate_setting']           = $this->url->link('affiliate/setting', 'token=' . $this->session->data['token'], 'SSL');
+			// $this->data['affiliate_sale']              = $this->url->link('affiliate/sale', 'token=' . $this->session->data['token'], 'SSL');
 			
 			// Import
 			$this->data['csv_import']                  = $this->url->link('import/csv_import', 'token=' . $this->session->data['token'], 'SSL');
@@ -295,6 +295,8 @@ class ControllerCommonHeader extends Controller {
 			// Extras
 			$this->data['shipping_methods']            = $this->url->link('shipping/custom_shipping', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['url_alias'] 				   = $this->url->link('extras/seo_url', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['settings'] 			       = $this->url->link('extras/settings', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['review_store'] 			   = $this->url->link('extras/review', 'token=' . $this->session->data['token'], 'SSL');
 
 			// Sales
 			$this->data['order_master'] 			   = $this->url->link('sale/order_master', 'token=' . $this->session->data['token'], 'SSL');

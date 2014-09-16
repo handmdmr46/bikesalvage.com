@@ -20,7 +20,7 @@ class ControllerAffiliateEdit extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->redirect($this->url->link('affiliate/account', '', 'SSL'));
+			$this->redirect($this->url->link('affiliate/dashboard', '', 'SSL'));
 		}
 
 		$this->data['breadcrumbs'] = array();
@@ -33,7 +33,7 @@ class ControllerAffiliateEdit extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('text_account'),
-			'href'      => $this->url->link('affiliate/account', '', 'SSL'),        	
+			'href'      => $this->url->link('affiliate/dashboard', '', 'SSL'),        	
 			'separator' => $this->language->get('text_separator')
 		);
 
@@ -240,7 +240,7 @@ class ControllerAffiliateEdit extends Controller {
 
 		$this->data['countries'] = $this->model_localisation_country->getCountries();
 
-		$this->data['back'] = $this->url->link('affiliate/account', '', 'SSL');
+		$this->data['back'] = $this->url->link('affiliate/dashboard', '', 'SSL');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/affiliate/edit.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/affiliate/edit.tpl';

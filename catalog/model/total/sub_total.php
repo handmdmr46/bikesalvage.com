@@ -21,5 +21,21 @@ class ModelTotalSubTotal extends Model {
 		
 		$total += $sub_total;
 	}
+
+	public function getAffiliateTotal(&$total_data, &$total, &$taxes, $affiliate_id) {
+		$this->language->load('total/sub_total');
+
+		$sub_total = $this->cart->getAffiliateSubTotal($affiliate_id);
+		
+		$total_data[] = array( 
+			'code'       => 'sub_total',
+			'title'      => $this->language->get('text_sub_total'),
+			'text'       => $this->currency->format($sub_total),
+			'value'      => $sub_total,
+			'sort_order' => $this->config->get('sub_total_sort_order')
+		);
+		
+		$total += $sub_total;
+	}
 }
 ?>

@@ -16,8 +16,9 @@
             <h1><?php echo $heading_title; ?></h1>
             <strong><?php echo $text_critea; ?></strong>
         </section>
-        <?php //echo $entry_search; ?>
-        <form class="form-inline" role="form">
+        
+        <form id="form" class="form-inline" role="form" >
+
             <!-- keywords -->
             <div class="form-group">
                 <?php if ($search) { ?>
@@ -26,6 +27,7 @@
                     <input class="form-control" type="text" name="search" value="<?php echo $search; ?>" onclick="this.value = '';" />
                 <?php } ?>
             </div>
+
             <!-- manufacturers -->
             <div class="form-group loader">
                 <select class="form-control" name="manufacturer_id" id="manufacturer_id">
@@ -39,6 +41,7 @@
                     <?php } ?>
                 </select>
             </div>
+
             <!-- categories -->
             <div class="form-group">
                 <select class="form-control" name="category_id">
@@ -66,8 +69,9 @@
                     } ?>
                 </select>
             </div>
+
             <!-- search in sub-category -->
-            <div class="checkbox">
+            <!-- <div class="checkbox">
                 <label for="sub_category">
                     <?php if ($sub_category) { ?>
                         <input type="checkbox" name="sub_category" value="1" id="sub_category" checked="checked" />
@@ -76,7 +80,8 @@
                     <?php } ?>
                     <?php echo $text_sub_category; ?>
                 </label>
-        	</div>
+        	</div> -->
+            
             <!-- search in description -->
         	<div class="checkbox">
                 <label for="description">
@@ -88,17 +93,21 @@
                     <?php echo $entry_description; ?>
                 </label>
             </div>
+            
         </form>
+
         <div class="pull-right">
             <input type="button" value="<?php echo $button_search; ?>" id="button-search" class="btn btn-info" />
         </div>
+        
         <h2><?php echo $text_advanced_search_title; ?></h2>
         <?php if ($products) { ?>
             <div class="product-compare"><a href="<?php echo $compare; ?>" id="compare_total"><?php echo $text_compare; ?></a></div>
             <div class="product-filter">
                 <div class="display">
                     <div class="btn-group">
-                        <a id="list-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_list'); ?>"><span class="glyphicon glyphicon-th-list"></span></a> <a id="grid-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_grid'); ?>"><span class="glyphicon glyphicon-th"></span></a>
+                        <a id="list-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_list'); ?>" onclick="showDescription()"><span class="glyphicon glyphicon-th-list"></span></a> 
+                        <a id="grid-view" class="btn btn-default tooltip-item" data-toggle="tooltip" title="<?php echo $this->language->get('button_grid'); ?>" onclick="hideDescription()"><span class="glyphicon glyphicon-th"></span></a>
                     </div>
                 </div>
                 <div class="limit">
@@ -146,10 +155,10 @@
                                         </a>
                                     </div>
                                 <?php } ?>
-                                <div class="name">
+                                <div class="description">
                                     <a href="<?php echo $product['href']; ?>"><?php echo $product['name']; ?></a>
-                                </div>
-                                <div class="description"><?php echo $product['description']; ?></div>
+                                </div>                                
+                                <div class="description description2" style="display:none;"><?php echo $product['description']; ?></div>
                                 <?php if ($product['price']) { ?>
                                     <div class="price">
                                         <?php if (!$product['special']) { 
@@ -186,7 +195,26 @@
         <?php echo $content_bottom; ?>
     </div>
 </div>
-<?php echo $footer; ?>
+
+<script type="text/javascript"><!--
+    /*$('#form').keydown(function() {
+        if (event.keyCode == 13) {
+            // $('#button-search').trigger('click');
+            // $('#form').submit();
+        }
+    });*/
+
+//--></script> 
+
+<script type="text/javascript"><!--
+    function showDescription() {
+    $('.description2').show();
+    }
+
+    function hideDescription() {
+    $('.description2').hide();
+    }
+//--></script>
 
 <script type="text/javascript"><!--
 
@@ -228,58 +256,59 @@
     });
 
     $('select[name=\'manufacturer_id\']').trigger('change');
-
 //--></script>
 
 <script type="text/javascript"><!--
-$('#button-search').on('click', function() {
-	url = 'index.php?route=product/search';
-	
-	var search = $('#content input[name=\'search\']').prop('value');
-	
-	if (search) {
-		url += '&search=' + encodeURIComponent(search);
-	}
+    $('#button-search').on('click', function() {
+        url = 'index.php?route=product/search';
 
-	var category_id = $('#content select[name=\'category_id\']').prop('value');
-	if (category_id > 0) {
-		url += '&category_id=' + encodeURIComponent(category_id);
-	}
+        var search = $('#content input[name=\'search\']').prop('value');
 
-    // added manufacturer_id - this adds manufacturer_id to the $_GET array??
-    var manufacturer_id = $('#content select[name=\'manufacturer_id\']').prop('value');
-    if (manufacturer_id > 0) {
-        url += '&manufacturer_id=' + encodeURIComponent(manufacturer_id);
-    }
-	
-    // search in subcategories
-	var sub_category = $('#content input[name=\'sub_category\']:checked').prop('value');
-	if (sub_category) {
-		url += '&sub_category=true';
-	}
-	
-    // search in description	
-	var filter_description = $('#content input[name=\'description\']:checked').prop('value');
-	if (filter_description) {
-		url += '&description=true';
-	}
+        if (search) {
+            url += '&search=' + encodeURIComponent(search);
+        }
 
-	location = url;
-});
+        var category_id = $('#content select[name=\'category_id\']').prop('value');
+        if (category_id > 0) {
+            url += '&category_id=' + encodeURIComponent(category_id);
+        }
 
-$('#content input[name=\'search\']').on('keydown', function(e) {
-	if (e.keyCode == 13) {
-		$('#button-search').trigger('click');
-	}
-});
+        // added manufacturer_id - this adds manufacturer_id to the $_GET array??
+        var manufacturer_id = $('#content select[name=\'manufacturer_id\']').prop('value');
+        if (manufacturer_id > 0) {
+            url += '&manufacturer_id=' + encodeURIComponent(manufacturer_id);
+        }
 
-$('select[name=\'category_id\']').on('change', function() {
-	if (this.value == '0') {
-		$('input[name=\'sub_category\']').prop('disabled', true);
-	} else {
-		$('input[name=\'sub_category\']').prop('disabled', false);
-	}
-});
+        // search in subcategories
+        var sub_category = $('#content input[name=\'sub_category\']:checked').prop('value');
+        if (sub_category) {
+            url += '&sub_category=true';
+        }
 
-$('select[name=\'category_id\']').trigger('change');
+        // search in description    
+        var filter_description = $('#content input[name=\'description\']:checked').prop('value');
+        if (filter_description) {
+            url += '&description=true';
+        }
+
+        location = url;
+    });
+
+    $('#content input[name=\'search\']').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            $('#button-search').trigger('click');
+        }
+    });
+
+    $('select[name=\'category_id\']').on('change', function() {
+        if (this.value == '0') {
+            $('input[name=\'sub_category\']').prop('disabled', true);
+        } else {
+            $('input[name=\'sub_category\']').prop('disabled', false);
+        }
+    });
+
+    $('select[name=\'category_id\']').trigger('change');
 --></script>
+
+<?php echo $footer; ?>

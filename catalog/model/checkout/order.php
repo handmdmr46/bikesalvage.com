@@ -101,7 +101,20 @@ class ModelCheckoutOrder extends Model {
 										mask = '" . $this->db->escape($download['mask']) . "', 
 										remaining = '" . (int)($download['remaining'] * $product['quantity']) . "'");
 			}	
+
 		}
+
+		// Totals	
+		foreach ($data['totals'] as $total) {
+			$this->db->query("INSERT INTO " . DB_PREFIX . "order_total 
+								SET order_id = '" . (int)$order_id . "', 
+								    code = '" . $this->db->escape($total['code']) . "', 
+									title = '" . $this->db->escape($total['title']) . "', 
+									text = '" . $this->db->escape($total['text']) . "', 
+									`value` = '" . (float)$total['value'] . "', 
+									sort_order = '" . (int)$total['sort_order'] . "',
+									master_total = '1'");
+		}	
 		
 		// Vouchers
 		foreach ($data['vouchers'] as $voucher) {
@@ -118,17 +131,6 @@ class ModelCheckoutOrder extends Model {
 									amount = '" . (float)$voucher['amount'] . "'");
 		}
 		
-		// Totals	
-		foreach ($data['totals'] as $total) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "order_total 
-								SET order_id = '" . (int)$order_id . "', 
-								    code = '" . $this->db->escape($total['code']) . "', 
-									title = '" . $this->db->escape($total['title']) . "', 
-									text = '" . $this->db->escape($total['text']) . "', 
-									`value` = '" . (float)$total['value'] . "', 
-									sort_order = '" . (int)$total['sort_order'] . "'");
-		}	
-
 		return $order_id;
 	}
 
@@ -306,27 +308,49 @@ class ModelCheckoutOrder extends Model {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . (int)$order_status_id . "', notify = '1', comment = '" . $this->db->escape(($comment && $notify) ? $comment : '') . "', date_added = NOW()");
 
 			// Order Products
-			$order_product_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");			
+			$order_product_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");		
+			$affiliate_ids = array();	
 			foreach ($order_product_query->rows as $order_product) {
 				############################################
 				############# STOCK CONTROL ################
 				############################################			
 				
-				$ebay_item_id = $this->getEbayItemId($order_product['product_id']);
-				$ebay_item_quantity = $this->getEbayItemQuantity($ebay_item_id);
-				$new_ebay_item_quantity = $ebay_item_quantity - $order_product['quantity'];
+				if($order_product['affiliate_id'] < 1) { // only make ebay call to admin products here
+					$ebay_item_id = $this->getEbayItemId($order_product['product_id']);
+					$ebay_item_quantity = $this->getEbayItemQuantity($ebay_item_id);
+					$new_ebay_item_quantity = $ebay_item_quantity - $order_product['quantity'];
 
-				$ebay_response = 'FAILED REQUEST - Please adjust your stock manually for this item';
+					$ebay_response = 'FAILED REQUEST - Please adjust your stock manually for this item';
 
-				// ebay item stock control
-				if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity < 1) {
-					$ebay_response = 'EBAY ITEM ENDED - ItemID: ' . $ebay_item_id . ' - Response:';
-					$ebay_response .= $this->endEbayItem($ebay_item_id);
+					// ebay item stock control
+					if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity < 1) {
+						$ebay_response = 'EBAY ITEM ENDED - ItemID: ' . $ebay_item_id . ' - Response:';
+						$ebay_response .= $this->endEbayItem($ebay_item_id);
+					}
+
+					if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity >= 1) {
+						$ebay_response = 'REVISED EBAY ITEM QUANTITY - ItemID: ' . $ebay_item_id . ' - Response: ';
+						$ebay_response .= $this->reviseEbayItemQuantity($ebay_item_id, $new_ebay_item_quantity);
+					}
 				}
+				// all other affiliates
+				if($order_product['affiliate_id'] > 0) {
+					$affiliate_ids[] = $order_product['affiliate_id'];
+					
+					// eBay Stock Control
+					//if(config('affiliate_stock_control_status') > 0 ) { //make ebayCall }
 
-				if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity >= 1) {
-					$ebay_response = 'REVISED EBAY ITEM QUANTITY - ItemID: ' . $ebay_item_id . ' - Response: ';
-					$ebay_response .= $this->reviseEbayItemQuantity($ebay_item_id, $new_ebay_item_quantity);
+					//Commission Control
+					if ($this->config->has('config_commission')) {
+						$commission_rate = $this->config->get('config_commission');
+					} else {
+						$commission_rate = 4.00;
+					}
+					$commission = ($commission_rate / 100) * $order_product['price'];
+					
+					$commission = $commission * $order_product['quantity'];
+					
+                    $this->db->query("UPDATE " . DB_PREFIX . "order_product SET commission = '" . (float)$commission . "' WHERE product_id = '" . (int)$order_product['product_id'] . "' AND order_id = '" . (int)$order_product['order_id'] . "'");
 				}
 
 				// adjust product quantity
@@ -369,15 +393,16 @@ class ModelCheckoutOrder extends Model {
 			}
 					
 			// Order Totals			
-			$order_total_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE order_id = '" . (int)$order_id . "' ORDER BY sort_order ASC");			
-			foreach ($order_total_query->rows as $order_total) {
+			$admin_order_total_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE order_id = '" . (int)$order_id . "' AND affiliate_id = '0' AND master_total = '0' ORDER BY sort_order ASC");	
+			$master_order_total_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE order_id = '" . (int)$order_id . "' AND affiliate_id = '0' AND master_total = '1' ORDER BY sort_order ASC");		
+			foreach ($admin_order_total_query->rows as $order_total) {
 				$this->load->model('total/' . $order_total['code']);				
 				if (method_exists($this->{'model_total_' . $order_total['code']}, 'confirm')) {
 					$this->{'model_total_' . $order_total['code']}->confirm($order_info, $order_total);
 				}
 			}
 			
-			// Send out order confirmation mail - to customer??
+			// Customer Order Confirmation Email
 			$language = new Language($order_info['language_directory']);
 			$language->load($order_info['language_filename']);
 			$language->load('mail/order');
@@ -554,7 +579,7 @@ class ModelCheckoutOrder extends Model {
 				);
 			}
 	
-			$template->data['totals'] = $order_total_query->rows;
+			$template->data['totals'] = $master_order_total_query->rows;
 			
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/mail/order.tpl')) {
 				$html = $template->fetch($this->config->get('config_template') . '/template/mail/order.tpl');
@@ -592,7 +617,7 @@ class ModelCheckoutOrder extends Model {
 			// Text Email Order Total			
 			$text .= "\n";
 			$text .= $language->get('text_new_order_total') . "\n";
-			foreach ($order_total_query->rows as $total) {
+			foreach ($admin_order_total_query->rows as $total) {
 				$text .= $total['title'] . ': ' . html_entity_decode($total['text'], ENT_NOQUOTES, 'UTF-8') . "\n";
 			}			
 			
@@ -634,7 +659,7 @@ class ModelCheckoutOrder extends Model {
 			$mail->setText(html_entity_decode($text, ENT_QUOTES, 'UTF-8'));
 			$mail->send();
 
-			// Send Order Alert Email
+			// Admin Order Alert Email
 			if ($this->config->get('config_alert_mail')) {
 				$subject = sprintf($language->get('text_new_subject'), html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'), $order_id);
 				
@@ -645,19 +670,27 @@ class ModelCheckoutOrder extends Model {
 				$text .= $language->get('text_new_order_status') . ' ' . $order_status . "\n\n";
 				$text .= $language->get('text_new_products') . "\n";
 				
+				$is_other_seller = false;
 				foreach ($order_product_query->rows as $product) {
-					$text .= $product['quantity'] . 'x ' . $product['name'] . ' (' . $product['model'] . ') ' . html_entity_decode($this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']), ENT_NOQUOTES, 'UTF-8') . "\n";
-					
-					$order_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . $product['order_product_id'] . "'");
-					
-					foreach ($order_option_query->rows as $option) {
-						if ($option['type'] != 'file') {
-							$value = $option['value'];
-						} else {
-							$value = utf8_substr($option['value'], 0, utf8_strrpos($option['value'], '.'));
+					if ($product['affiliate_id'] < 1) {
+
+						$text .= $product['quantity'] . 'x ' . $product['name'] . ' (' . $product['model'] . ') ' . html_entity_decode($this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']), ENT_NOQUOTES, 'UTF-8') . "\n";
+						
+						$order_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . $product['order_product_id'] . "'");
+						
+						foreach ($order_option_query->rows as $option) {
+							if ($option['type'] != 'file') {
+								$value = $option['value'];
+							} else {
+								$value = utf8_substr($option['value'], 0, utf8_strrpos($option['value'], '.'));
+							}
+												
+							$text .= chr(9) . '-' . $option['name'] . ' ' . (utf8_strlen($value) > 20 ? utf8_substr($value, 0, 20) . '..' : $value) . "\n";
 						}
-											
-						$text .= chr(9) . '-' . $option['name'] . ' ' . (utf8_strlen($value) > 20 ? utf8_substr($value, 0, 20) . '..' : $value) . "\n";
+					}
+
+					if ($product['affiliate_id'] > 0) {
+						$is_other_seller = true;
 					}
 				}
 				
@@ -669,7 +702,7 @@ class ModelCheckoutOrder extends Model {
 
 				$text .= $language->get('text_new_order_total') . "\n";
 				
-				foreach ($order_total_query->rows as $total) {
+				foreach ($admin_order_total_query->rows as $total) {
 					$text .= $total['title'] . ': ' . html_entity_decode($total['text'], ENT_NOQUOTES, 'UTF-8') . "\n";
 				}			
 				
@@ -678,6 +711,23 @@ class ModelCheckoutOrder extends Model {
 				if ($order_info['comment']) {
 					$text .= $language->get('text_new_comment') . "\n\n";
 					$text .= $order_info['comment'] . "\n\n";
+				}
+
+				if ($is_other_seller) {
+					$text .= '--------------------------------------------------------------------------------' . "\n";
+					$text .= '------ ATTENION: There other seller(s) products are present on this order ------' . "\n";
+					$text .= '--------------------------------------------------------------------------------' . "\n\n";
+					$text .= 'Additional Products:' . "\n";
+					foreach ($order_product_query->rows as $product) {
+						if ($product['affiliate_id'] > 0) {
+							$text .= $product['quantity'] . 'x ' . $product['name'] . ' (' . $product['model'] . ') ' . html_entity_decode($this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']), ENT_NOQUOTES, 'UTF-8') . "\n";																							
+						}
+					}					
+					$text .= "\n\n" . 'Master Order Totals:' . "\n";
+					foreach ($master_order_total_query->rows as $total) {
+						$text .= $total['title'] . ': ' . html_entity_decode($total['text'], ENT_NOQUOTES, 'UTF-8') . "\n";
+					}
+
 				}
 			
 				$mail = new Mail(); 
@@ -695,7 +745,7 @@ class ModelCheckoutOrder extends Model {
 				$mail->setText(html_entity_decode($text, ENT_QUOTES, 'UTF-8'));
 				$mail->send();
 				
-				// Send to additional alert emails
+				// additional alert emails
 				$emails = explode(',', $this->config->get('config_alert_emails'));
 				
 				foreach ($emails as $email) {
@@ -706,17 +756,74 @@ class ModelCheckoutOrder extends Model {
 				}				
 			}	
 			
-			// Send Affiliates Order Alert Email
-			/*foreach ($order_product_query->rows as $product) {
-				if ($product['affiliate_id'] != 0) {
-					// $affiliate_email = $this->getAffiliateEmail($product['affiliate_id']);
+			// Affiliate Order Alert Email
+			if ($affiliate_ids) {
+				foreach (array_unique($affiliate_ids) as $affiliate_id) {
 
-					// start build affiliate order emails here....
+					if ($this->config->get('config_alert_mail')) {
+						$affiliate_email = $this->getAffiliateEmail($affiliate_id);
+
+						$subject = sprintf($language->get('text_new_subject'), html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'), $order_id);
+						
+						// Text 
+						$text  = $language->get('text_new_received') . "\n\n";
+						$text .= $language->get('text_new_order_id') . ' ' . $order_id . "\n";
+						$text .= $language->get('text_new_date_added') . ' ' . date($language->get('date_format_short'), strtotime($order_info['date_added'])) . "\n";
+						$text .= $language->get('text_new_order_status') . ' ' . $order_status . "\n\n";
+						$text .= $language->get('text_new_products') . "\n";
+						
+						foreach ($order_product_query->rows as $product) {
+							if ($product['affiliate_id'] == $affiliate_id) {
+								$text .= $product['quantity'] . 'x ' . $product['name'] . ' (' . $product['model'] . ') ' . html_entity_decode($this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']), ENT_NOQUOTES, 'UTF-8') . "\n";																							
+							}
+						}													
+									
+						$text .= "\n";
+
+						$text .= $language->get('text_new_order_total') . "\n";
+						
+						$affiliate_order_total_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE order_id = '" . (int)$order_id . "' AND affiliate_id = '" . (int)$affiliate_id . "' ORDER BY sort_order ASC");
+
+						foreach ($affiliate_order_total_query->rows as $total) {
+							$text .= $total['title'] . ': ' . html_entity_decode($total['text'], ENT_NOQUOTES, 'UTF-8') . "\n";								
+						}			
+						
+						$text .= "\n";
+						
+						if ($order_info['comment']) {
+							$text .= $language->get('text_new_comment') . "\n\n";
+							$text .= $order_info['comment'] . "\n\n";
+						}
+					
+						$mail = new Mail(); 
+						$mail->protocol = $this->config->get('config_mail_protocol');
+						$mail->parameter = $this->config->get('config_mail_parameter');
+						$mail->hostname = $this->config->get('config_smtp_host');
+						$mail->username = $this->config->get('config_smtp_username');
+						$mail->password = $this->config->get('config_smtp_password');
+						$mail->port = $this->config->get('config_smtp_port');
+						$mail->timeout = $this->config->get('config_smtp_timeout');
+						$mail->setTo($affiliate_email);
+						$mail->setFrom($this->config->get('config_email'));
+						$mail->setSender($order_info['store_name']);
+						$mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
+						$mail->setText(html_entity_decode($text, ENT_QUOTES, 'UTF-8'));
+						$mail->send();
+						
+						// Send to additional alert emails						
+						$emails = explode(',', $this->getOtherAffiliateEmails($affiliate_id));
+				
+						foreach ($emails as $email) {
+							if ($email && preg_match('/^[^\@]+@.*\.[a-z]{2,6}$/i', $email)) {
+								$mail->setTo($email);
+								$mail->send();
+							}
+						}										
+					}
+
 				}
-
-			}*/
-		}
-	
+			}
+		}	
 	}
 	
 	public function update($order_id, $order_status_id, $comment = '', $notify = false) {
@@ -967,6 +1074,18 @@ class ModelCheckoutOrder extends Model {
 		$sql = "SELECT * FROM " . DB_PREFIX . "ebay_settings WHERE `affiliate_id` = '" . (int)$affiliate_id . "'";
 		$query = $this->db->query($sql);
 		return $query->row;
+	}
+
+	public function getAffiliateEmail($affiliate_id) {
+		$query = $this->db->query("SELECT a.email FROM " . DB_PREFIX . "affiliate a WHERE a.affiliate_id = '" . (int)$affiliate_id . "'");
+
+		return $query->row['email'];
+	}
+
+	public function getOtherAffiliateEmails($affiliate_id) {
+		$query = $this->db->query("SELECT a.other_email FROM " . DB_PREFIX . "affiliate a WHERE a.affiliate_id = '" . (int)$affiliate_id . "'");
+
+		return $query->row['other_email'];
 	}
 
 }// end class

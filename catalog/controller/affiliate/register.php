@@ -4,7 +4,7 @@ class ControllerAffiliateRegister extends Controller {
 
 	public function index() {
 		if ($this->affiliate->isLogged()) {
-			$this->redirect($this->url->link('affiliate/account', '', 'SSL'));
+			$this->redirect($this->url->link('affiliate/dashboard', '', 'SSL'));
 		}
 
 		$this->language->load('affiliate/register');
@@ -33,7 +33,7 @@ class ControllerAffiliateRegister extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('text_account'),
-			'href'      => $this->url->link('affiliate/account', '', 'SSL'),      	
+			'href'      => $this->url->link('affiliate/dashboard', '', 'SSL'),      	
 			'separator' => $this->language->get('text_separator')
 		);
 

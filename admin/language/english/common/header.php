@@ -39,7 +39,7 @@ $_['text_manager']                     = 'Extension Manager';
 $_['text_manufacturer']                = 'Manufacturers';
 $_['text_module']                      = 'Modules';
 $_['text_option']                      = 'Options';
-$_['text_order']                       = 'Orders';
+$_['text_order']                       = 'Admin Orders';
 $_['text_order_status']                = 'Order Statuses';
 $_['text_opencart']                    = 'Homepage';
 $_['text_payment']                     = 'Payments';
@@ -137,6 +137,7 @@ $_['text_product_upload']              = 'Product Upload';
 // Extras
 $_['text_manage_url_alias']            = 'Manage SEO URL';
 $_['text_shipping_methods']            = 'Shipping Methods';
+$_['text_review_store'] = 'Reviews';
 
 // Order Master
 $_['text_order_master']                       = 'Master Orders';

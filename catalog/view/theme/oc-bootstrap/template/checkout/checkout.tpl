@@ -12,6 +12,7 @@
     <?php echo $column_right; ?>
     <div id="content" class="col-md-8">
         <?php echo $content_top; ?>
+
         <h1><?php echo $heading_title; ?></h1>
         <div class="checkout">
             <div id="checkout">
@@ -66,59 +67,60 @@
     </div>
 </div>
 <script type="text/javascript"><!--
-$(document).on('change', '#checkout .checkout-content input[name=\'account\']', function() {
-	if ($(this).attr('value') == 'register') {
-		$('#payment-address .checkout-heading span').html('<?php echo $text_checkout_account; ?>');
-	} else {
-		$('#payment-address .checkout-heading span').html('<?php echo $text_checkout_payment_address; ?>');
-	}
-});
+	$(document).on('change', '#checkout .checkout-content input[name=\'account\']', function() {
+		if ($(this).attr('value') == 'register') {
+			$('#payment-address .checkout-heading span').html('<?php echo $text_checkout_account; ?>');
+		} else {
+			$('#payment-address .checkout-heading span').html('<?php echo $text_checkout_payment_address; ?>');
+		}
+	});
 
-$(document).on('click','.checkout-heading a', function() {
-	$('.checkout-content').slideUp('slow');
+	$(document).on('click','.checkout-heading a', function() {
+		$('.checkout-content').slideUp('slow');
+		
+		$(this).parent().parent().find('.checkout-content').slideDown('slow');
+	});
 	
-	$(this).parent().parent().find('.checkout-content').slideDown('slow');
-});
-<?php if (!$logged) { ?> 
-$(document).ready(function() {
-	<?php if(isset($quickconfirm)) { ?>
-		quickConfirm();
-	<?php }else{ ?>
-		$.ajax({
-			url: 'index.php?route=checkout/login',
-			dataType: 'html',
-			success: function(html) {
-				$('#checkout .checkout-content').html(html);
-					
-				$('#checkout .checkout-content').slideDown('slow');
-			},
-			error: function(xhr, ajaxOptions, thrownError) {
-				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-			}
-		});	
-	<?php } ?>
-});		
-<?php } else { ?>
-$(document).ready(function() {
+	<?php if (!$logged) { ?> 
+		$(document).ready(function() {
+			<?php if(isset($quickconfirm)) { ?>
+				quickConfirm();
+			<?php }else{ ?>
+				$.ajax({
+					url: 'index.php?route=checkout/login',
+					dataType: 'html',
+					success: function(html) {
+						$('#checkout .checkout-content').html(html);
+							
+						$('#checkout .checkout-content').slideDown('slow');
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					}
+				});	
+			<?php } ?>
+		});		
+	<?php } else { ?>
+		$(document).ready(function() {
 
-	<?php if(isset($quickconfirm)) { ?>
-		quickConfirm();
-	<?php }else{ ?>
-		$.ajax({
-			url: 'index.php?route=checkout/payment_address',
-			dataType: 'html',
-			success: function(html) {
-				$('#payment-address .checkout-content').html(html);
-					
-				$('#payment-address .checkout-content').slideDown('slow');
-			},
-			error: function(xhr, ajaxOptions, thrownError) {
-				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-			}
-		});	
+			<?php if(isset($quickconfirm)) { ?>
+				quickConfirm();
+			<?php }else{ ?>
+				$.ajax({
+					url: 'index.php?route=checkout/payment_address',
+					dataType: 'html',
+					success: function(html) {
+						$('#payment-address .checkout-content').html(html);
+							
+						$('#payment-address .checkout-content').slideDown('slow');
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					}
+				});	
+			<?php } ?>
+		});
 	<?php } ?>
-});
-<?php } ?>
 
 // Checkout
 $(document).on('click', '#button-account', function() {
@@ -860,6 +862,7 @@ $(document).on('click', '#button-guest-shipping', function() {
 	});	
 });
 
+// Shipping Method
 $(document).on('click', '#button-shipping-method', function() {
 	$.ajax({
 		url: 'index.php?route=checkout/shipping_method/validate',
@@ -914,6 +917,7 @@ $(document).on('click', '#button-shipping-method', function() {
 	});	
 });
 
+// Payment Method
 $(document).on('click', '#button-payment-method', function() {
 	$.ajax({
 		url: 'index.php?route=checkout/payment_method/validate', 

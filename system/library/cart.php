@@ -379,11 +379,35 @@ class Cart {
 		return $weight;
 	}
 
+	public function getWeightByAffiliateId($affiliate_id) {
+		$weight = 0;
+
+		foreach ($this->getProducts() as $product) {
+			if ($product['shipping'] && $product['affiliate_id'] == $affiliate_id) {
+				$weight += $this->weight->convert($product['weight'], $product['weight_class_id'], $this->config->get('config_weight_class_id'));
+			}
+		}
+
+		return $weight;
+	}
+
 	public function getSubTotal() {
 		$total = 0;
 
 		foreach ($this->getProducts() as $product) {
 			$total += $product['total'];
+		}
+
+		return $total;
+	}
+
+	public function getAffiliateSubTotal($affiliate_id) {
+		$total = 0;
+
+		foreach ($this->getProducts() as $product) {
+			if($product['affiliate_id'] == $affiliate_id) {
+				$total += $product['total'];
+			}
 		}
 
 		return $total;
@@ -401,6 +425,28 @@ class Cart {
 						$tax_data[$tax_rate['tax_rate_id']] = ($tax_rate['amount'] * $product['quantity']);
 					} else {
 						$tax_data[$tax_rate['tax_rate_id']] += ($tax_rate['amount'] * $product['quantity']);
+					}
+				}
+			}
+		}
+
+		return $tax_data;
+	}
+
+	public function getAffiliateTaxes($affiliate_id) {
+		$tax_data = array();
+
+		foreach ($this->getProducts() as $product) {
+			if ($product['affiliate_id'] == $affiliate_id) {
+				if ($product['tax_class_id']) {
+					$tax_rates = $this->tax->getRates($product['price'], $product['tax_class_id']);
+
+					foreach ($tax_rates as $tax_rate) {
+						if (!isset($tax_data[$tax_rate['tax_rate_id']])) {
+							$tax_data[$tax_rate['tax_rate_id']] = ($tax_rate['amount'] * $product['quantity']);
+						} else {
+							$tax_data[$tax_rate['tax_rate_id']] += ($tax_rate['amount'] * $product['quantity']);
+						}
 					}
 				}
 			}

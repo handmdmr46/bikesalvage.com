@@ -9,11 +9,12 @@ $_['text_logged']                = 'You are logged in as <a href="%s">%s</a> <b>
 $_['text_account']               = 'My Account';
 $_['text_checkout']              = 'Checkout';
 $_['text_blog']                  = 'Blog';
-$_['text_parts_search']          = 'Advanced Parts Search';
+$_['text_parts_search']          = 'Parts Search';
 $_['text_affiliates']            = 'Affiliates';
 $_['text_manufacturers']         = 'Manufacturers';
 $_['text_models']                = 'Models';
 $_['text_see_all_manufacturers'] = 'See All Manufacturers';
 $_['text_see_all_models']        = 'See All Models';
 $_['text_menu']                  = 'Navagation Menu:';
+$_['text_review']                = 'Reviews';
 ?>

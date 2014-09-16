@@ -450,9 +450,9 @@
 	<nav class="topbar navbar navbar-default <?php echo $topbarposition; ?>" role="navigation">
     	<div class="container">
         	<?php echo $language; ?>
-            <?php if ($status == '0' || $status == '1' && $this->config->get('themeoptions_currency') == 0) { 
+            <?php /*if ($status == '0' || $status == '1' && $this->config->get('themeoptions_currency') == 0) { 
             	echo $currency; 
-            } ?>
+            } */?>
         	<ul class="nav navbar-nav topbar-nav">
                 <li>
                 	<a href="<?php echo $wishlist; ?>" id="wishlist-total">
@@ -508,8 +508,6 @@
                 <?php } ?>
             <?php } ?>
 		</header>
-        
-       <?php //print_r($models); ?>
        
             <nav class="main-navbar navbar navbar-inverse" role="navigation">
                 <div class="navbar-header">
@@ -539,36 +537,11 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_information; ?></a>
                             <div class="dropdown-menu">
                                 <ul class="list-unstyled">
-                                <?php foreach ($informations as $information) { ?>
-                                    <li><a href="<?php echo $information['href']; ?>"><?php echo $information['title']; ?></a></li>
-                                <?php } ?>
-                                </ul>                                
-                            </div>
-                        </li>                         
-                    </ul>
-                    <!-- Customer Service -->
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_service; ?></a>
-                            <div class="dropdown-menu">
-                                <ul class="list-unstyled">
+                                    <?php foreach ($informations as $information) { ?>
+                                        <li><a href="<?php echo $information['href']; ?>"><?php echo $information['title']; ?></a></li>
+                                    <?php } ?>
                                     <li><a href="<?php echo $contact; ?>"><?php echo $text_contact; ?></a></li>
                                     <li><a href="<?php echo $return; ?>"><?php echo $text_return; ?></a></li>
-                                    <li><a href="<?php echo $sitemap; ?>"><?php echo $text_sitemap; ?></a></li>
-                                </ul>                                
-                            </div>
-                        </li>                         
-                    </ul>
-                    <!-- Extras -->
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $text_extra; ?></a>
-                            <div class="dropdown-menu">
-                                <ul class="list-unstyled">
-                                    <li><a href="<?php echo $manufacturer; ?>"><?php echo $text_manufacturer; ?></a></li>
-                                    <li><a href="<?php echo $voucher; ?>"><?php echo $text_voucher; ?></a></li>
-                                    <li><a href="<?php echo $affiliate; ?>"><?php echo $text_affiliate; ?></a></li>
-                                    <li><a href="<?php echo $special; ?>"><?php echo $text_special; ?></a></li>
                                 </ul>                                
                             </div>
                         </li>                         

@@ -1,11 +1,6 @@
 <?php
 // Heading
-$_['heading_title_approval']         = 'Affiliate Approvals';
-$_['heading_title_import']           = 'Affiliate Imports';
-$_['heading_title_setting']          = 'Affiliate Settings';
-$_['heading_title_profile']          = 'Affiliate Profiles';
-$_['heading_title_sale']             = 'Affiliate Sales';
-
+$_['heading_title']             = 'Affiliates';
 
 // Text
 $_['text_success']              = 'Success: You have modified affiliates!';
@@ -17,7 +12,14 @@ $_['text_paypal']               = 'PayPal';
 $_['text_bank']                 = 'Bank Transfer';
 $_['text_edit']                 = 'Edit';
 $_['text_view']                 = 'View';
-
+$_['text_manage']               = 'Manage';
+$_['text_product']              = 'Products';
+$_['text_sale']                 = 'Sales';
+$_['text_transaction_balance']    = 'Total Transactions:';
+$_['text_commission_total']     = 'Commission Fees:';
+$_['text_balance_due']          = 'Balance Owed:';
+$_['text_order_product_total']  = 'Total Sales:';
+$_['text_total_due']            = 'Total:';
 
 // Column
 $_['column_name']               = 'Affiliate Name';
@@ -30,11 +32,13 @@ $_['column_date_added']         = 'Date Added';
 $_['column_description']        = 'Description';
 $_['column_amount']             = 'Amount';
 $_['column_action']             = 'Action';
-$_['column_import_pending']		= 'Import Pending';
-$_['column_import_status']		= 'Import\'s Pending';
-
-
-
+$_['column_import_pending']     = 'Import Pending';
+$_['column_import_status']      = 'Import\'s Pending';
+$_['column_model']              = 'Model';
+$_['column_price']              = 'Price';
+$_['column_quantity']           = 'Quantity';
+$_['column_image']              = 'Image';
+$_['column_product_name']       = 'Product Name';
 
 // Entry
 $_['entry_firstname']           = 'First Name:';
@@ -65,6 +69,7 @@ $_['entry_bank_account_name']   = 'Account Name:';
 $_['entry_bank_account_number'] = 'Account Number:';
 $_['entry_amount']              = 'Amount:';
 $_['entry_description']         = 'Description:';
+$_['entry_transaction_status']  = 'Transaction Status:';
 
 // Error
 $_['error_permission']          = 'Warning: You do not have permission to modify affiliates!';
@@ -81,4 +86,9 @@ $_['error_postcode']            = 'Postcode must be between 2 and 10 characters 
 $_['error_country']             = 'Please select a country!';
 $_['error_zone']                = 'Please select a region / state!';
 $_['error_code']                = 'Tracking Code required!';
+
+//Tab
+$_['tab_product']               = 'Products';
+$_['tab_sale']                  = 'Sales';
+$_['button_edit_transaction']   = 'Edit Transaction';
 ?>

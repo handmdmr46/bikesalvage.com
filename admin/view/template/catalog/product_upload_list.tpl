@@ -82,7 +82,8 @@
             <?php foreach ($products as $product) { ?>
             <tr>
               <td style="text-align: center;">
-                <?php echo $product['product_id']; ?>
+                <?php //echo $product['product_id']; ?>
+                <?php //echo $product['affiliate_id']; ?>
                 <?php if ($product['selected']) { ?>
                   <input type="checkbox" name="selected[]" value="<?php echo $product['product_id']; ?>" id="<?php echo $product['product_id']; ?>_select" checked="checked" />
                 <?php } else { ?>
