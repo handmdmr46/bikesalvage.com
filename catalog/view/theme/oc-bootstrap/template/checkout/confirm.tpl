@@ -1,6 +1,4 @@
-
 <?php if (!isset($redirect)) { ?>
-
     <div class="checkout-product">
         <table class="table">
             <thead>
@@ -55,7 +53,6 @@
                 <?php } ?>
             </tbody>
             <tfoot>                
-                <?php print_r($totals); ?>
                 <?php foreach ($totals as $total) { ?>
                     <tr>
                         <td colspan="4" class="price"><strong><?php echo $total['title']; ?>:</strong></td>

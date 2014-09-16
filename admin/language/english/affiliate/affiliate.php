@@ -15,10 +15,10 @@ $_['text_view']                 = 'View';
 $_['text_manage']               = 'Manage';
 $_['text_product']              = 'Products';
 $_['text_sale']                 = 'Sales';
-$_['text_transaction_total']    = 'Transaction:';
-$_['text_commission_total']     = 'Commission:';
-$_['text_balance_due']          = 'Balance:';
-$_['text_order_product_total']  = 'Sales:';
+$_['text_transaction_balance']    = 'Total Transactions:';
+$_['text_commission_total']     = 'Commission Fees:';
+$_['text_balance_due']          = 'Balance Owed:';
+$_['text_order_product_total']  = 'Total Sales:';
 $_['text_total_due']            = 'Total:';
 
 // Column

@@ -4214,7 +4214,7 @@ class ControllerAffiliateAffiliate extends Controller {
 		$this->data['text_no_results'] = $this->language->get('text_no_results');
 		$this->data['text_total_due'] = $this->language->get('text_total_due');
 		$this->data['text_balance_due'] = $this->language->get('text_balance_due');
-		$this->data['text_transaction_total'] = $this->language->get('text_transaction_total');
+		$this->data['text_transaction_balance'] = $this->language->get('text_transaction_balance');
 		$this->data['text_commission_total'] = $this->language->get('text_commission_total');
 		$this->data['text_order_product_total'] = $this->language->get('text_order_product_total');
 		$this->data['text_select'] = $this->language->get('text_select');

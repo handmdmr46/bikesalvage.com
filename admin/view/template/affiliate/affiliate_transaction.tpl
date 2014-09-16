@@ -84,7 +84,7 @@
         <td>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
-        <td class="right"><b><?php echo $text_transaction_total; ?></b></td>
+        <td class="right"><b><?php echo $text_transaction_balance; ?></b></td>
         <td class="right"><?php echo $total_transaction; ?></td>
       </tr>      
       <tr>

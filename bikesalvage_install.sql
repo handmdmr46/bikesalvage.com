@@ -349,6 +349,7 @@ ADD COLUMN  `commission` decimal(15,4) NOT NULL DEFAULT '0.0000';
 
 ALTER TABLE `oc_order_total`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
+ADD COLUMN  `master_total` tinyint(1) NOT NULL DEFAULT'0';
 
 ALTER TABLE `oc_order_voucher`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
@@ -375,7 +376,8 @@ ALTER TABLE `oc_ebay_listing`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 
 ALTER TABLE `oc_affiliate`
-ADD COLUMN  `commission_balance` decimal(15,4) NOT NULL DEFAULT '0.0000';
+ADD COLUMN  `commission_balance` decimal(15,4) NOT NULL DEFAULT '0.0000',
+ADD COLUMN  `other_email` text NOT NULL;
 
 ALTER TABLE `oc_affiliate_transaction`
 ADD COLUMN  `status_id` int(11) NOT NULL DEFAULT '0',

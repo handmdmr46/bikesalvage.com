@@ -207,9 +207,10 @@ class ControllerCheckoutShippingMethod extends Controller {
 		}
 
 		$affiliate_ids = array_unique($affiliate_ids);
-
+		$is_admin = true;
 		// This works
 		if (!$json) {
+
 			if (!isset($this->request->post['shipping_method'])) {
 				$is_admin = false;
 			}

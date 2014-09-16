@@ -369,13 +369,11 @@ class ControllerCheckoutConfirm extends Controller {
 			$order_id = $this->model_checkout_order->addMasterOrder($data);
 			$this->session->data['order_id'] = $order_id;
 
-			// Affiliate Order Totals
+			//New Order Totals
 			$affiliate_ids   = array();
 		
 			foreach ($this->cart->getProducts() as $product) {
-				if ($product['affiliate_id'] > 0) {
 					$affiliate_ids[] = $product['affiliate_id'];
-				}
 			}
 
 			$this->load->model('affiliate/dashboard_order_total');
@@ -405,20 +403,21 @@ class ControllerCheckoutConfirm extends Controller {
 
 					$this->model_affiliate_dashboard_order_total->setAffiliateOrderTotals($affiliate_total_data, $affiliate_id, $order_id);
 					
-					// Update order totals for additional affiliate shipping quotes
-					foreach ($total_data as $key => $value) {
-						if ($value['code'] == 'shipping') {
-							$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
-							$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
+					// Update master order totals for additional affiliate shipping quotes
+					if ($affiliate_id > 0) {
+						foreach ($total_data as $key => $value) {
+							if ($value['code'] == 'shipping') {
+								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
+								$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
+							}
+							if ($value['code'] == 'total') {
+								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
+								$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
+							}
 						}
-						if ($value['code'] == 'total') {
-							$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
-							$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
-						}
-
-						$this->model_affiliate_dashboard_order_total->updateOrderTotals($total_data, $order_id);
 					}
 				}
+				$this->model_affiliate_dashboard_order_total->updateOrderTotals($total_data, $order_id);
 			}		
 			
 		    // Display product total's -- confirm.tpl --	
@@ -497,7 +496,7 @@ class ControllerCheckoutConfirm extends Controller {
 						'amount'      => $this->currency->format($voucher['amount'])
 					);
 				}
-			}  
+			}  			
 			
 			// Order Totals for Confirm View			
 			$this->data['totals'] = $total_data;

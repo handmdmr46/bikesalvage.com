@@ -55,7 +55,9 @@ class ModelTotalShipping extends Model {
 				}
 			}
 
-			$total += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost']; 
+			if ($affiliate_id > 0) {
+				$total += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost']; 
+			}
 		}			
 	}
 }
