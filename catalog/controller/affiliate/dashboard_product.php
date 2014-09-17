@@ -19,7 +19,7 @@ class ControllerAffiliateDashboardProduct extends Controller {
 		$this->getProducts();		
 	}
 	
-	public function getProducts() {
+	protected function getProducts() {
 		// filters
        if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];

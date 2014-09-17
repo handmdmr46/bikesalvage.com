@@ -379,5 +379,4 @@ $_['text_transaction']              = 'Transactions';
 $_['column_description']            = 'Description';
 $_['column_amount']                 = 'Amount';
 $_['entry_other_email']             = 'Additional Alert Emails<span class="help">Any additional emails you want to receive the alert email, in addition to the main affiliate email. (comma separated)</span>';
-
 ?>

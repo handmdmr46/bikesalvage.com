@@ -10,8 +10,6 @@ class ControllerAffiliateCommonHeader extends Controller {
 		$this->data['heading_title'] = $this->language->get('heading_title');
 
 		// language
-		//$this->data['title'] = $this->language->get('heading_title_product');
-    	//$this->data['heading_title_product'] = $this->language->get('heading_title_product');
 		$this->data['styles'] = $this->document->getStyles();
 		$this->data['scripts'] = $this->document->getScripts();
 		$this->data['first_name'] = $this->affiliate->getFirstName();
@@ -43,6 +41,8 @@ class ControllerAffiliateCommonHeader extends Controller {
 		$this->data['text_ebayid_import'] = $this->language->get('text_ebayid_import');
 		$this->data['text_transaction'] = $this->language->get('text_transaction');
 		$this->data['text_shipping_config'] = $this->language->get('text_shipping_config');
+		$this->data['text_linked_products'] = $this->language->get('text_linked_products');
+		$this->data['text_unlinked_products'] = $this->language->get('text_unlinked_products');
 
 		if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
 			$this->data['base'] = HTTPS_SERVER;
@@ -67,6 +67,8 @@ class ControllerAffiliateCommonHeader extends Controller {
 		$this->data['dashboard_import_ebayid'] = $this->url->link('affiliate/dashboard_import_ebayid', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['transaction'] = $this->url->link('affiliate/dashboard_transaction', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['shipping_config'] = $this->url->link('affiliate/dashboard_shipping', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['linked_products'] = $this->url->link('affiliate/dashboard_linked_products', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['unlinked_products'] = $this->url->link('affiliate/dashboard_unlinked_products', 'token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['template_url'] = 'catalog/view/theme/' . $this->config->get('config_template');
 		$this->template = $this->config->get('config_template') . '/template/affiliate/common/header.tpl';
