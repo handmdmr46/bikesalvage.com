@@ -136,9 +136,10 @@ $_['text_product_upload']              = 'Product Upload';
 
 // Extras
 $_['text_manage_url_alias']            = 'Manage SEO URL';
-$_['text_shipping_methods']            = 'Shipping Methods';
+$_['text_custom_setting']            = 'Custom Settings';
 $_['text_review_store'] = 'Reviews';
 
 // Order Master
 $_['text_order_master']                       = 'Master Orders';
+$_['text_transaction_status'] = 'Transaction Statuses';
 ?>

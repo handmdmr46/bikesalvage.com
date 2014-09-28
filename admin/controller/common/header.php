@@ -152,12 +152,15 @@ class ControllerCommonHeader extends Controller {
 
 		// Extras
 		$this->data['text_url_alias']          = $this->language->get('text_url_alias');
-		$this->data['text_shipping_methods']   = $this->language->get('text_shipping_methods');
+		$this->data['text_custom_setting']   = $this->language->get('text_custom_setting');
 		$this->data['text_settings']           = $this->language->get('text_settings');
 		$this->data['text_review_store']       = $this->language->get('text_review_store');
 
 		// Sales
 		$this->data['text_order_master']       = $this->language->get('text_order_master');
+
+		// Others
+		$this->data['text_transaction_status'] = $this->language->get('text_transaction_status');
 
 		// Product Upload
 		$this->data['text_product_upload']     = $this->language->get('text_product_upload');
@@ -293,13 +296,16 @@ class ControllerCommonHeader extends Controller {
 			$this->data['product_upload']              = $this->url->link('catalog/product_upload', 'token=' . $this->session->data['token'], 'SSL');
 
 			// Extras
-			$this->data['shipping_methods']            = $this->url->link('shipping/custom_shipping', 'token=' . $this->session->data['token'], 'SSL');
+			$this->data['custom_setting']              = $this->url->link('extras/custom_setting', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['url_alias'] 				   = $this->url->link('extras/seo_url', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['settings'] 			       = $this->url->link('extras/settings', 'token=' . $this->session->data['token'], 'SSL');
 			$this->data['review_store'] 			   = $this->url->link('extras/review', 'token=' . $this->session->data['token'], 'SSL');
 
 			// Sales
 			$this->data['order_master'] 			   = $this->url->link('sale/order_master', 'token=' . $this->session->data['token'], 'SSL');
+
+			// Others
+			$this->data['transaction_status'] 			   = $this->url->link('localisation/transaction_status', 'token=' . $this->session->data['token'], 'SSL');			
 
 			$this->data['stores'] = array();
 

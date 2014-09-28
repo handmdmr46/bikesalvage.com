@@ -11,7 +11,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 	}
 
 	public function setEbayProfile($data, $affiliate_id) {
-		$this->db->query("DELETE FROM " . DB_PREFIX . "ebay_settings WHERE affiliate_id = '0'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "ebay_settings WHERE affiliate_id = '" . (int)$affiliate_id . "'");
 
 		$this->db->query("INSERT INTO " . DB_PREFIX . "ebay_settings
 						  SET		  `compat` = '" . (int)$data['compatability_level'] . "',
@@ -152,10 +152,10 @@ class ModelAffiliateDashboardStockControl extends Model {
 		}
 	}
 
-	public function setProductLink($product_id, $ebay_id) {
+	public function setProductLink($product_id, $ebay_id, $affiliate_id) {
 		if (isset($ebay_id) ) {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET linked = 1, status = 1 WHERE product_id = '" . $this->db->escape($product_id) . "'");
-			$this->db->query("INSERT INTO " . DB_PREFIX . "ebay_listing SET ebay_item_id = '" . $this->db->escape($ebay_id) . "', product_id = '" . $this->db->escape($product_id) . "', affiliate_id = '0'");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "ebay_listing SET ebay_item_id = '" . $this->db->escape($ebay_id) . "', product_id = '" . $this->db->escape($product_id) . "', affiliate_id = '" . (int)$affiliate_id . "'");
 		}
 	}
 
@@ -436,6 +436,12 @@ class ModelAffiliateDashboardStockControl extends Model {
         }
 
         return $ebay_call_response;
+	}
+
+	public function getEbayImportStartDates($affiliate_id) {
+		$sql = "SELECT `start_date`, `end_date`, `text` FROM " . DB_PREFIX . "ebay_import_startdates WHERE `affiliate_id` = '" . (int)$affiliate_id . "'";
+		$query = $this->db->query($sql);
+		return json_encode($query->rows);
 	}
 
 } // end class

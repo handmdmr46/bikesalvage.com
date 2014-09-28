@@ -141,6 +141,7 @@ class ControllerSettingSetting extends Controller {
 		$this->data['entry_error_log'] = $this->language->get('entry_error_log');
 		$this->data['entry_error_filename'] = $this->language->get('entry_error_filename');
 		$this->data['entry_google_analytics'] = $this->language->get('entry_google_analytics');
+		$this->data['entry_affiliate_order_complete_status'] = $this->language->get('entry_affiliate_order_complete_status');
 
 		$this->data['button_save'] = $this->language->get('button_save');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
@@ -638,7 +639,7 @@ class ControllerSettingSetting extends Controller {
 			$this->data['config_complete_status_id'] = $this->request->post['config_complete_status_id'];
 		} else {
 			$this->data['config_complete_status_id'] = $this->config->get('config_complete_status_id');
-		}	
+		}
 
 		$this->load->model('localisation/order_status');
 

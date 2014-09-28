@@ -271,7 +271,7 @@ class ModelAffiliateAffiliate extends Model {
 		return $query->row['total'];
 	}
 		
-	public function addTransaction($affiliate_id, $description = '', $amount = '', $status_id = 0, $order_id = 0) {
+	public function addTransaction($affiliate_id = 0, $description = '', $amount = '', $status_id = 0, $order_id = 0) {
 		$affiliate_info = $this->getAffiliate($affiliate_id);
 		
 		if ($affiliate_info) { 
@@ -334,14 +334,23 @@ class ModelAffiliateAffiliate extends Model {
 		return $query->rows;
 	}
 
+	/**
+	* -- $this->config->get('config_affiliate_order_complete_status_id');
+	*/
 	public function getCommissionBalanceByAffiliateId($affiliate_id) {
-		$query = $this->db->query("SELECT SUM(commission) AS balance FROM " . DB_PREFIX . "order_product WHERE affiliate_id = '" . (int)$affiliate_id . "'");
+		$query = $this->db->query("SELECT    SUM(commission) AS balance 
+			                       FROM      " . DB_PREFIX . "order_product op			                       
+			                       WHERE     op.order_id IN (SELECT o.order_id FROM " . DB_PREFIX . "order o WHERE o.order_status_id = '" . (int)$this->config->get('config_affiliate_order_complete_status_id') . "')
+			                       AND       op.affiliate_id = '" . (int)$affiliate_id . "'");			                       
 
 		return $query->row['balance'];
 	}
 
 	public function getOrderProductBalanceByAffiliateId($affiliate_id) {
-		$query = $this->db->query("SELECT SUM(total) AS balance FROM " . DB_PREFIX . "order_product WHERE affiliate_id = '" . (int)$affiliate_id . "'");
+		$query = $this->db->query("SELECT    SUM(total) AS balance 
+			                       FROM      " . DB_PREFIX . "order_product op			                       
+			                       WHERE     op.order_id IN (SELECT o.order_id FROM " . DB_PREFIX . "order o WHERE o.order_status_id = '" . (int)$this->config->get('config_affiliate_order_complete_status_id') . "')
+			                       AND       op.affiliate_id = '" . (int)$affiliate_id . "'");			                       
 
 		return $query->row['balance'];
 	}

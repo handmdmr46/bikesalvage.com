@@ -1,4 +1,18 @@
 <?php if (!isset($redirect)) { ?>
+<?php print_r($_SESSION['shipping_methods_7']['usps']); echo '<br>'; ?>
+<?php print_r($_SESSION['shipping_methods']); ?>
+<?php
+
+
+
+/*foreach ($_SESSION['shipping_methods'] as $k => $v) {
+    echo $k . '<br>';
+    print_r($v) . '<br>';
+}*/
+
+
+
+?>
     <div class="checkout-product">
         <table class="table">
             <thead>
@@ -55,7 +69,12 @@
             <tfoot>                
                 <?php foreach ($totals as $total) { ?>
                     <tr>
-                        <td colspan="4" class="price"><strong><?php echo $total['title']; ?>:</strong></td>
+                        <td colspan="4" class="price">
+                            <?php if ($total['code'] == 'shipping') { ?>
+                                <strong><?php $total['title'] = $text_shipping_total; ?></strong>
+                            <?php } ?>
+                            <strong><?php echo $total['title']; ?>:</strong>
+                        </td>
                         <td class="total"><?php echo $total['text']; ?></td>
                     </tr>                    
                 <?php } ?>

@@ -310,14 +310,11 @@ class ModelCheckoutOrder extends Model {
 			// Order Products
 			$order_product_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");		
 			$affiliate_ids = array();	
-			foreach ($order_product_query->rows as $order_product) {
-				############################################
-				############# STOCK CONTROL ################
-				############################################			
-				
+			foreach ($order_product_query->rows as $order_product) {			
+				// Admin Stock Control
 				if($order_product['affiliate_id'] < 1) { // only make ebay call to admin products here
 					$ebay_item_id = $this->getEbayItemId($order_product['product_id']);
-					$ebay_item_quantity = $this->getEbayItemQuantity($ebay_item_id);
+					$ebay_item_quantity = $this->getEbayItemQuantity($ebay_item_id,$order_product['affiliate_id']);
 					$new_ebay_item_quantity = $ebay_item_quantity - $order_product['quantity'];
 
 					$ebay_response = 'FAILED REQUEST - Please adjust your stock manually for this item';
@@ -325,29 +322,48 @@ class ModelCheckoutOrder extends Model {
 					// ebay item stock control
 					if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity < 1) {
 						$ebay_response = 'EBAY ITEM ENDED - ItemID: ' . $ebay_item_id . ' - Response:';
-						$ebay_response .= $this->endEbayItem($ebay_item_id);
+						$ebay_response .= $this->endEbayItem($ebay_item_id, $order_product['affiliate_id']);
 					}
 
 					if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity >= 1) {
 						$ebay_response = 'REVISED EBAY ITEM QUANTITY - ItemID: ' . $ebay_item_id . ' - Response: ';
-						$ebay_response .= $this->reviseEbayItemQuantity($ebay_item_id, $new_ebay_item_quantity);
+						$ebay_response .= $this->reviseEbayItemQuantity($ebay_item_id, $new_ebay_item_quantity, $order_product['affiliate_id']);
 					}
+					
+					// add eBay response to db
+					$this->db->query("UPDATE " . DB_PREFIX . "order_product SET ebay_response = '" . $this->db->escape($ebay_response) . "' WHERE order_id = '" . (int)$order_id . "' AND product_id = '" . (int)$order_product['product_id'] . "'");
 				}
-				// all other affiliates
+				// Affiliates Stock Control
 				if($order_product['affiliate_id'] > 0) {
 					$affiliate_ids[] = $order_product['affiliate_id'];
 					
 					// eBay Stock Control
-					//if(config('affiliate_stock_control_status') > 0 ) { //make ebayCall }
+					if($this->config->get($order_product['affiliate_id'] . '_stock_control_id')) { 
+						$ebay_item_id           = $this->getEbayItemId($order_product['product_id']);
+						$ebay_item_quantity     = $this->getEbayItemQuantity($ebay_item_id, $order_product['affiliate_id']);
+						$new_ebay_item_quantity = $ebay_item_quantity - $order_product['quantity'];
+						$ebay_response          = 'FAILED REQUEST - Please adjust your stock manually for this item';
+						
+						if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity < 1) {
+							$ebay_response = 'EBAY ITEM ENDED - ItemID: ' . $ebay_item_id . ' - Response:';
+							$ebay_response .= $this->endEbayItem($ebay_item_id, $order_product['affiliate_id']);
+						}
+						if(is_numeric($ebay_item_quantity) && $new_ebay_item_quantity >= 1) {
+							$ebay_response = 'REVISED EBAY ITEM QUANTITY - ItemID: ' . $ebay_item_id . ' - Response: ';
+							$ebay_response .= $this->reviseEbayItemQuantity($ebay_item_id, $new_ebay_item_quantity, $order_product['affiliate_id']);
+						}						
+						
+						$this->db->query("UPDATE " . DB_PREFIX . "order_product SET ebay_response = '" . $this->db->escape($ebay_response) . "' WHERE order_id = '" . (int)$order_id . "' AND product_id = '" . (int)$order_product['product_id'] . "'");
+					}
 
-					//Commission Control
+					//Affiliate Commission Control
 					if ($this->config->has('config_commission')) {
 						$commission_rate = $this->config->get('config_commission');
 					} else {
 						$commission_rate = 4.00;
 					}
+
 					$commission = ($commission_rate / 100) * $order_product['price'];
-					
 					$commission = $commission * $order_product['quantity'];
 					
                     $this->db->query("UPDATE " . DB_PREFIX . "order_product SET commission = '" . (float)$commission . "' WHERE product_id = '" . (int)$order_product['product_id'] . "' AND order_id = '" . (int)$order_product['order_id'] . "'");
@@ -360,10 +376,7 @@ class ModelCheckoutOrder extends Model {
 				if($this->getProductQuantity($order_product['product_id']) < 1) {
 					$this->db->query("UPDATE " . DB_PREFIX . "product SET status = '0' WHERE product_id = '" . (int)$order_product['product_id'] . "'");
 					$ebay_response .= ' - Opencart Product Status: Not Active (0) ';
-				}
-
-				// add eBay response to db
-				$this->db->query("UPDATE " . DB_PREFIX . "order_product SET ebay_response = '" . $this->db->escape($ebay_response) . "' WHERE order_id = '" . (int)$order_id . "' AND product_id = '" . (int)$order_product['product_id'] . "'");
+				}				
 
 				// order options
 				$order_option_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_option WHERE order_id = '" . (int)$order_id . "' AND order_product_id = '" . (int)$order_product['order_product_id'] . "'");				
@@ -714,16 +727,14 @@ class ModelCheckoutOrder extends Model {
 				}
 
 				if ($is_other_seller) {
-					$text .= '--------------------------------------------------------------------------------' . "\n";
-					$text .= '------ ATTENION: There other seller(s) products are present on this order ------' . "\n";
-					$text .= '--------------------------------------------------------------------------------' . "\n\n";
-					$text .= 'Additional Products:' . "\n";
+					$text .= $this->language->get('text_attention_other_sellers');
+					$text .= $this->language->get('text_additional_products');
 					foreach ($order_product_query->rows as $product) {
 						if ($product['affiliate_id'] > 0) {
 							$text .= $product['quantity'] . 'x ' . $product['name'] . ' (' . $product['model'] . ') ' . html_entity_decode($this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']), ENT_NOQUOTES, 'UTF-8') . "\n";																							
 						}
 					}					
-					$text .= "\n\n" . 'Master Order Totals:' . "\n";
+					$text .= $this->language->get('text_master_order');
 					foreach ($master_order_total_query->rows as $total) {
 						$text .= $total['title'] . ': ' . html_entity_decode($total['text'], ENT_NOQUOTES, 'UTF-8') . "\n";
 					}
@@ -923,9 +934,9 @@ class ModelCheckoutOrder extends Model {
 		}
 	}
 
-	public function reviseEbayItemQuantity($ebay_item_id, $new_quantity) {
+	public function reviseEbayItemQuantity($ebay_item_id, $new_quantity, $affiliate_id) {
 		$call_name = 'ReviseInventoryStatus';
-		$profile = $this->getEbayProfile();		
+		$profile = $this->getEbayProfile($affiliate_id);		
 		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compat'], $profile['site_id'], $call_name);
 
 		$xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -974,9 +985,9 @@ class ModelCheckoutOrder extends Model {
         return $ebay_call_response;
 	}
 
-	public function endEbayItem($ebay_item_id) {
+	public function endEbayItem($ebay_item_id, $affiliate_id) {
 		$call_name = 'endFixedPriceItem';		
-		$profile = $this->getEbayProfile();
+		$profile = $this->getEbayProfile($affiliate_id);
 		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compat'], $profile['site_id'], $call_name);
 
 		$xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -1018,9 +1029,9 @@ class ModelCheckoutOrder extends Model {
         return $ebay_call_response;
 	}
 
-	public function getEbayItemQuantity($ebay_item_id) {
+	public function getEbayItemQuantity($ebay_item_id, $affiliate_id) {
 		$call_name = 'getItem';		
-		$profile = $this->getEbayProfile();
+		$profile = $this->getEbayProfile($affiliate_id);
 		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compat'], $profile['site_id'], $call_name);
 		
 		$xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -1070,7 +1081,7 @@ class ModelCheckoutOrder extends Model {
 		return $ebay_item_id->row['ebay_item_id'];
 	}
 
-	public function getEbayProfile($affiliate_id = 0) {
+	public function getEbayProfile($affiliate_id) {
 		$sql = "SELECT * FROM " . DB_PREFIX . "ebay_settings WHERE `affiliate_id` = '" . (int)$affiliate_id . "'";
 		$query = $this->db->query($sql);
 		return $query->row;

@@ -34,7 +34,7 @@ class ModelAffiliateDashboardTransaction extends Model {
 
 	public function getTransactionStatuses($data = array()) {
 		if ($data) {
-			$sql = "SELECT * FROM " . DB_PREFIX . "order_status WHERE language_id = '" . (int)$this->config->get('config_language_id') . "'";
+			$sql = "SELECT * FROM " . DB_PREFIX . "transaction_status WHERE language_id = '" . (int)$this->config->get('config_language_id') . "'";
 
 			$sql .= " ORDER BY name";	
 
@@ -60,32 +60,36 @@ class ModelAffiliateDashboardTransaction extends Model {
 
 			return $query->rows;
 		} else {
-			$order_status_data = $this->cache->get('order_status.' . (int)$this->config->get('config_language_id'));
+			$transaction_status_data = $this->cache->get('transaction_status.' . (int)$this->config->get('config_language_id'));
 
-			if (!$order_status_data) {
-				$query = $this->db->query("SELECT order_status_id, name FROM " . DB_PREFIX . "order_status WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY name");
+			if (!$transaction_status_data) {
+				$query = $this->db->query("SELECT transaction_status_id, name FROM " . DB_PREFIX . "transaction_status WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY name");
 
-				$order_status_data = $query->rows;
+				$transaction_status_data = $query->rows;
 
-				$this->cache->set('order_status.' . (int)$this->config->get('config_language_id'), $order_status_data);
+				$this->cache->set('order_status.' . (int)$this->config->get('config_language_id'), $transaction_status_data);
 			}	
 
-			return $order_status_data;				
+			return $transaction_status_data;				
 		}
 	}
 
 	public function getOrderProductTotalByAffiliateId($affiliate_id) {
-		$query = $this->db->query("SELECT SUM(op.total) as total
-			                       FROM   " . DB_PREFIX . "order_product op
-			                       WHERE  op.affiliate_id = '" . (int)$affiliate_id . "'");
+		$query = $this->db->query("SELECT    SUM(op.total) as total
+			                       FROM      " . DB_PREFIX . "order_product op
+			                       LEFT JOIN " . DB_PREFIX . "order o ON (op.order_id = o.order_id)
+			                       WHERE     op.affiliate_id = '" . (int)$affiliate_id . "'
+			                       AND       o.order_status_id = '" . (int)$this->config->get('config_affiliate_order_complete_status_id') . "'");
 
 		return $query->row['total'];
 	}
 
 	public function getOrderProductCommissionTotalByAffiliateId($affiliate_id) {
-		$query = $this->db->query("SELECT SUM(op.commission) as commission
-			                       FROM   " . DB_PREFIX . "order_product op
-			                       WHERE  op.affiliate_id = '" . (int)$affiliate_id . "'");
+		$query = $this->db->query("SELECT    SUM(op.commission) as commission
+			                       FROM      " . DB_PREFIX . "order_product op
+			                       LEFT JOIN " . DB_PREFIX . "order o ON (op.order_id = o.order_id)
+			                       WHERE     op.affiliate_id = '" . (int)$affiliate_id . "'
+			                       AND       o.order_status_id = '" . (int)$this->config->get('config_affiliate_order_complete_status_id') . "'");
 
 		return $query->row['commission'];
 	}

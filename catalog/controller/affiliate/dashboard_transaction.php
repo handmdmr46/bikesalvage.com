@@ -63,11 +63,12 @@ class ControllerAffiliateDashboardTransaction extends Controller {
 			$page = 1;
 		}  
 
+		
+		$total_commission                   = $this->model_affiliate_dashboard_transaction->getOrderProductCommissionTotalByAffiliateId($affiliate_id);
+		$order_product_total                = $this->model_affiliate_dashboard_transaction->getOrderProductTotalByAffiliateId($affiliate_id);
+		$this->data['balance_due']          = $this->currency->format(($order_product_total - $total_commission) - $order_product_total, $this->config->get('config_currency'));
+		$this->data['total_paid']           = $this->currency->format($this->model_affiliate_dashboard_transaction->getTransactionTotal($affiliate_id), $this->config->get('config_currency'));
 		$this->data['transaction_statuses'] = $this->model_affiliate_dashboard_transaction->getTransactionStatuses();
-		$total_commission = $this->model_affiliate_dashboard_transaction->getOrderProductCommissionTotalByAffiliateId($affiliate_id);
-		$order_product_total = $this->model_affiliate_dashboard_transaction->getOrderProductTotalByAffiliateId($affiliate_id);
-		$this->data['balance_due'] = $this->currency->format(($order_product_total - $total_commission) - $order_product_total, $this->config->get('config_currency'));
-		$this->data['total_paid'] = $this->currency->format($this->model_affiliate_dashboard_transaction->getTransactionTotal($affiliate_id), $this->config->get('config_currency'));
 
 		$this->data['transactions'] = array();
 

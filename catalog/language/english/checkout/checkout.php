@@ -30,7 +30,7 @@ $_['text_shipping_method']                    = 'Please select the preferred shi
 $_['text_sold_by_admin']                      = 'Sold by: %s';
 $_['text_payment_method']                     = 'Please select the preferred payment method to use on this order.';
 $_['text_comments']                           = 'Add Comments About Your Order';
-$_['text_other_sellers']                      = 'NOTICE: Your shopping may cart contains products from more than one seller. Please select the preferred shipping method to use for each seller(s).';
+$_['text_other_sellers']                      = 'NOTICE: Your shopping cart may contain products from more than one seller. Please select the preferred shipping method to use for each seller(s).';
 $_['text_recurring_item']                     = 'Recurring item';
 $_['text_payment_profile']                    = 'Payment Profile';
 $_['text_trial_description']                  = '%s every %d %s(s) for %d payment(s) then';
@@ -103,5 +103,5 @@ $_['text_length']                             = ' for %s payments';
 $_['text_seller']                             = '<b>Seller:</b> ';
 $_['text_shipped_from']                       = '<b class="pad-left15">Shipped From:</b> ';
 $_['text_package_weight']                     = '<b class="pad-left15">Package Weight:</b> ';
-$_['text_lbs']                                = 'lbs';
+$_['text_shipping_total']                     = 'Shipping-Total';
 ?>

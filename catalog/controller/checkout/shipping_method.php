@@ -105,6 +105,12 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 					$this->session->data['shipping_methods_' . $affiliate_id] = $quote_data;
 					$affiliate_shipping[]                                     = $quote_data;
+
+					if (isset($this->session->data['shipping_method_' . $affiliate_id]['code'])) {
+						$this->data['affiliate_code'] = $this->session->data['shipping_method']['code'];
+					} else {
+						$this->data['affiliate_code'] = '';
+					}
 				}
 
 				$this->data['is_affiliate_products'] = true;
@@ -120,7 +126,6 @@ class ControllerCheckoutShippingMethod extends Controller {
 		$this->data['text_seller']          = $this->language->get('text_seller');
 		$this->data['text_shipped_from']    = $this->language->get('text_shipped_from');
 		$this->data['text_package_weight']  = $this->language->get('text_package_weight');
-		$this->data['text_lbs']             = $this->language->get('text_lbs');
 
 		if (empty($this->session->data['shipping_methods'])) {
 			$this->data['error_warning'] = sprintf($this->language->get('error_no_shipping'), $this->url->link('information/contact'));
@@ -138,7 +143,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 			$this->data['code'] = $this->session->data['shipping_method']['code'];
 		} else {
 			$this->data['code'] = '';
-		}
+		}		
 
 		if (isset($this->session->data['comment'])) {
 			$this->data['comment'] = $this->session->data['comment'];

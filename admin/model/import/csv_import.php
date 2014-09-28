@@ -22,13 +22,6 @@ class ModelImportCsvImport extends Model {
 		return $query->row['name'];
 	}
 
-	/**
-	* 5 = American & HD, 8 = British & European, 
-	* 3 = Suzuki       , 1 = Honda
-	* 4 = Yamaha       , 7 = Harley Davison
-	* 2 = Kawasaki     , 
-	*
-	*/
 	public function getCategoryInfoByManufacturerId($manufacturer_id) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_description cd 
 								   LEFT JOIN " . DB_PREFIX . "category c ON cd.category_id = c.category_id
@@ -315,7 +308,7 @@ class ModelImportCsvImport extends Model {
 	}
 
 	public function clearCsvImportTable() {
-		$this->db->query("UPDATE " . DB_PREFIX . "product SET csv_import = '0' WHERE csv_import = '1'");
+		$this->db->query("UPDATE " . DB_PREFIX . "product p SET p.csv_import = '0' WHERE p.csv_import = '1' AND p.affiliate_id = '0'");
 		//fortab
 	}
 

@@ -28,7 +28,7 @@ $_['button_load_profile']             =	'Load Profile';
 $_['button_ebay_call']                =	'eBay Call';
 $_['button_cancel']                   =	'Cancel';
 $_['button_edit']                     = 'Edit';
-$_['button_delete']                   = 'Delete';
+$_['button_delete']                   = 'Remove';
 $_['button_link_product']             = 'Link Product';
 
 // Error

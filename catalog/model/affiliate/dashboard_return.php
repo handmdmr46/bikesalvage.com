@@ -84,7 +84,7 @@ class ModelAffiliateDashboardReturn extends Model {
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$sort_data = array(
@@ -165,7 +165,7 @@ class ModelAffiliateDashboardReturn extends Model {
 		}
 
 		if ($implode) {
-			$sql .= " WHERE " . implode(" AND ", $implode);
+			$sql .= " AND " . implode(" AND ", $implode);
 		}
 
 		$query = $this->db->query($sql);

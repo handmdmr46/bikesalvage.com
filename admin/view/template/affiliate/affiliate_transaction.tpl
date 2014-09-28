@@ -41,10 +41,10 @@
                   onclick='document.getElementById("<?php echo $transaction['affiliate_transaction_id']; ?>_select").setAttribute("checked","checked");'> 
             <option value=""><?php echo $text_select; ?></option>
             <?php foreach ($transaction_statuses as $status) { ?>
-              <?php if ($status['order_status_id'] == $transaction['status_id']) { ?> 
-                <option value="<?php echo $status['order_status_id']; ?>" selected="selected"><?php echo $status['name']; ?></option>
+              <?php if ($status['transaction_status_id'] == $transaction['status_id']) { ?> 
+                <option value="<?php echo $status['transaction_status_id']; ?>" selected="selected"><?php echo $status['name']; ?></option>
               <?php } else { ?>          
-                <option value="<?php echo $status['order_status_id']; ?>"><?php echo $status['name']; ?></option>
+                <option value="<?php echo $status['transaction_status_id']; ?>"><?php echo $status['name']; ?></option>
               <?php } ?>            
             <?php } ?>
           </select>
@@ -64,7 +64,7 @@
         <td>&nbsp;</td>
         <td>&nbsp;</td>
         <td class="right"><b><?php echo $text_order_product_total; ?></b></td>
-        <td class="right"><?php echo $total_order_product; ?></td>
+        <td class="right"><?php echo $total_sales; ?></td>
       </tr>
       <tr>
         <td>&nbsp;</td>
@@ -78,7 +78,14 @@
         <td>&nbsp;</td>
         <td>&nbsp;</td>
         <td class="right"><b><?php echo $text_total_due; ?></b></td>
-        <td class="right"><?php echo $total; ?></td>
+        <td class="right"><?php echo $balance; ?></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
       </tr>
       <tr>
         <td>&nbsp;</td>
@@ -97,6 +104,48 @@
       <?php } else { ?>
       <tr>
         <td class="center" colspan="5"><?php echo $text_no_results; ?></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="right"><b><?php echo $text_order_product_total; ?></b></td>
+        <td class="right"><?php echo $total_sales; ?></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="right"><b><?php echo $text_commission_total; ?></b></td>
+        <td class="right"><?php echo $total_commission; ?></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="right"><b><?php echo $text_total_due; ?></b></td>
+        <td class="right"><?php echo $balance; ?></td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="right"><b><?php echo $text_transaction_balance; ?></b></td>
+        <td class="right"><?php echo $total_transaction; ?></td>
+      </tr>      
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="right"><b><?php echo $text_balance_due; ?></b></td>
+        <td class="right"><?php echo $balance_due; ?></td>
       </tr>
       <?php } ?>
     </tbody>

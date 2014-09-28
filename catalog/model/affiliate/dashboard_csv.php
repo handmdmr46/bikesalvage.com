@@ -182,8 +182,8 @@ class ModelAffiliateDashboardCsv extends Model {
 		// $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_affiliate SET `product_id` = '" . (int)$product_id . "', `affiliate_id` = '" . $this->affiliate->getId() . "'");
 	}
 
-	public function getTotalCsvImportProducts() {
-	    $query = $this->db->query("SELECT `product_id` FROM " . DB_PREFIX . "product WHERE `status` = '0' AND `affiliate_id` = '" . $this->affiliate->getID() . "'");
+	public function getTotalCsvImportProducts($affiliate_id) {
+	    $query = $this->db->query("SELECT `product_id` FROM " . DB_PREFIX . "product WHERE `status` = '0' AND `affiliate_id` = '" . (int)$affiliate_id . "'");
 
 		$pids = array();
 		foreach($query->rows as $result) {
@@ -216,7 +216,7 @@ class ModelAffiliateDashboardCsv extends Model {
 		return $count->row['total'];
 	}
 
-	public function getCsvImportProductInfo($start, $limit) {
+	/*public function getCsvImportProductInfo($start, $limit) {
 	    $query = $this->db->query("SELECT `product_id` FROM " . DB_PREFIX . "product WHERE `status` = '0' AND `affiliate_id` = '" . $this->affiliate->getId() . "'");
 
 		$pids = array();
@@ -247,14 +247,7 @@ class ModelAffiliateDashboardCsv extends Model {
 				    LEFT JOIN  " . DB_PREFIX . "manufacturer m ON p.manufacturer_id = m.manufacturer_id
 				    WHERE      p.product_id IN (" . $this->db->escape(implode(',',$pids)) . ")";
 
-				    /*
-				    SELECT   pd.name,
-         					 pd.product_id
-					FROM     oc_product_description pd
-					WHERE    pd.product_id IN (SELECT product_id
-                           					   FROM   oc_affiliate_product_link)
-					ORDER BY pd.name DESC;
-					*/
+				    
 
 		    if(isset($start) || isset($limit)) {
 				if($start < 0) {
@@ -299,6 +292,75 @@ class ModelAffiliateDashboardCsv extends Model {
 			return $product_data;
 		}
 		return null;
+	}*/
+
+	public function getCsvImportProductInfo($start, $limit, $affiliate_id) {
+
+		$sql = "SELECT     p.model,
+						   p.product_id,
+						   p.quantity,
+						   p.image,
+						   p.price,
+						   p.weight,
+						   p.length,
+						   p.width,
+						   p.height,
+						   pd.name AS 'product_name',
+						   pd.description AS 'product_description',
+						   cd.name AS 'category_name',
+						   cd.category_id,
+						   m.name AS 'manufacturer_name',
+						   m.manufacturer_id
+			    FROM       " . DB_PREFIX . "product p
+			    LEFT JOIN  " . DB_PREFIX . "product_description pd ON p.product_id = pd.product_id
+			    LEFT JOIN  " . DB_PREFIX . "product_to_category ptc ON p.product_id = ptc.product_id
+			    LEFT JOIN  " . DB_PREFIX . "category_description cd ON ptc.category_id = cd.category_id
+			    LEFT JOIN  " . DB_PREFIX . "manufacturer m ON p.manufacturer_id = m.manufacturer_id
+			    WHERE  p.status = '0'
+			    AND    p.affiliate_id = '" . (int)$affiliate_id . "'
+			    AND    p.csv_import = '1'";
+
+	    if(isset($start) || isset($limit)) {
+			if($start < 0) {
+				$start = 0;
+			}
+			if($limit < 1) {
+				$limit = 20;
+			}
+
+		    $sql .= " LIMIT " . (int)$start . "," . (int)$limit;
+		}
+
+		$query_product = $this->db->query($sql);
+
+		$product_data = array();
+
+		foreach($query_product->rows as $data) {
+
+				$product_data[] = array(
+					'product_id'        => $data['product_id'],
+					'model'             => $data['model'],
+					'quantity'          => $data['quantity'],
+					'featured_image'    => $data['image'],
+					'price'             => $data['price'],
+					'weight'            => $data['weight'],
+					'length'            => $data['length'],
+					'width'             => $data['width'],
+					'height'            => $data['height'],
+					'product_name'      => $data['product_name'],
+					'description'       => $data['product_description'],
+					'category_name'     => $data['category_name'],
+					'category_id'       => $data['category_id'],
+					'manufacturer_name' => $data['manufacturer_name'],
+					'manufacturer_id'   => $data['manufacturer_id'],
+					'gallery_images'    => $this->getProductGalleryImages($data['product_id']),
+					'shipping_methods'  => $this->getProductShippingMethods($data['product_id']),
+					'categories'        => $this->getProductCategories($data['manufacturer_id']),
+					'selected'          => isset($this->request->post['selected']) && in_array($data['product_id'], $this->request->post['selected'])
+				);
+		}
+
+		return $product_data;
 	}
 
     public function editList($product_id, $edit_data) {
@@ -424,13 +486,7 @@ class ModelAffiliateDashboardCsv extends Model {
 									  `end_date` = '" . $this->db->escape($data['end_date']) . "',
 									  `affiliate_id` = '" . (int)$this->affiliate->getId() . "',
 									  `text` = '" . $this->db->escape($today) . "'");
-	}
-
-	public function getEbayImportStartDates($affiliate_id) {
-		$sql = "SELECT `start_date`, `end_date`, `text` FROM " . DB_PREFIX . "ebay_import_startdates WHERE `affiliate_id` = '" . (int)$affiliate_id . "'";
-		$query = $this->db->query($sql);
-		return json_encode($query->rows);
-	}
+	}	
 
 	public function clearDates() {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "ebay_import_startdates WHERE `affiliate_id` = '" . (int)$this->affiliate->getId() . "'");
@@ -479,7 +535,6 @@ class ModelAffiliateDashboardCsv extends Model {
 						  			  `affiliate_id` = '" . (int)$this->affiliate->getId() . "'");
 
 		}
-
 	}
 
 	public  function getLinkedProducts($start, $limit) {
@@ -561,7 +616,6 @@ class ModelAffiliateDashboardCsv extends Model {
 			return $product_data;
 		}
 		return null;
-
 	}
 
 	public  function editLinkedProducts($product_id, $ebay_id) {
@@ -572,7 +626,6 @@ class ModelAffiliateDashboardCsv extends Model {
 							  	  `ebay_item_id` = '" . $this->db->escape($ebay_id) . "',
 							  	  `affiliate_id` = '" . (int)$this->affiliate->getId() . "'");
 		}
-
 	}
 
 	public  function editUnlinkedProducts($product_id, $ebay_id) {
@@ -584,9 +637,24 @@ class ModelAffiliateDashboardCsv extends Model {
 
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET `status` = '1'");
 		}
-
 	}
 
+	public function getCategoryInfoByManufacturerId($manufacturer_id) {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_description cd 
+								   LEFT JOIN " . DB_PREFIX . "category c ON cd.category_id = c.category_id
+								   WHERE c.manufacturer_id = '" . (int)$manufacturer_id . "'");
 
+		return $query->rows;
+	}
 
+	public function getManufacturerInfo() {
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "manufacturer");
+
+		return $query->rows;
+	}
+
+	public function clearCsvImportTable($affiliate_id) {
+		$this->db->query("UPDATE " . DB_PREFIX . "product p SET p.csv_import = '0' WHERE p.csv_import = '1' AND p.affiliate_id = '" . (int)$affiliate_id . "'");
+		//fortab
+	}
 }// end class

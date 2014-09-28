@@ -231,17 +231,17 @@ class ControllerCheckoutConfirm extends Controller {
 					$shipping_address = $this->session->data['guest']['shipping'];
 				}			
 				
-				$data['shipping_firstname'] = $shipping_address['firstname'];
-				$data['shipping_lastname'] = $shipping_address['lastname'];	
-				$data['shipping_company'] = $shipping_address['company'];	
-				$data['shipping_address_1'] = $shipping_address['address_1'];
-				$data['shipping_address_2'] = $shipping_address['address_2'];
-				$data['shipping_city'] = $shipping_address['city'];
-				$data['shipping_postcode'] = $shipping_address['postcode'];
-				$data['shipping_zone'] = $shipping_address['zone'];
-				$data['shipping_zone_id'] = $shipping_address['zone_id'];
-				$data['shipping_country'] = $shipping_address['country'];
-				$data['shipping_country_id'] = $shipping_address['country_id'];
+				$data['shipping_firstname']      = $shipping_address['firstname'];
+				$data['shipping_lastname']       = $shipping_address['lastname'];	
+				$data['shipping_company']        = $shipping_address['company'];	
+				$data['shipping_address_1']      = $shipping_address['address_1'];
+				$data['shipping_address_2']      = $shipping_address['address_2'];
+				$data['shipping_city']           = $shipping_address['city'];
+				$data['shipping_postcode']       = $shipping_address['postcode'];
+				$data['shipping_zone']           = $shipping_address['zone'];
+				$data['shipping_zone_id']        = $shipping_address['zone_id'];
+				$data['shipping_country']        = $shipping_address['country'];
+				$data['shipping_country_id']     = $shipping_address['country_id'];
 				$data['shipping_address_format'] = $shipping_address['address_format'];
 			
 				if (isset($this->session->data['shipping_method']['title'])) {
@@ -383,13 +383,9 @@ class ControllerCheckoutConfirm extends Controller {
 					$affiliate_total      = 0;
 					$affiliate_total_data = array();
 					$affiliate_taxes      = array();
-					$affiliate_taxes      = $this->cart->getAffiliateTaxes($affiliate_id);
+					$affiliate_taxes      = $this->cart->getAffiliateTaxes($affiliate_id);					
 
-					foreach ($this->session->data['shipping_methods'] as $key => $value) {
-					  $code = $key;
-				    }
-
-					$this->model_total_shipping->getAffiliateTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes, $affiliate_id, $code);				
+					$this->model_total_shipping->getAffiliateTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes, $affiliate_id);				
 					$this->model_total_sub_total->getAffiliateTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes, $affiliate_id);				
 					$this->model_total_total->getTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes);				
 				
@@ -405,13 +401,17 @@ class ControllerCheckoutConfirm extends Controller {
 					
 					// Update master order totals for additional affiliate shipping quotes
 					if ($affiliate_id > 0) {
+						foreach ($this->session->data['shipping_methods_' . $affiliate_id] as $k => $v) { $key1 = $k; }
+
+				    	foreach ($this->session->data['shipping_methods_' . $affiliate_id]['usps']['quote'] as $k => $v) { $key2 = $k; }
+				    	
 						foreach ($total_data as $key => $value) {
 							if ($value['code'] == 'shipping') {
-								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
+								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$key1]['quote'][$key2]['cost'];
 								$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
 							}
 							if ($value['code'] == 'total') {
-								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$code]['quote'][$code]['cost'];
+								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$key1]['quote'][$key2]['cost'];
 								$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
 							}
 						}
@@ -419,13 +419,13 @@ class ControllerCheckoutConfirm extends Controller {
 				}
 				$this->model_affiliate_dashboard_order_total->updateOrderTotals($total_data, $order_id);
 			}		
-			
-		    // Display product total's -- confirm.tpl --	
-			$this->data['column_name']     = $this->language->get('column_name');
-			$this->data['column_model']    = $this->language->get('column_model');
-			$this->data['column_quantity'] = $this->language->get('column_quantity');
-			$this->data['column_price']    = $this->language->get('column_price');
-			$this->data['column_total']    = $this->language->get('column_total');
+				
+			$this->data['column_name']         = $this->language->get('column_name');
+			$this->data['column_model']        = $this->language->get('column_model');
+			$this->data['column_quantity']     = $this->language->get('column_quantity');
+			$this->data['column_price']        = $this->language->get('column_price');
+			$this->data['column_total']        = $this->language->get('column_total');
+			$this->data['text_shipping_total'] = $this->language->get('text_shipping_total');
 			
 			$this->data['products'] = array();
 			foreach ($this->cart->getProducts() as $product) {

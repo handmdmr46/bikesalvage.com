@@ -9,22 +9,6 @@ class ModelShippingUsps extends Model {
 
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('usps_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
 
-		// Custom Shipping Methods
-		// $product_ids = array();
-		
-		### OLDWAY START ###
-		/*foreach($this->cart->getProducts() as $result) {
-			$product_ids[] = $result['product_id']; 
-		}
-		
-		$this->load->model('extras/product_shipping');
-		
-		$product_shipping_methods = $this->model_extras_product_shipping->getProductShippingMethods($product_ids);*/
-		### OLDWAY END ###
-
-		### NEW WAY NEEDS TESTING ### ### SEE LINE 381 - 385
-		
-
 		if (!$this->config->get('usps_geo_zone_id')) {
 			$status = true;
 		} elseif ($query->num_rows) {
@@ -346,8 +330,9 @@ class ModelShippingUsps extends Model {
 				curl_close($curl);
 
 				// strip reg, trade and ** out 01-02-2011
-				$result = str_replace('&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt;', '', $result);
-				$result = str_replace('&amp;lt;sup&amp;gt;&amp;amp;trade;&amp;lt;/sup&amp;gt;', '', $result);
+				$result = str_replace('&amp;lt;sup&amp;gt;&amp;#174;&amp;lt;/sup&amp;gt;', '', $result);
+        		$result = str_replace('&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;', '', $result);
+        		$result = str_replace('1-Day', '', $result);
 				$result = str_replace('**', '', $result);
 				$result = str_replace("\r\n", '', $result);
 				$result = str_replace('\"', '"', $result);
@@ -375,19 +360,15 @@ class ModelShippingUsps extends Model {
 					$this->load->model('extras/product_shipping');
 					$allowed = array();
 					foreach($this->cart->getProducts() as $result) {
-						$allowed[] = $this->model_extras_product_shipping->getProductShippingMethod($result['product_id']);
+						if ($result['affiliate_id'] == 0) {
+							$allowed[] = $this->model_extras_product_shipping->getProductShippingMethod($result['product_id']);
+						}						
 					}
+
+					$allowed = $this->array_flatten($allowed);
 
 					if ($rate_response || $intl_rate_response) {
 						if ($address['iso_code_2'] == 'US') { /* Domestic Mail Service */
-							// $allowed = array(0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17, 18, 19, 22, 23, 25, 27, 28);	
-
-							// Custom Shipping Methods
-							// $allowed = array();																			
-									
-							/*foreach ($product_shipping_methods as $result) {
-								$allowed[] = $result['key_id'];
-							}*/
 							
 							// Shipping method hireacy
 							if (in_array(4,$allowed)) { 		// 4 = Parcel Post
@@ -424,20 +405,9 @@ class ModelShippingUsps extends Model {
 													break;
 												}
 											}
+										}
 
-											if (($this->config->get('usps_domestic_' . $classid))) {
-												$cost = $postage->getElementsByTagName('Rate')->item(0)->nodeValue;
-
-												$quote_data[$classid] = array(
-													'code'         => 'usps.' . $classid,
-													'title'        => $postage->getElementsByTagName('MailService')->item(0)->nodeValue,
-													'cost'         => $this->currency->convert($cost, 'USD', $this->config->get('config_currency')),
-													'tax_class_id' => $this->config->get('usps_tax_class_id'),
-													'text'         => $this->currency->format($this->tax->calculate($this->currency->convert($cost, 'USD', $this->currency->getCode()), $this->config->get('usps_tax_class_id'), $this->config->get('config_tax')), $this->currency->getCode(), 1.0000000)
-												);
-											}
-
-										} elseif ($this->config->get('usps_domestic_' . $classid)) {
+										if (($this->config->get('usps_domestic_' . $classid))) {
 											$cost = $postage->getElementsByTagName('Rate')->item(0)->nodeValue;
 
 											$quote_data[$classid] = array(
@@ -447,7 +417,7 @@ class ModelShippingUsps extends Model {
 												'tax_class_id' => $this->config->get('usps_tax_class_id'),
 												'text'         => $this->currency->format($this->tax->calculate($this->currency->convert($cost, 'USD', $this->currency->getCode()), $this->config->get('usps_tax_class_id'), $this->config->get('config_tax')), $this->currency->getCode(), 1.0000000)
 											);
-										}
+										}										
 									}
 								}
 							} else {
@@ -462,14 +432,6 @@ class ModelShippingUsps extends Model {
 								);
 							}
 						} else { /* International Mail Service */							
-							// $allowed = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21);
-
-							// Custom Shipping Methods
-							$allowed = array();
-								
-							foreach ($product_shipping_methods as $result) {
-								$allowed[] = $result['key_id'];
-							}
 							
 							if (in_array(2,$allowed)) {				// priority mail
 								$allowed = array(2);								
@@ -524,20 +486,13 @@ class ModelShippingUsps extends Model {
 			}
 
 			if ($quote_data) {
-				// $title = $this->language->get('text_title');
+				$title_data = array();
 
-				/*if ($this->config->get('usps_display_weight')) {
-					$title .= ' (' . $this->language->get('text_weight') . ' ' . $this->weight->format($weight, $this->config->get('usps_weight_class_id')) . ')';
-				}*/
-
-				$weight = $this->weight->convert($this->cart->getWeightByAffiliateId(0), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
-				$title = '<b>Seller:</b> ' . $this->config->get('config_owner');
-				$title .= ' <b>Shipped From:</b> ' . $this->config->get('config_address');
-				$title .= ' <b>Package Weight:</b> ' . $this->weight->format($weight, $this->config->get('usps_weight_class_id')) . 'lbs';
-
+				$title_data[] = $this->getAdminShippingInfo();
+				
 				$method_data = array(
 					'code'       => 'usps',
-					'title'      => $title,
+					'title'      => $title_data,
 					'quote'      => $quote_data,
 					'sort_order' => $this->config->get('usps_sort_order'),
 					'error'      => false
@@ -874,8 +829,9 @@ class ModelShippingUsps extends Model {
 				curl_close($curl);
 
 				// strip reg, trade and ** out 01-02-2011
-				$result = str_replace('&amp;lt;sup&amp;gt;&amp;amp;reg;&amp;lt;/sup&amp;gt;', '', $result);
-				$result = str_replace('&amp;lt;sup&amp;gt;&amp;amp;trade;&amp;lt;/sup&amp;gt;', '', $result);
+				$result = str_replace('&amp;lt;sup&amp;gt;&amp;#174;&amp;lt;/sup&amp;gt;', '', $result);
+        		$result = str_replace('&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;', '', $result);
+        		$result = str_replace('1-Day', '', $result);
 				$result = str_replace('**', '', $result);
 				$result = str_replace("\r\n", '', $result);
 				$result = str_replace('\"', '"', $result);
@@ -903,8 +859,12 @@ class ModelShippingUsps extends Model {
 					$this->load->model('extras/product_shipping');
 					$allowed = array();
 					foreach($this->cart->getProducts() as $result) {
-						$allowed[] = $this->model_extras_product_shipping->getProductShippingMethod($result['product_id']);
+						if ($result['affiliate_id'] == $affiliate_id) {
+							$allowed[] = $this->model_extras_product_shipping->getProductShippingMethod($result['product_id']);
+						}						
 					}
+
+					$allowed = $this->array_flatten($allowed);
 
 					if ($rate_response || $intl_rate_response) {
 						if ($address['iso_code_2'] == 'US') { 	
@@ -943,20 +903,9 @@ class ModelShippingUsps extends Model {
 													break;
 												}
 											}
+										}									
 
-											if (($this->config->get('usps_domestic_' . $classid))) {
-												$cost = $postage->getElementsByTagName('Rate')->item(0)->nodeValue;
-
-												$quote_data[$classid] = array(
-													'code'         => 'usps.' . $classid,
-													'title'        => $postage->getElementsByTagName('MailService')->item(0)->nodeValue,
-													'cost'         => $this->currency->convert($cost, 'USD', $this->config->get('config_currency')),
-													'tax_class_id' => $this->config->get('usps_tax_class_id'),
-													'text'         => $this->currency->format($this->tax->calculate($this->currency->convert($cost, 'USD', $this->currency->getCode()), $this->config->get('usps_tax_class_id'), $this->config->get('config_tax')), $this->currency->getCode(), 1.0000000)
-												);
-											}
-
-										} elseif ($this->config->get('usps_domestic_' . $classid)) {
+										if (($this->config->get('usps_domestic_' . $classid))) {
 											$cost = $postage->getElementsByTagName('Rate')->item(0)->nodeValue;
 
 											$quote_data[$classid] = array(
@@ -968,7 +917,7 @@ class ModelShippingUsps extends Model {
 											);
 										}
 									}
-								}
+								} 
 							} else {
 								$error = $package->getElementsByTagName('Error')->item(0);
 
@@ -980,13 +929,7 @@ class ModelShippingUsps extends Model {
 									'error'      => $error->getElementsByTagName('Description')->item(0)->nodeValue
 								);
 							}
-						} else { 
-							/* International Mail Service */														
-							$allowed = array();
-								
-							foreach ($product_shipping_methods as $result) {
-								$allowed[] = $result['key_id'];
-							}
+						} else { /* International Mail Service */														
 							
 							if (in_array(2,$allowed)) {				// priority mail
 								$allowed = array(2);								
@@ -1041,7 +984,7 @@ class ModelShippingUsps extends Model {
 			}
 
 			if ($quote_data) {
-				$title = $this->language->get('text_title');
+				
 
 				$title_data = array();
 				$title_data[] = $this->getAffiliateShippingInfo($affiliate_id);
@@ -1059,7 +1002,7 @@ class ModelShippingUsps extends Model {
 		return $method_data;
 	}
 
-	function getAffiliateShippingInfo($affiliate_id) {
+	private function getAffiliateShippingInfo($affiliate_id) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "affiliate a WHERE a.affiliate_id = '" . (int)$affiliate_id . "'");
 			                                                  
 		$zone = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone z WHERE z.zone_id = '" . (int)$query->row['zone_id'] . "'");
@@ -1079,6 +1022,30 @@ class ModelShippingUsps extends Model {
 		);
 
 		return $address;
+	}
+
+	private function getAdminShippingInfo() {
+		$weight = $this->weight->convert($this->cart->getWeightByAffiliateId(0), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
+
+		$info = array(
+			'name'    => $this->config->get('config_owner'),
+			'address' => $this->config->get('config_address'),
+			'weight'  => $this->weight->format($weight, $this->config->get('usps_weight_class_id'))
+		);
+
+		return $info;
+	}
+
+	private function array_flatten($array) {
+		$i = 0;
+
+		while ($i < count($array)) {
+		    if (is_array($array[$i]))
+		        array_splice($array,$i,1,$array[$i]);
+		    else
+		        ++$i;
+		}
+		return $array;
 	}
 
 }// end class

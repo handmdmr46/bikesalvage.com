@@ -76,7 +76,7 @@
                   <option value="0"><?php echo $text_disabled; ?></option>
                   <?php } ?>
                 </select></td>
-              <td align="right"><a onclick="filter();" class="button"><?php echo $button_filter; ?></a></td>
+              <td align="right"><a onclick="filter();" class="button"><?php echo $button_filter; ?></a></td>              
             </tr>
             <?php if ($products) { ?>
             <?php foreach ($products as $product) { ?>
@@ -122,7 +122,7 @@
 </div>
 <script type="text/javascript"><!--
   function filter() {
-  	url = 'index.php?route=affiliate/affiliate/getAffiliateProductList&token=<?php echo $token; ?>';
+  	url = 'index.php?route=affiliate/affiliate/getAffiliateProductList&token=<?php echo $token; ?>&affiliate_id=<?php echo $affiliate_id; ?>';
   	
   	var filter_name = $('input[name=\'filter_name\']').attr('value');
   	

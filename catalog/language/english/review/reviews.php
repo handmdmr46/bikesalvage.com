@@ -18,7 +18,7 @@ $_['text_no_reviews']    = 'There are no reviews for Bikesalvage.com.';
 $_['text_on']            = ' Review Date: ';
 $_['text_responses']     = ' %s Responses to <span>%s</span>';
 $_['text_wait']          = 'Please Wait!';
-$_['text_review_intro']  = '<b>Tell us about your experience:</b><br><p>Bikesalvage.com takes upmost priority in our customers and customer service. Please tell us about your experience good or bad so we know how were doing and our customers can know what to expect when purchasing products fom bikesalvage.com.</p>';
+$_['text_review_intro']  = '<b>Tell us about your experience:</b><br><p>Bikesalvage.com takes utmost priority in our customers and customer service. Please tell us about your experience good or bad so we know how were doing and our customers can know what to expect when purchasing products from bikesalvage.com.</p>';
 
 // Entry
 $_['entry_name']         = 'Your Name:';

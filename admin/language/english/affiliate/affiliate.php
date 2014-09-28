@@ -19,7 +19,7 @@ $_['text_transaction_balance']    = 'Total Transactions:';
 $_['text_commission_total']     = 'Commission Fees:';
 $_['text_balance_due']          = 'Balance Owed:';
 $_['text_order_product_total']  = 'Total Sales:';
-$_['text_total_due']            = 'Total:';
+$_['text_total_due']            = 'Balance:';
 
 // Column
 $_['column_name']               = 'Affiliate Name';

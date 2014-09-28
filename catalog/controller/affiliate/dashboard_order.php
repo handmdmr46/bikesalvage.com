@@ -1676,6 +1676,9 @@ class ControllerAffiliateDashboardOrder extends Controller {
 			$this->data['tab_history'] = $this->language->get('tab_history');
 			$this->data['tab_fraud'] = $this->language->get('tab_fraud');
 
+			$this->data['column_ebay_response']                    = $this->language->get('column_ebay_response');
+			$this->data['tab_stock_control']                       = $this->language->get('tab_stock_control');
+
 			$this->data['token'] = $this->session->data['token'];
 
 			// $url for filter breadcrumbs
@@ -1743,17 +1746,18 @@ class ControllerAffiliateDashboardOrder extends Controller {
 				$this->data['invoice_no'] = '';
 			}
 
-			$this->data['store_name']      = $order_info['store_name'];
-			$this->data['store_url']       = $order_info['store_url'];
-			$this->data['firstname']       = $order_info['firstname'];
-			$this->data['lastname']        = $order_info['lastname'];
-			$this->data['email']           = $order_info['email'];
-			$this->data['telephone']       = $order_info['telephone'];
-			$this->data['fax']             = $order_info['fax'];
-			$this->data['comment']         = nl2br($order_info['comment']);
-			$this->data['shipping_method'] = $order_info['shipping_method'];
-			$this->data['payment_method']  = $order_info['payment_method'];
-			$this->data['total']           = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value']);
+			$this->data['store_name']           = $order_info['store_name'];
+			$this->data['store_url']            = $order_info['store_url'];
+			$this->data['firstname']            = $order_info['firstname'];
+			$this->data['lastname']             = $order_info['lastname'];
+			$this->data['email']                = $order_info['email'];
+			$this->data['telephone']            = $order_info['telephone'];
+			$this->data['fax']                  = $order_info['fax'];
+			$this->data['comment']              = nl2br($order_info['comment']);
+			$this->data['shipping_method']      = $order_info['shipping_method'];
+			$this->data['payment_method']       = $order_info['payment_method'];
+			$this->data['total']                = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value']);
+			$this->data['stock_control_id']     = $this->config->get($affiliate_id . '_stock_control_id');
 
 			if ($order_info['total'] < 0) {
 				$this->data['credit'] = $order_info['total'];
@@ -1775,7 +1779,6 @@ class ControllerAffiliateDashboardOrder extends Controller {
 				$this->data['order_status'] = '';
 			}
 
-			// $data variables
 			$this->data['ip']                 = $order_info['ip'];
 			$this->data['forwarded_ip']       = $order_info['forwarded_ip'];
 			$this->data['user_agent']         = $order_info['user_agent'];
@@ -1843,7 +1846,8 @@ class ControllerAffiliateDashboardOrder extends Controller {
 					'price'    		   => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
 					'total'    		   => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
 					'commission'       => $this->currency->format($product['commission'], $order_info['currency_code'], $order_info['currency_value']),
-					'href'     		   => $this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . '&product_id=' . $product['product_id'], 'SSL')
+					'href'     		   => $this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . '&product_id=' . $product['product_id'], 'SSL'),
+					'ebay_response'    => $product['ebay_response']
 				);
 			}
 

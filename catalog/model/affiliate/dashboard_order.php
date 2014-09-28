@@ -1208,17 +1208,186 @@ class ModelAffiliateDashboardOrder extends Model {
 		$query = $this->db->query($sql);
 
 		return $query->rows;	
+	}
+
+	/**
+	* NOTE: query works but doesnt work when try to use with autocomplete
+	*/
+	public function getCustomersByAffiliateId($data = array(), $affiliate_id) {
+		$sql = "SELECT *, 
+		        CONCAT(c.firstname, ' ', c.lastname) AS name, 
+		        cgd.name AS customer_group 
+		        FROM " . DB_PREFIX . "customer c 
+		        LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (c.customer_group_id = cgd.customer_group_id) 
+		        LEFT JOIN " . DB_PREFIX . "order o ON (c.customer_id = o.customer_id)
+		        LEFT JOIN " . DB_PREFIX . "order_product op ON (o.order_id = op.order_id)
+		        WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'
+		        AND   op.affiliate_id = '" . (int)$affiliate_id . "'";		        
+
+		$implode = array();
+
+		if (!empty($data['filter_name'])) {
+			$implode[] = "CONCAT(c.firstname, ' ', c.lastname) LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+		}
+
+		if (!empty($data['filter_email'])) {
+			$implode[] = "c.email LIKE '" . $this->db->escape($data['filter_email']) . "%'";
+		}
+
+		if (isset($data['filter_newsletter']) && !is_null($data['filter_newsletter'])) {
+			$implode[] = "c.newsletter = '" . (int)$data['filter_newsletter'] . "'";
+		}	
+
+		if (!empty($data['filter_customer_group_id'])) {
+			$implode[] = "c.customer_group_id = '" . (int)$data['filter_customer_group_id'] . "'";
+		}	
+
+		if (!empty($data['filter_ip'])) {
+			$implode[] = "c.customer_id IN (SELECT customer_id FROM " . DB_PREFIX . "customer_ip WHERE ip = '" . $this->db->escape($data['filter_ip']) . "')";
+		}	
+
+		if (isset($data['filter_status']) && !is_null($data['filter_status'])) {
+			$implode[] = "c.status = '" . (int)$data['filter_status'] . "'";
+		}	
+
+		if (isset($data['filter_approved']) && !is_null($data['filter_approved'])) {
+			$implode[] = "c.approved = '" . (int)$data['filter_approved'] . "'";
+		}	
+
+		if (!empty($data['filter_date_added'])) {
+			$implode[] = "DATE(c.date_added) = DATE('" . $this->db->escape($data['filter_date_added']) . "')";
+		}
+
+		if ($implode) {
+			$sql .= " AND " . implode(" AND ", $implode);
+		}
+
+		$sort_data = array(
+			'name',
+			'c.email',
+			'customer_group',
+			'c.status',
+			'c.approved',
+			'c.ip',
+			'c.date_added'
+		);	
+
+		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
+			$sql .= " ORDER BY " . $data['sort'];	
+		} else {
+			$sql .= " ORDER BY name";	
+		}
+
+		if (isset($data['order']) && ($data['order'] == 'DESC')) {
+			$sql .= " DESC";
+		} else {
+			$sql .= " ASC";
+		}
+
+		if (isset($data['start']) || isset($data['limit'])) {
+			if ($data['start'] < 0) {
+				$data['start'] = 0;
+			}			
+
+			if ($data['limit'] < 1) {
+				$data['limit'] = 20;
+			}	
+
+			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}		
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;	
 	}	
 
 	public function getTotalCustomersByAffiliateId($affiliate_id) {
-		$query = $this->db->query("SELECT COUNT(*) as total
-			                       FROM   " . DB_PREFIX . "customer c
-			                       WHERE  c.customer_id IN (SELECT o.customer_id
-			                       	                        FROM   " . DB_PREFIX . "order o
-			                       	                        WHERE  o.order IN ( SELECT o.order_id
-			                       	                        	                FROM   " . DB_PREFIX . "order_product
-			                       	                        	                WHERE  o.affiliate_id = " . (int)$affiliate_id . "'))");
+		$query = $this->db->query("SELECT    COUNT(*) as total
+								   FROM      " . DB_PREFIX . "customer c
+								   LEFT JOIN " . DB_PREFIX . "order o ON (c.customer_id = o.customer_id)
+								   LEFT JOIN " . DB_PREFIX . "order_product op ON (o.order_id = op.order_id)
+								   WHERE     op.affiliate_id = '" . (int)$affiliate_id . "'");
+		
 		return $query->row['total'];
+	}
+
+	public function getTotalCustomersYearByAffiliateId($affiliate_id) {
+		$query = $this->db->query("SELECT    COUNT(*) as total
+								   FROM      " . DB_PREFIX . "customer c
+								   LEFT JOIN " . DB_PREFIX . "order o ON (c.customer_id = o.customer_id)
+								   LEFT JOIN " . DB_PREFIX . "order_product op ON (o.order_id = op.order_id)
+								   WHERE     op.affiliate_id = '" . (int)$affiliate_id . "'
+								   AND       YEAR(c.date_added) = '" . date('Y') . "'");
+		
+		return $query->row['total'];
+	}
+
+	public function getAddresses($customer_id) {
+		$address_data = array();
+
+		$query = $this->db->query("SELECT address_id FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
+
+		foreach ($query->rows as $result) {
+			$address_info = $this->getAddress($result['address_id']);
+
+			if ($address_info) {
+				$address_data[$result['address_id']] = $address_info;
+			}
+		}		
+
+		return $address_data;
+	}
+
+	public function getAddress($address_id) {
+		$address_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "address WHERE address_id = '" . (int)$address_id . "'");
+
+		if ($address_query->num_rows) {
+			$country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$address_query->row['country_id'] . "'");
+
+			if ($country_query->num_rows) {
+				$country = $country_query->row['name'];
+				$iso_code_2 = $country_query->row['iso_code_2'];
+				$iso_code_3 = $country_query->row['iso_code_3'];
+				$address_format = $country_query->row['address_format'];
+			} else {
+				$country = '';
+				$iso_code_2 = '';
+				$iso_code_3 = '';	
+				$address_format = '';
+			}
+
+			$zone_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "zone` WHERE zone_id = '" . (int)$address_query->row['zone_id'] . "'");
+
+			if ($zone_query->num_rows) {
+				$zone = $zone_query->row['name'];
+				$zone_code = $zone_query->row['code'];
+			} else {
+				$zone = '';
+				$zone_code = '';
+			}		
+
+			return array(
+				'address_id'     => $address_query->row['address_id'],
+				'customer_id'    => $address_query->row['customer_id'],
+				'firstname'      => $address_query->row['firstname'],
+				'lastname'       => $address_query->row['lastname'],
+				'company'        => $address_query->row['company'],
+				'company_id'     => $address_query->row['company_id'],
+				'tax_id'         => $address_query->row['tax_id'],
+				'address_1'      => $address_query->row['address_1'],
+				'address_2'      => $address_query->row['address_2'],
+				'postcode'       => $address_query->row['postcode'],
+				'city'           => $address_query->row['city'],
+				'zone_id'        => $address_query->row['zone_id'],
+				'zone'           => $zone,
+				'zone_code'      => $zone_code,
+				'country_id'     => $address_query->row['country_id'],
+				'country'        => $country,	
+				'iso_code_2'     => $iso_code_2,
+				'iso_code_3'     => $iso_code_3,
+				'address_format' => $address_format
+			);
+		}
 	}
 }//end class
 ?>

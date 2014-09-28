@@ -41,7 +41,13 @@ class ModelExtrasProductShipping extends Model {
 								   LEFT JOIN " . DB_PREFIX . "product_to_shipping p2s ON (sm.shipping_id = p2s.shipping_id)
 								   WHERE     p2s.product_id = '" . (int)$product_id . "'");
 
-		return $query->row['key_id'];
+		
+		if ($query->num_rows > 0) {
+			return $query->rows;
+		} else {
+			return array($this->config->get('domestic_shipping_default_id'), $this->config->get('domestic_shipping_default_id')); 
+		}
+		
 	}
 	
 	

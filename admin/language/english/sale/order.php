@@ -201,4 +201,5 @@ $_['error_filename']                          = 'Filename must be between 3 and 
 $_['error_filetype']                          = 'Invalid file type!';
 $_['error_action']                            = 'Warning: Could not complete this action!';
 $_['tab_stock_control']                       = 'Stock Control';
+$_['column_ebay_response'] = 'eBay Response';
 ?>

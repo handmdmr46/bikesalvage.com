@@ -142,7 +142,7 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 				foreach ($this->request->post['selected'] as $product_id) {
 					$ebay_item_id_str = $product_id . '_ebay_item_id';
 					$ebay_item_id = $this->request->post[$ebay_item_id_str];
-					$this->model_affiliate_dashboard_stock_control->setProductLink($product_id, $ebay_item_id);
+					$this->model_affiliate_dashboard_stock_control->setProductLink($product_id, $ebay_item_id, $this->affiliate->getId());
 				}
 
 				$this->session->data['success'] = $this->language->get('success_link_product');

@@ -250,6 +250,7 @@ class ControllerProductProduct extends Controller {
 			$this->data['text_share'] = $this->language->get('text_share');
 			$this->data['text_wait'] = $this->language->get('text_wait');
 			$this->data['text_tags'] = $this->language->get('text_tags');
+			$this->data['text_shipped_from'] = $this->language->get('text_shipped_from');
 
 			$this->data['entry_name'] = $this->language->get('entry_name');
 			$this->data['entry_review'] = $this->language->get('entry_review');
@@ -271,12 +272,13 @@ class ControllerProductProduct extends Controller {
 			$this->data['tab_review'] = sprintf($this->language->get('tab_review'), $product_info['reviews']);
 			$this->data['tab_related'] = $this->language->get('tab_related');
 
-			$this->data['product_id'] = $this->request->get['product_id'];
-			$this->data['manufacturer'] = $product_info['manufacturer'];
+			$this->data['product_id']    = $this->request->get['product_id'];
+			$this->data['manufacturer']  = $product_info['manufacturer'];
 			$this->data['manufacturers'] = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $product_info['manufacturer_id']);
-			$this->data['model'] = $product_info['model'];
-			$this->data['reward'] = $product_info['reward'];
-			$this->data['points'] = $product_info['points'];
+			$this->data['shipped_from']  = $product_info['shipped_from'];
+			$this->data['model']         = $product_info['model'];
+			$this->data['reward']        = $product_info['reward'];
+			$this->data['points']        = $product_info['points'];
 
 			if ($product_info['quantity'] <= 0) {
 				$this->data['stock'] = $product_info['stock_status'];

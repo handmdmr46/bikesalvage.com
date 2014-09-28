@@ -225,17 +225,17 @@ if ($ebay_item_ids->length > 0) {
 
 					// Stock Control - adjust inventory
 					$log_message .= 'ActionTaken:';
-		   		$new_opencart_product_quantity = $opencart_product_quantity - $quantity_purchased;
-		   		if($new_opencart_product_quantity >= 1) {
-		   			$sql = "UPDATE " . DB_PREFIX . "product SET quantity = '" . (int)$new_opencart_product_quantity . "' WHERE product_id = '" . (int)$oc_product_id . "'";
-		   			mysql_query($sql, $connection);
-		   			$log_message .= 'ProductID = ' . $oc_product_id . ' SET NewQuantity = ' . $new_opencart_product_quantity . "\n";
-		   		}
-		   		if($new_opencart_product_quantity < 1) {
-		   			$sql = "UPDATE " . DB_PREFIX . "product SET status = '0' WHERE product_id = '" . (int)$oc_product_id . "'";
-		   			mysql_query($sql, $connection);
-		   			$log_message .= 'ProductID = ' . $oc_product_id . ' NewQuantity = 0 SET Status = Not Avtive(0)' .  "\n";
-		   		}
+			   		$new_opencart_product_quantity = $opencart_product_quantity - $quantity_purchased;
+			   		if($new_opencart_product_quantity >= 1) {
+			   			$sql = "UPDATE " . DB_PREFIX . "product SET quantity = '" . (int)$new_opencart_product_quantity . "' WHERE product_id = '" . (int)$oc_product_id . "'";
+			   			mysql_query($sql, $connection);
+			   			$log_message .= 'ProductID = ' . $oc_product_id . ' SET NewQuantity = ' . $new_opencart_product_quantity . "\n";
+			   		}
+			   		if($new_opencart_product_quantity < 1) {
+			   			$sql = "UPDATE " . DB_PREFIX . "product SET status = '0' WHERE product_id = '" . (int)$oc_product_id . "'";
+			   			mysql_query($sql, $connection);
+			   			$log_message .= 'ProductID = ' . $oc_product_id . ' NewQuantity = 0 SET Status = Not Avtive(0)' .  "\n";
+			   		}
 
 			   	} else {
 		   			$log_message .= 'NO MATCH FOUND: EBayItemID = ' . $ebay_item_id . "\n";

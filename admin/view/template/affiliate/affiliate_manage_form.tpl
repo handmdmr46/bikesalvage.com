@@ -229,7 +229,7 @@
               <td>
                 <select name="status">
                   <?php foreach ($transaction_statuses as $status) { ?>
-                    <option value="<?php echo $status['order_status_id']; ?>"><?php echo $status['name']; ?></option>
+                    <option value="<?php echo $status['transaction_status_id']; ?>"><?php echo $status['name']; ?></option>
                   <?php } ?>
                 </select>
               </td>

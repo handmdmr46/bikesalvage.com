@@ -1222,7 +1222,7 @@ class ControllerAffiliateDashboardReturn extends Controller {
 				'limit'       => 20
 			);
 
-			$results = $this->model_sale_customer->getCustomers($data);
+			$results = $this->model_affiliate_dashboard_order->getCustomers($data);
 
 			foreach ($results as $result) {
 				$json[] = array(
@@ -1235,7 +1235,7 @@ class ControllerAffiliateDashboardReturn extends Controller {
 					'email'             => $result['email'],
 					'telephone'         => $result['telephone'],
 					'fax'               => $result['fax'],
-					'address'           => $this->model_sale_customer->getAddresses($result['customer_id'])
+					'address'           => $this->model_affiliate_dashboard_order->getAddresses($result['customer_id'])
 				);					
 			}
 		}

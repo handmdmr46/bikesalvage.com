@@ -581,9 +581,9 @@ class ControllerAffiliateAffiliate extends Controller {
 			$this->data['confirm'] = '';
 		}
 
-		$this->load->model('localisation/order_status');
+		$this->load->model('localisation/transaction_status');
 
-		$this->data['transaction_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+		$this->data['transaction_statuses'] = $this->model_localisation_transaction_status->getTransactionStatuses();
 
 		if (isset($this->request->post['transaction_status'])) { 
 			$this->data['transaction_status'] = $this->request->post['transaction_status'];
@@ -839,9 +839,10 @@ class ControllerAffiliateAffiliate extends Controller {
 		} else {
 			$page = 1;
 		}
-
+		
 		$affiliate_id = $this->request->get['affiliate_id'];
 		$this->session->data['affiliate_id'] = $affiliate_id;
+		$this->data['affiliate_id'] = $affiliate_id;
 
 		$url = '&affiliate_id=' . $affiliate_id;
 
@@ -2197,6 +2198,7 @@ class ControllerAffiliateAffiliate extends Controller {
 
 		$affiliate_id = $this->request->get['affiliate_id'];
 		$this->session->data['affiliate_id'] = $affiliate_id;
+		$this->data['affiliate_id'] = $affiliate_id;
 
 		$url = '&affiliate_id=' . $affiliate_id;
 
@@ -4233,9 +4235,9 @@ class ControllerAffiliateAffiliate extends Controller {
 
 		$this->data['transactions'] = array();
 
-		$this->load->model('localisation/order_status');
+		$this->load->model('localisation/transaction_status');
 
-		$this->data['transaction_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+		$this->data['transaction_statuses'] = $this->model_localisation_transaction_status->getTransactionStatuses();
 
 		$this->data['edit_transaction'] = $this->url->link('affiliate/affiliate/editTransaction', 'token=' . $this->session->data['token'], 'SSL');
 
@@ -4251,20 +4253,20 @@ class ControllerAffiliateAffiliate extends Controller {
 				'date_added'               => date($this->language->get('date_format_short'), strtotime($result['date_added']))
 			);
 		}
-		$total = $this->model_affiliate_affiliate->getTransactionTotal($this->request->get['affiliate_id']);
+		$transaction_total = $this->model_affiliate_affiliate->getTransactionTotal($this->request->get['affiliate_id']);
 		$commission_total = $this->model_affiliate_affiliate->getCommissionBalanceByAffiliateId($this->request->get['affiliate_id']);
 		$product_total = $this->model_affiliate_affiliate->getOrderProductBalanceByAffiliateId($this->request->get['affiliate_id']);
 
-		$this->data['total_transaction'] = $this->currency->format($total, $this->config->get('config_currency'));
+		$this->data['total_sales'] = $this->currency->format($product_total, $this->config->get('config_currency'));
 		$this->data['total_commission'] = $this->currency->format($commission_total, $this->config->get('config_currency'));
-		$this->data['total_order_product'] = $this->currency->format($product_total, $this->config->get('config_currency'));
-		$this->data['balance_due'] = $this->currency->format(($product_total + $commission_total) - $total, $this->config->get('config_currency'));
-		$this->data['total'] = $this->currency->format($product_total - $commission_total, $this->config->get('config_currency'));
+		$this->data['total_transaction'] = $this->currency->format($transaction_total, $this->config->get('config_currency'));
+		$this->data['balance'] = $this->currency->format($product_total - $commission_total, $this->config->get('config_currency'));
+		$this->data['balance_due'] = $this->currency->format(($product_total - $commission_total) - $transaction_total, $this->config->get('config_currency'));
 
-		$transaction_total = $this->model_affiliate_affiliate->getTotalTransactions($this->request->get['affiliate_id']);
+		$total_transaction = $this->model_affiliate_affiliate->getTotalTransactions($this->request->get['affiliate_id']);
 
 		$pagination = new Pagination();
-		$pagination->total = $transaction_total;
+		$pagination->total = $total_transaction;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_admin_limit');
 		$pagination->text = $this->language->get('text_pagination');

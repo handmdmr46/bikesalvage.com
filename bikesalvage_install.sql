@@ -385,3 +385,10 @@ ADD COLUMN  `last_modified` datetime NOT NULL;
 
 ALTER TABLE `oc_return`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
+
+CREATE TABLE `oc_transaction_status` (
+  `transaction_status_id` int(11) NOT NULL AUTO_INCREMENT,
+  `language_id` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  PRIMARY KEY (`transaction_status_id`,`language_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

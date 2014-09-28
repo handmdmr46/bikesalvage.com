@@ -154,15 +154,13 @@ $(document).ready(function(){
               <li><a href="<?php echo $voucher_theme; ?>"><?php echo $text_voucher_theme; ?></a></li>
             </ul>
           </li>
-          <!-- PAYPAL MANAGE NAVIGATION LINK -->
           <?php if ($pp_express_status) { ?>
-           <li><a class="parent" href="<?php echo $paypal_express; ?>"><?php echo $text_paypal_express; ?></a>
-             <ul>
-               <li><a href="<?php echo $paypal_express_search; ?>"><?php echo $text_paypal_express_search; ?></a></li>
-             </ul>
-           </li>
+            <li><a class="parent" href="<?php echo $paypal_express; ?>"><?php echo $text_paypal_express; ?></a>
+              <ul>
+                <li><a href="<?php echo $paypal_express_search; ?>"><?php echo $text_paypal_express_search; ?></a></li>
+              </ul>
+            </li>
           <?php } ?>
-          <!-- PAYPAL MANAGE NAVIGATION LINK END -->
           <li><a href="<?php echo $contact; ?>"><?php echo $text_contact; ?></a></li>
         </ul>
       </li>
@@ -188,6 +186,7 @@ $(document).ready(function(){
               <li><a href="<?php echo $currency; ?>"><?php echo $text_currency; ?></a></li>
               <li><a href="<?php echo $stock_status; ?>"><?php echo $text_stock_status; ?></a></li>
               <li><a href="<?php echo $order_status; ?>"><?php echo $text_order_status; ?></a></li>
+              <li><a href="<?php echo $transaction_status; ?>"><?php echo $text_transaction_status; ?></a></li>
               <li><a class="parent"><?php echo $text_return; ?></a>
                 <ul>
                   <li><a href="<?php echo $return_status; ?>"><?php echo $text_return_status; ?></a></li>
@@ -256,11 +255,11 @@ $(document).ready(function(){
               <li><a href="<?php echo $report_customer_credit; ?>"><?php echo $text_report_customer_credit; ?></a></li>
             </ul>
           </li>
-          <li><a class="parent"><?php echo $text_affiliate; ?></a>
+          <!-- <li><a class="parent"><?php echo $text_affiliate; ?></a>
             <ul>
               <li><a href="<?php echo $report_affiliate_commission; ?>"><?php echo $text_report_affiliate_commission; ?></a></li>
             </ul>
-          </li>
+          </li> -->
         </ul>
       </li>
       <!-- blog -->
@@ -276,19 +275,9 @@ $(document).ready(function(){
       </li>
       <!-- extras -->
       <li id="extras"><a class="top"><?php echo $text_extras; ?></a>
-        <ul>
-          <li><a href="<?php echo $url_alias; ?>"><?php echo $text_manage_url_alias; ?></a></li>
-          <li><a href="<?php echo $shipping_methods; ?>"><?php echo $text_shipping_methods; ?></a></li>
-          <li><a href="<?php echo $setting; ?>"><?php echo $text_shipping_methods; ?></a></li>
+        <ul>          
+          <li><a href="<?php echo $custom_setting; ?>"><?php echo $text_custom_setting; ?></a></li>          
           <li><a href="<?php echo $review_store; ?>"><?php echo $text_review_store; ?></a></li>
-        </ul>
-      </li>
-      <!-- help -->
-      <li id="help"><a class="top"><?php echo $text_help; ?></a>
-        <ul>
-          <li><a href="http://www.opencart.com" target="_blank"><?php echo $text_opencart; ?></a></li>
-          <li><a href="http://www.opencart.com/index.php?route=documentation/introduction" target="_blank"><?php echo $text_documentation; ?></a></li>
-          <li><a href="http://forum.opencart.com" target="_blank"><?php echo $text_support; ?></a></li>
         </ul>
       </li>
     </ul>

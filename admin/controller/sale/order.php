@@ -1486,8 +1486,8 @@ class ControllerSaleOrder extends Controller {
 			$this->data['tab_product']                             = $this->language->get('tab_product');
 			$this->data['tab_history']                             = $this->language->get('tab_history');
 			$this->data['tab_fraud']                               = $this->language->get('tab_fraud');
-			$this->data['column_ebay_response']                    = $this->language->get('column_ebay_response');
 			
+			$this->data['column_ebay_response']                    = $this->language->get('column_ebay_response');
 			$this->data['tab_stock_control']                       = $this->language->get('tab_stock_control');
 		
 			$this->data['token'] = $this->session->data['token'];
