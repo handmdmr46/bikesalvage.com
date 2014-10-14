@@ -119,8 +119,8 @@ $_['text_affiliate_sale']              = 'Sales';
 
 // import
 $_['text_csv_import']                  = 'CSV Import';
-$_['text_import_csv']                  = 'Import CSV - step 1';
-$_['text_import_ebayid']               = 'Import eBayID - step 2';
+$_['text_import_csv']                  = 'CSV Import';
+$_['text_import_ebayid']               = 'EbayID Import';
 $_['text_import']                      = 'Import';
 
 

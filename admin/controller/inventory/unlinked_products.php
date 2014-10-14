@@ -8,10 +8,10 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_unlinked_products'));
 		$this->load->model('inventory/stock_control');
-		$this->init();
+		$this->getList();
 	}
 
-	protected function init() {
+	protected function getList() {
 		// Filter
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
@@ -94,8 +94,17 @@ class ControllerInventoryUnlinkedProducts extends Controller {
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
 	    // Variables	    
-		$total                           = $this->model_inventory_stock_control->getTotalUnlinkedProducts($data);
-		$this->data['unlinked_products'] = $this->model_inventory_stock_control->getUnlinkedProducts($data);
+		$total   = $this->model_inventory_stock_control->getTotalUnlinkedProducts($data);
+		$results = $this->model_inventory_stock_control->getUnlinkedProducts($data);
+		$this->data['unlinked_products'] = array();
+		
+		foreach ($results as $result) {
+			$this->data['unlinked_products'][] = array(
+				'product_id' => $result['product_id'],
+				'title'       => $result['name'],
+				'selected'   => isset($this->request->post['selected']) && in_array($result['product_id'], $this->request->post['selected'])
+			);
+		}
 
 	    // Pagination
 	    $pagination        = new Pagination();

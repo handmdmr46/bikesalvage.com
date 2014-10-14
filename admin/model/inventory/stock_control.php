@@ -41,9 +41,6 @@ class ModelInventoryStockControl extends Model {
 	}
 
 	public function getTotalLinkedProducts($data= array()) {
-		/*$count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "ebay_listing");
-
-		return $count->row['total'];*/
 		$sql = "SELECT COUNT(DISTINCT el.product_id) AS total FROM " . DB_PREFIX . "ebay_listing el LEFT JOIN " . DB_PREFIX . "product_description pd ON (el.product_id = pd.product_id)";
 		
 		$sql .= " WHERE affiliate_id = '0'";
@@ -58,9 +55,6 @@ class ModelInventoryStockControl extends Model {
 	}
 
 	public function getTotalUnlinkedProducts($data= array()) {
-		// $count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "product WHERE `linked` = '0' AND `affiliate_id` = '0' AND `status` = '0'");
-		// return $count->row['total'];
-
 		$sql = "SELECT COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)";
 		
 		$sql .= " WHERE `linked` = '0' AND `affiliate_id` = '0' AND `status` = '0'";
@@ -100,30 +94,11 @@ class ModelInventoryStockControl extends Model {
 		}
 
 		$query = $this->db->query($sql);
-		$product_data = array();
 
-		foreach($query->rows as $data) {
-				$product_data[] = array (
-					'product_id'   => $data['product_id'],
-					'ebay_item_id' => $data['ebay_item_id'],
-					'title'        => $data['name'],
-					'selected'     => isset($this->request->post['selected']) && in_array($data['product_id'], $this->request->post['selected'])
-				);
-		}
-		
-		return $product_data;
+		return $query->rows;
 	}
 
 	public function getUnlinkedProducts($data = array()) {
-		/*$sql = "SELECT   pd.name,
- 					 	 pd.product_id
-			    FROM     " . DB_PREFIX . "product_description pd
-				WHERE    pd.product_id IN (
-										   SELECT product_id p
-                   					   	   FROM   " . DB_PREFIX . "product p
-                   					   	   WHERE  p.affiliate_id = '0'
-                   					   	   AND 	  p.linked = '0'                   					   	   
-                   					   	   )";*/
 		$sql = "SELECT    * 
 		        FROM      " . DB_PREFIX . "product p 
 		        LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)
@@ -147,18 +122,9 @@ class ModelInventoryStockControl extends Model {
 		    $sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
 
-		$query_product = $this->db->query($sql);
-		$product_data = array();
+		$query = $this->db->query($sql);
 
-		foreach ($query_product->rows as $data) {
-			$product_data[] = array(
-				'product_id' => $data['product_id'],
-				'title'      => $data['name'],
-				'selected'   => isset($this->request->post['selected']) && in_array($data['product_id'], $this->request->post['selected'])
-			);
-		}
-
-		return $product_data;
+		return $query->rows;
 	}
 
 	public function setLinkedProductEbayItemId($product_id, $ebay_id) {
@@ -179,7 +145,7 @@ class ModelInventoryStockControl extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "ebay_listing WHERE product_id = '" . $this->db->escape($product_id) . "'");
 	}
 
-	public function getOrdersRequest() {
+	public function getOrdersRequest($time_from, $time_to) {
 		$call_name = 'GetOrders';
 		$profile = $this->getEbayProfile();
 		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compat'], $profile['site_id'], $call_name);
@@ -199,8 +165,8 @@ class ModelInventoryStockControl extends Model {
 		$xml .= '<OutputSelector>OrderArray.Order.TransactionArray.Transaction.Item.ItemID</OutputSelector>';
 		$xml .= '<OutputSelector>OrderArray.Order.TransactionArray.Transaction.Item.Title</OutputSelector>';
 		$xml .= '<OutputSelector>OrderArray.Order.TransactionArray.Transaction.QuantityPurchased</OutputSelector>';
-		$xml .= '<CreateTimeFrom>2014-06-10T01:00:00.000Z</CreateTimeFrom>';
-		$xml .= '<CreateTimeTo>2014-06-10T24:00:00.000Z</CreateTimeTo>';
+		$xml .= '<CreateTimeFrom>' . $time_from . '</CreateTimeFrom>';
+		$xml .= '<CreateTimeTo>' . $time_to . '</CreateTimeTo>';
 		$xml .= '<OrderRole>Seller</OrderRole>';
 		$xml .= '<OrderStatus>Completed</OrderStatus>';
 		$xml .= '</GetOrdersRequest>';
@@ -248,7 +214,6 @@ class ModelInventoryStockControl extends Model {
 
         if($page_count > 1) {
         	for($i = 2; $i <= $page_count; $i++) {
-        		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compatability_level'], $profile['site_id'], $call_name);
         		
         		$xml = '<?xml version="1.0" encoding="utf-8"?>';
 				$xml .= '<GetOrdersRequest xmlns="urn:ebay:apis:eBLBaseComponents">';
@@ -266,8 +231,8 @@ class ModelInventoryStockControl extends Model {
 				$xml .= '<OutputSelector>OrderArray.Order.TransactionArray.Transaction.Item.ItemID</OutputSelector>';
 				$xml .= '<OutputSelector>OrderArray.Order.TransactionArray.Transaction.Item.Title</OutputSelector>';
 				$xml .= '<OutputSelector>OrderArray.Order.TransactionArray.Transaction.QuantityPurchased</OutputSelector>';
-				$xml .= '<CreateTimeFrom>2014-06-10T01:00:00.000Z</CreateTimeFrom>';
-				$xml .= '<CreateTimeTo>2014-06-10T24:00:00.000Z</CreateTimeTo>';
+				$xml .= '<CreateTimeFrom>' . $time_from .'</CreateTimeFrom>';
+				$xml .= '<CreateTimeTo>' . $time_to . '</CreateTimeTo>';
 				$xml .= '<OrderRole>Seller</OrderRole>';
 				$xml .= '<OrderStatus>Completed</OrderStatus>';
 				$xml .= '</GetOrdersRequest>';
@@ -305,6 +270,109 @@ class ModelInventoryStockControl extends Model {
 		        	$import_data['quantity_purchased'][] = $quantity->nodeValue;
 		        }				        		        
 		    }
+	    }
+
+	    return $import_data;
+	}
+
+	public function getSellerList($time_from, $time_to) {
+		$call_name = 'GetSellerList';
+		$profile = $this->getEbayProfile();
+		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compat'], $profile['site_id'], $call_name);
+
+		$xml  = '<?xml version="1.0" encoding="utf-8"?>';
+        $xml .= '<GetSellerListRequest xmlns="urn:ebay:apis:eBLBaseComponents">';
+      	$xml .= '<RequesterCredentials>';
+      	$xml .= '<eBayAuthToken>' . $profile['user_token'] . '</eBayAuthToken>';
+      	$xml .= '</RequesterCredentials>';
+      	$xml .= '<Pagination ComplexType="PaginationType">';
+      	$xml .= '<EntriesPerPage>200</EntriesPerPage>';
+      	$xml .= '<PageNumber>1</PageNumber>';
+      	$xml .= '</Pagination>';
+      	$xml .= '<GranularityLevel>Coarse</GranularityLevel>';
+      	$xml .= '<StartTimeFrom>' . $time_from . '</StartTimeFrom>';
+      	$xml .= '<StartTimeTo>' . $time_to . '</StartTimeTo>';
+      	$xml .= '<WarningLevel>Low</WarningLevel>';
+      	$xml .= '<OutputSelector>PaginationResult</OutputSelector>';
+      	$xml .= '<OutputSelector>ItemArray.Item.Title</OutputSelector>';
+      	$xml .= '<OutputSelector>ItemArray.Item.ItemID</OutputSelector>';
+      	$xml .= '</GetSellerListRequest>';
+
+      	$xml_response = $ebay_call->sendHttpRequest($xml);
+
+		if(stristr($xml_response, 'HTTP 404') || $xml_response == '') {
+			$this->language->load('affiliate/stock_control');
+	        $response = $this->language->get('error_ebay_api_call');
+	        return $response;
+        }
+
+        $doc_response = new DomDocument();
+        $doc_response->loadXML($xml_response);
+        $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;
+        
+        if($message == 'Failure') {
+        	$severity_code = $doc_response->getElementsByTagName('SeverityCode')->item(0)->nodeValue;
+        	$error_code = $doc_response->getElementsByTagName('ErrorCode')->item(0)->nodeValue;
+        	$short_message = $doc_response->getElementsByTagName('ShortMessage')->item(0)->nodeValue;
+        	$long_message = $doc_response->getElementsByTagName('LongMessage')->item(0)->nodeValue;
+	        $response = strtoupper($severity_code) . ': ' . $long_message . ' Error Code: ' . $error_code;
+			return $response;
+        }
+
+        $titles = $doc_response->getElementsByTagName('Title');
+	    $item_ids = $doc_response->getElementsByTagName('ItemID');
+	    $number_pages = $doc_response->getElementsByTagName('TotalNumberOfPages');
+	    $number_entries = $doc_response->getElementsByTagName('TotalNumberOfEntries');
+	    $import_data = array();
+
+	    foreach ($titles as $title) {
+	      $import_data['title'][] = $title->nodeValue;
+	    }
+
+	    foreach ($item_ids as $item_id) {
+	      $import_data['id'][] = $item_id->nodeValue;
+	    }
+
+	    $page_count = intval($number_pages->item(0)->nodeValue);
+	    $total_entries = intval($number_entries->item(0)->nodeValue);
+
+	    if($page_count > 1) {
+	        for($i = 2; $i <= $page_count; $i++) {
+
+	          $xml  = '<?xml version="1.0" encoding="utf-8"?>';
+	          $xml .= '<GetSellerListRequest xmlns="urn:ebay:apis:eBLBaseComponents">';
+	          $xml .= '<RequesterCredentials>';
+	          $xml .= '<eBayAuthToken>' . $profile['user_token'] . '</eBayAuthToken>';
+	          $xml .= '</RequesterCredentials>';
+	          $xml .= '<Pagination ComplexType="PaginationType">';
+	          $xml .= '<EntriesPerPage>200</EntriesPerPage>';
+	          $xml .= '<PageNumber>' . $i . '</PageNumber>';
+	          $xml .= '</Pagination>';
+	          $xml .= '<GranularityLevel>Coarse</GranularityLevel>';
+	          $xml .= '<StartTimeFrom>' . $time_from . '</StartTimeFrom>';
+      	   	  $xml .= '<StartTimeTo>' . $time_to . '</StartTimeTo>';
+	          $xml .= '<WarningLevel>Low</WarningLevel>';
+	          $xml .= '<OutputSelector>PaginationResult</OutputSelector>';
+	          $xml .= '<OutputSelector>ItemArray.Item.Title</OutputSelector>';
+	          $xml .= '<OutputSelector>ItemArray.Item.ItemID</OutputSelector>';
+	          $xml .= '</GetSellerListRequest>';
+
+	          $xml_response = $ebay_call->sendHttpRequest($xml);
+
+			  if(stristr($xml_response, 'HTTP 404') || $xml_response == '') {
+				$this->language->load('affiliate/stock_control');
+		        $response = $this->language->get('error_ebay_api_call');
+		        return $response;
+	          }
+
+	          foreach ($titles as $title) {
+	            $import_data['title'][] = $title->nodeValue;
+	          }
+
+	          foreach ($item_ids as $item_id) {
+	            $import_data['id'][] = $item_id->nodeValue;
+	          }
+	        }
 	    }
 
 	    return $import_data;
@@ -352,17 +420,11 @@ class ModelInventoryStockControl extends Model {
         return $quantity;
 	}
 
-	public function getProductQuantity($product_id) {
-		$product_quantity = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");
-		return $product_quantity->row['quantity'];
-	}
-
 	public function getEbayItemId($product_id) {
 		$ebay_item_id = $this->db->query("SELECT ebay_item_id FROM " . DB_PREFIX . "ebay_listing WHERE product_id = '" . (int)$product_id . "'");
 		return $ebay_item_id->row['ebay_item_id'];
 	}
 
-	// tested working
 	public function reviseEbayItemQuantity($ebay_item_id, $new_quantity) {
 		$call_name = 'ReviseInventoryStatus';
 		$profile = $this->getEbayProfile();
@@ -451,6 +513,79 @@ class ModelInventoryStockControl extends Model {
         }
 
         return $ebay_call_response;
+	}
+
+	public function getTotalLogs($data = array()) {
+		$sql = "SELECT COUNT(el.log_id) AS total FROM " . DB_PREFIX . "ebay_log el";
+		
+		if (!empty($data['filter_date_start']) && !empty($data['filter_date_end'])) {
+			$sql .= " WHERE DATE(el.log_date) >= '" . $this->db->escape($data['filter_date_start']) . "'";
+			$sql .= " AND DATE(el.log_date) <= '" . $this->db->escape($data['filter_date_end']) . "'";
+		} else {
+			$sql .= " WHERE el.log_date >= CURDATE()";
+		}
+			
+		$query = $this->db->query($sql);
+
+		return $query->row['total'];
+	}
+
+	public function getLogs($data = array()) {		
+		$sql = "SELECT * FROM " . DB_PREFIX . "ebay_log el";		
+		
+		if (!empty($data['filter_date_start']) && !empty($data['filter_date_end'])) {
+			$sql .= " WHERE DATE(el.log_date) >= '" . $this->db->escape($data['filter_date_start']) . "'";
+			$sql .= " AND DATE(el.log_date) <= '" . $this->db->escape($data['filter_date_end']) . "'";
+		} else {
+			$sql .= " WHERE el.log_date >= CURDATE()";
+		}
+				
+		if (isset($data['start']) || isset($data['limit'])) {
+			if ($data['start'] < 0) {
+				$data['start'] = 0;
+			}			
+
+			if ($data['limit'] < 1) {
+				$data['limit'] = 20;
+			}	
+			
+			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}
+			
+		$query = $this->db->query($sql);
+	
+		return $query->rows;
+	}
+
+	public function setEbayLogMessage($message) {
+		$this->db->query("INSERT INTO " . DB_PREFIX . "ebay_log SET message = '" . $this->db->escape($message) . "', log_date = NOW()");
+		// tab
+	}
+
+	public function getProductIdFromEbayListing($ebay_item_id) {
+		// NOTE: ebay_item_id is not an (int)
+		$query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "ebay_listing WHERE ebay_item_id = '" . $this->db->escape($ebay_item_id) . "'");
+		
+		if ($query->num_rows > 0) {
+			return $query->row['product_id'];
+		} else {
+			return 0;
+		}
+	}
+
+	public function getProductQuantity($product_id) {
+		$query = $this->db->query("SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");
+		return $query->row['quantity'];
+	}
+
+	public function setProductQuantity($new_quantity, $product_id) {
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = '" . (int)$new_quantity . "' WHERE product_id = '" . (int)$product_id . "'");
+		//tab
+	}
+
+	public function setProductStatus($new_status, $product_id) {
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET status = '" . (int)$new_status . "' WHERE product_id = '" . (int)$product_id . "'");
+		//tab
 	}
 
 } // end class

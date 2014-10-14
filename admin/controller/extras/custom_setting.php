@@ -16,9 +16,20 @@ class ControllerExtrasCustomSetting extends Controller {
 		$this->data['entry_international_shipping_methods']  = $this->language->get('entry_international_shipping_methods');
 		$this->data['entry_domestic_shipping_methods']       = $this->language->get('entry_domestic_shipping_methods');
 		$this->data['entry_affiliate_order_complete_status'] = $this->language->get('entry_affiliate_order_complete_status');
+		$this->data['entry_category_count_minimum_sidebar']  = $this->language->get('entry_category_count_minimum_sidebar');
+		$this->data['entry_category_count_minimum_menu']     = $this->language->get('entry_category_count_minimum_menu');
 		$this->data['button_cancel']                         = $this->language->get('button_cancel');
 		$this->data['button_save']                           = $this->language->get('button_save');
 		$this->data['text_select']                           = $this->language->get('text_select');
+		$this->data['text_user_token']                       = $this->language->get('text_user_token');
+		$this->data['text_developer_id']                     = $this->language->get('text_developer_id');
+		$this->data['text_application_id']                   = $this->language->get('text_application_id');
+		$this->data['text_certification_id']                 = $this->language->get('text_certification_id');
+		$this->data['text_compat_level']                     = $this->language->get('text_compat_level');
+		$this->data['text_none']                             = $this->language->get('text_none');
+		$this->data['text_compat_help']                      = $this->language->get('text_compat_help');
+		$this->data['text_confirm_clear_dates']              = $this->language->get('text_confirm_clear_dates');
+		$this->data['text_site_id']                          = $this->language->get('text_site_id');
 
 		$this->data['token'] = $this->session->data['token']; 
 		$url = '';
@@ -47,9 +58,9 @@ class ControllerExtrasCustomSetting extends Controller {
 			$this->data['error'] = $this->error['warning'];
 		} else {
 			$this->data['error'] = '';
-		}
+		}		
 
-   		// Sucess
+   		// Success
 		if (isset($this->session->data['success'])) {
 			$this->data['success'] = $this->session->data['success'];		
 			unset($this->session->data['success']);
@@ -60,15 +71,17 @@ class ControllerExtrasCustomSetting extends Controller {
    		$this->load->model('shipping/custom_shipping');
    		$this->data['shipping_methods'] = $this->model_shipping_custom_shipping->getShippingMethods();
 
-   		$this->load->model('localisation/order_status');
-		$this->data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();	
-
+   		$this->load->model('localisation/transaction_status');
+		$this->data['transaction_statuses'] = $this->model_localisation_transaction_status->getTransactionStatuses();	
+		
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$this->load->model('setting/setting');
+			$this->load->model('inventory/stock_control');
 			$this->model_setting_setting->editSetting('custom_setting', $this->request->post);
+			$this->model_inventory_stock_control->setEbayProfile($this->request->post);
 			$this->session->data['success'] = $this->language->get('text_success');
-			$this->redirect($this->url->link('extras/custom_setting', 'token=' . $this->session->data['token'], 'SSL'));
-		}
+			$this->redirect($this->url->link('extras/custom_setting', 'token=' . $this->session->data['token'], 'SSL'));				        	        	        	            		    		
+		} 
 
 		if (isset($this->request->post['domestic_shipping_default_id'])) {
 			$this->data['domestic_shipping_default_id'] = $this->request->post['domestic_shipping_default_id'];
@@ -87,6 +100,61 @@ class ControllerExtrasCustomSetting extends Controller {
 		} else {
 			$this->data['config_affiliate_order_complete_status_id'] = $this->config->get('config_affiliate_order_complete_status_id');
 		}
+
+		if (isset($this->request->post['category_count_minimum_sidebar'])) {
+			$this->data['category_count_minimum_sidebar'] = $this->request->post['category_count_minimum_sidebar'];
+		} else {
+			$this->data['category_count_minimum_sidebar'] = $this->config->get('category_count_minimum_sidebar');
+		}
+
+		if (isset($this->request->post['category_count_minimum_menu'])) {
+			$this->data['category_count_minimum_menu'] = $this->request->post['category_count_minimum_menu'];
+		} else {
+			$this->data['category_count_minimum_menu'] = $this->config->get('category_count_minimum_menu');
+		}
+
+		// Ebay Profile
+		$this->load->model('import/csv_import');
+		$profiles                        = $this->model_import_csv_import->getEbayProfile();
+	    $this->data['ebay_sites']        = $this->model_import_csv_import->getEbaySiteIds();
+	    $this->data['compat_levels']     = $this->model_import_csv_import->getEbayCompatibilityLevels();
+	    $this->data['dates']             = $this->model_import_csv_import->getEbayImportStartDates();
+	   
+	    if (!empty($profiles)) {
+	      $this->data['developer_id'] = $profiles['developer_id'];
+	    } else {
+	      $this->data['developer_id'] = '';
+	    }
+
+	    if (!empty($profiles)) {
+	      $this->data['application_id'] = $profiles['application_id'];
+	    } else {
+	      $this->data['application_id'] = '';
+	    }
+
+	    if (!empty($profiles)) {
+	      $this->data['certification_id'] = $profiles['certification_id'];
+	    } else {
+	      $this->data['certification_id'] = '';
+	    }
+
+	    if (!empty($profiles)) {
+	      $this->data['user_token'] = $profiles['user_token'];
+	    } else {
+	      $this->data['user_token'] = '';
+	    }
+
+	    if (!empty($profiles)) {
+	      $this->data['site_id'] = $profiles['site_id'];
+	    } else {
+	      $this->data['site_id'] = '';
+	    }
+
+	    if(!empty($profiles)) {
+	      $this->data['compat'] = $profiles['compat'];
+	    } else {
+	      $this->data['compat'] = '';
+	    }
 
    		$this->template = 'extras/custom_setting.tpl';
 		$this->children = array(
@@ -108,6 +176,5 @@ class ControllerExtrasCustomSetting extends Controller {
 			return false;
 		}
 	}
-
-  }// and class
-  ?>
+}
+?>

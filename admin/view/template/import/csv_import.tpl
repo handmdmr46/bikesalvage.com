@@ -37,10 +37,15 @@
         <tr>
           <td><?php echo $text_choose_file; ?></td>
           <td><input name="csv" type="file" /><?php if($loading) { echo $loading; } ?></td>
+          <td>Export Date</td>
+          <td>
+            <input name="import_date" id="import-date" type="text" value="<?php if(!empty($import_date)) { echo $import_date; } ?>" required>
+          </td>
         </tr>
         <td>
             <div class="wait success" style="float:right; display:none; background-image:none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></div>
         </td>
+        <td></td>
       </table>
     <table class="list" cellpadding="2">
       <thead>
@@ -48,6 +53,7 @@
                <td width="1" class="center">
                  <input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" />
               </td>
+              <td class="left" width="8%"><?php echo $text_ebay_id; ?></td>
               <td class="left" width="18%"><?php echo $text_title; ?></td>
               <td class="left" width="18%"><?php echo $text_description; ?></td>
               <td class="center width100"><?php echo $text_quantity; ?></td>
@@ -76,6 +82,10 @@
                 <input type="checkbox" name="selected[]" id="<?php echo $product['product_id']; ?>_select" value="<?php echo $product['product_id']; ?>">
               <?php } ?>
             </td>
+            <!-- EbayID -->
+            <td width="8%">
+            <input type="text" class="editable left" name="<?php echo $product['product_id']; ?>_ebay_id" value="<?php echo $product['ebay_id']; ?>"  size="25" onclick="check(<?php echo $product['product_id']; ?>)" readonly>
+            </td>
             <!-- product name -->
             <td width="18%">
             <input type="text" class="editable left" name="<?php echo $product['product_id']; ?>_name" value="<?php echo $product['product_name']; ?>"  size="85" onclick="check(<?php echo $product['product_id']; ?>)" readonly>
@@ -91,7 +101,7 @@
             </td>
             <!-- price -->
             <td>
-            <input type="text" class="editable center width75" name="<?php echo $product['product_id']; ?>_price" value="<?php echo number_format($product['price'],2); ?>" onclick="check(<?php echo $product['product_id']; ?>)">
+            <input type="text" class="editable center width75" name="<?php echo $product['product_id']; ?>_price" value="<?php echo $product['price']; ?>" onclick="check(<?php echo $product['product_id']; ?>)">
             </td>
             <!-- lenght -->
             <td>
@@ -204,24 +214,15 @@
 $(document).ready(function() {
 
   // Confirm delete
-  $('#form').submit(function(){
+  /*$('#form').submit(function(){
         if ($(this).attr('action').indexOf('delete',1) != -1) {
             if (!confirm('<?php echo $text_confirm; ?>')) {
                 return false;
             }
         }
-    });
+  });*/
 
-  // Confirm edit
-  /*
-  $('#form').submit(function(){
-        if ($(this).attr('action').indexOf('edit',1) != -1) {
-            if (!confirm('<?php echo $text_confirm_edit; ?>')) {
-                return false;
-            }
-        }
-    });
-  */
+  $('#import-date').datepicker({dateFormat: 'yy-mm-dd'});
 
   $('.editable').focus(function() {
     $(this).addClass("focusField");

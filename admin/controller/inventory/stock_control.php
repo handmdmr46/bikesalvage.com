@@ -12,29 +12,50 @@ class ControllerInventoryStockControl extends Controller {
 	}
 
 	protected function init() {
-		// TESTING
-		$this->load->model('import/csv_import');
-		$this->data['test'] = $this->model_import_csv_import->getManufacturerInfo();
 
-		/**
-		* 5 = American & HD, 8 = British & European, 
-		* 3 = Suzuki       , 1 = Honda
-		* 4 = Yamaha       , 7 = Harley Davison
-		* 2 = Kawasaki     , 
-		*
-		*/
+		/*$this->load->model('inventory/stock_control');
 
-		$this->data['suzuki_test'] = $this->model_import_csv_import->getCategoryInfoByManufacturerId(3);
+		date_default_timezone_set('America/Los_Angeles');
 
-		$this->data['yamaha_test'] = $this->model_import_csv_import->getCategoryInfoByManufacturerId(4);
+		$time_from = date('Y-m-d\TH:i:s\.', time() - 3600). '000Z'; // 3600 = 1 hour (added 200ms to prevent any chance of overlap times)
+		$time_to   = date('Y-m-d\TH:i:s\.') . '000Z';
 
-		$this->data['honda_test'] = $this->model_import_csv_import->getCategoryInfoByManufacturerId(1);
+		$import_data = $this->model_inventory_stock_control->getOrdersRequest($time_from, $time_to);
+		
+		$log_message = 'NO ORDERS MATCHES PRESENT AT THIS TIME: TimeStamp - ' . $time_to;
 
+		if (is_array($import_data)) {
+			foreach(array_combine($import_data['id'], $import_data['qty_purchased']) as $item_id => $qty) { 
+				
+				if ($this->model_inventory_stock_control->getProductIdFromEbayListing($item_id) > 0) {
+					$log_message = 'EBayItemID:' . $item_id . ' - ';
+   					$log_message .= 'QuantityPurchased:' . $qty . ' - ';
+					$product_id = $this->model_inventory_stock_control->getProductIdFromEbayListing($item_id);
+					
+					$product_quantity = $this->model_inventory_stock_control->getProductQuantity($product_id);	
+					
+					$product_quantity = (int)$product_quantity;
+					$qty = (int)$qty;
 
+					$new_quantity = $product_quantity - $qty;
 
+					$this->model_inventory_stock_control->setProductQuantity($new_quantity, $product_id);
 
+					$log_message .= 'ActionTaken:';
 
+					if ($new_quantity < 1) {
+						$this->model_inventory_stock_control->setProductStatus(0, $product_id);
+						$log_message .= 'ProductID = ' . $product_id . ' NewQuantity = 0 SET Status = Not Avtive(0)' .  "\n";
+					} else {
+						$log_message .= 'ProductID = ' . $product_id . ' SET NewQuantity = ' . $new_quantity . "\n";	
+					}
+				}	
+			}
+		} else if (is_string($import_data)) { // failed response, write failure message to db
+			$this->model_inventory_stock_control->setEbayLogMessage($import_data);	
+		}
 
+		$this->model_inventory_stock_control->setEbayLogMessage($log_message);*/
 
 		// Breadcrumbs
 	    $this->data['breadcrumbs'] = array();
@@ -198,6 +219,7 @@ class ControllerInventoryStockControl extends Controller {
 
 		// Buttons
 	    $this->data['ebay_call'] = $this->url->link('inventory/stock_control/ebayCall', 'token=' . $this->session->data['token'] . $url, 'SSL');
+	    $this->data['log_test'] = $this->url->link('inventory/stock_control/logTest', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['set_ebay_profile'] = $this->url->link('inventory/stock_control/setEbayProfile', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
@@ -291,6 +313,70 @@ class ControllerInventoryStockControl extends Controller {
 		}
 
 		$this->session->data['error'] = $this->language->get('error');
+    	$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
+	}
+
+	public function logTest() {	
+		$this->language->load('inventory/stock_control');
+		$this->document->setTitle($this->language->get('heading_title_stock_control'));
+		$this->load->model('inventory/stock_control');
+
+		################################################################################################################
+		################################################################################################################
+
+		date_default_timezone_set('America/Los_Angeles');
+
+		// $time_from = date('Y-m-d\TH:i:s\.', time() - 3600). '000Z'; // 3600 = 1 hour (added 200ms to prevent any chance of overlap times)
+		// $time_to   = date('Y-m-d\TH:i:s\.') . '000Z';
+		$time_from = '2014-10-05T20:08:37.000Z';
+		$time_to = '2014-10-06T20:08:37.000Z';
+
+		// 2014-10-06T20:08:37.000Z
+
+		$import_data = $this->model_inventory_stock_control->getOrdersRequest($time_from, $time_to);
+		
+		$log_message = 'NO ORDERS PRESENT AT THIS TIME - TimeStamp: ' . $time_to;
+
+		if (is_array($import_data)) {
+			$log_message = 'GetOrders - TimeStamp: ' . $time_to . '<br>';
+			foreach(array_combine($import_data['id'], $import_data['qty_purchased']) as $item_id => $qty) { 
+				
+				if ($this->model_inventory_stock_control->getProductIdFromEbayListing($item_id) > 0) {
+					$log_message .= 'ItemID: ' . $item_id . '  ';
+   					$log_message .= ' -- QuantityPurchased: ' . $qty . '  ';
+					$product_id = $this->model_inventory_stock_control->getProductIdFromEbayListing($item_id);
+					
+					$product_quantity = $this->model_inventory_stock_control->getProductQuantity($product_id);	
+					
+					$product_quantity = (int)$product_quantity;
+					$qty = (int)$qty;
+
+					$new_quantity = $product_quantity - $qty;
+
+					$this->model_inventory_stock_control->setProductQuantity($new_quantity, $product_id);
+
+					$log_message .= ' ActionTaken: ';
+
+					if ($new_quantity < 1) {
+						$this->model_inventory_stock_control->setProductStatus(0, $product_id);
+						$log_message .= ' ProductID = ' . $product_id . ' NewQuantity = ' . $new_quantity . ' SET Status = Not Active(0)' . '<br>';
+					} else {
+						$log_message .= ' ProductID = ' . $product_id . ' SET NewQuantity = ' . $new_quantity . '<br>';	
+					}
+				} else {
+					$log_message .= 'ItemID: ' . $item_id . ' --  NO MATCH FOUND' . '<br>';
+				}	
+			}
+		} else if (is_string($import_data)) { // failed response, write failure message to db
+			$this->model_inventory_stock_control->setEbayLogMessage($import_data);	
+		}
+
+		$this->model_inventory_stock_control->setEbayLogMessage($log_message);
+
+		################################################################################################################
+		################################################################################################################
+
+		$this->session->data['success'] = $this->language->get('success_revise_item');
     	$this->redirect($this->url->link('inventory/stock_control', 'token=' . $this->session->data['token'], 'SSL'));
 	}
 

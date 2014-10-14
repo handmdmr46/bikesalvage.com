@@ -167,7 +167,7 @@ class ControllerCommonHeader extends Controller {
 			$categories = $this->model_catalog_category->getCategoriesByManufacturerId($manufacturer['manufacturer_id']);
 			foreach($categories as $result) {				
 				$total = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => $result['category_id']));				
-				if($total > 0) {
+				if($total >= (int)$this->config->get('category_count_minimum_menu')) {
 					$model_data[] = array(
 						'name' => $result['name'] . ($this->config->get('config_product_count') ? ' (' . $total . ')' : ''),
 						'href' => $this->url->link('product/category', 'path=' . $result['category_id'])
@@ -202,7 +202,6 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
-		
 		
 		// others
 		$this->data['home']              = $this->url->link('common/home');

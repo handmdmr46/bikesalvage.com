@@ -146,7 +146,6 @@ $(document).ready(function(){
               <li><a href="<?php echo $customer_ban_ip; ?>"><?php echo $text_customer_ban_ip; ?></a></li>
             </ul>
           </li>
-          <li><a href="<?php echo $affiliate; ?>"><?php echo $text_affiliate; ?></a></li>
           <li><a href="<?php echo $coupon; ?>"><?php echo $text_coupon; ?></a></li>
           <li><a class="parent"><?php echo $text_voucher; ?></a>
             <ul>
@@ -227,6 +226,7 @@ $(document).ready(function(){
           <li><a href="<?php echo $linked_products; ?>"><?php echo $text_linked_products; ?></a></li>
           <li><a href="<?php echo $unlinked_products; ?>"><?php echo $text_unlinked_products; ?></a></li>
           <li><a href="<?php echo $ebay_log; ?>"><?php echo $text_ebay_log; ?></a></li>
+          <li><a href="<?php echo $ebay_log_database; ?>"><?php echo $text_ebay_log; ?>_2</a></li>
         </ul>
       </li>
       <!-- reports -->

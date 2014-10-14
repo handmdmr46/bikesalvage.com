@@ -12,7 +12,6 @@ class ControllerImportCsvImport extends Controller {
 	}
 
 	protected function import() {
-		// Breadcrumbs
   		$this->data['breadcrumbs'] = array();
 
    		$this->data['breadcrumbs'][] = array(
@@ -27,7 +26,6 @@ class ControllerImportCsvImport extends Controller {
       		'separator' => ' :: '
    		);
 
-		// Language
 		$this->data['heading_title_csv_import'] = $this->language->get('heading_title_csv_import');
 		$this->data['text_choose_file']         = $this->language->get('text_choose_file');
 		$this->data['text_skip_image']          = $this->language->get('text_skip_image');
@@ -63,11 +61,10 @@ class ControllerImportCsvImport extends Controller {
 		$this->data['entry_select']             = $this->language->get('entry_select');
 		$this->data['text_search_image']        = $this->language->get('text_search_image');
 		$this->data['text_search_image_help']   = $this->language->get('text_search_image_help');		
+		$this->data['text_ebay_id']             = $this->language->get('text_ebay_id');
 
-		// used for js filter() in approval.tpl
 		$this->data['token'] = $this->session->data['token'];
 
-		// Error
 		if (isset($this->session->data['error_file'])) {
 			$this->data['error_warning'] = $this->session->data['error_file'];
 			unset($this->session->data['error_file']);
@@ -84,7 +81,7 @@ class ControllerImportCsvImport extends Controller {
 
 		if (isset($this->session->data['error_delete'])) {
 			$this->data['error_warning'] = $this->session->data['error_delete'];
-			unset($this->session->data['error_edit']);
+			unset($this->session->data['error_delete']);
 		} else {
 			$this->data['error_warning'] = '';
 		}
@@ -96,7 +93,6 @@ class ControllerImportCsvImport extends Controller {
 			$this->data['error_warning'] = '';
 		}
 
-		// Success
 		if (isset($this->session->data['success'])) {
     		$this->data['success'] = $this->session->data['success'];
 			unset($this->session->data['success']);
@@ -125,7 +121,6 @@ class ControllerImportCsvImport extends Controller {
 			$this->data['success'] = '';
 		}
 
-		// Page, Start & Limit -- pagination --
 		if (isset($this->request->get['page'])) {
 			$page = $this->request->get['page'];
 			$this->data['page'] = $this->request->get['page'];
@@ -160,140 +155,159 @@ class ControllerImportCsvImport extends Controller {
 			'text/anytext',
 			'application/octet-stream',
 			'application/txt',
-       );
+        );
 
-	   // for view
-	   $this->data['manufacturers'] = $this->model_import_csv_import->getManufacturers();
-	   $this->data['domestic_shipping'] = $this->model_import_csv_import->getDomesticShippingMethods();
-	   $this->data['international_shipping'] = $this->model_import_csv_import->getInternationalShippingMethods();
+	    $this->data['manufacturers'] = $this->model_import_csv_import->getManufacturers();
+	    $this->data['domestic_shipping'] = $this->model_import_csv_import->getDomesticShippingMethods();
+	    $this->data['international_shipping'] = $this->model_import_csv_import->getInternationalShippingMethods();
 
-	   $this->data['test'] = $this->model_import_csv_import->getManufacturerInfo();
 		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
-				  if (is_uploaded_file($this->request->files['csv']['tmp_name']) && in_array($this->request->files['csv']['type'], $csv_mimetypes)) {
-					  $content = $this->request->files['csv']['tmp_name'];
-				  } else {
-					  $content = false;
-					  $this->session->data['error_file'] = $this->language->get('error_file_type');
-				      $this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
-				  }
+			if (is_uploaded_file($this->request->files['csv']['tmp_name']) && in_array($this->request->files['csv']['type'], $csv_mimetypes)) {
+				$content = $this->request->files['csv']['tmp_name'];
+			} else {
+				$content = false;
+				$this->session->data['error_file'] = $this->language->get('error_file_type');
+			    $this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			}
 
-				  if ($this->validImport($content)) {
+			if ($this->validImport($content)) {
 
-					  $csv = new Parsecsv();
+				    $csv = new Parsecsv();
+				    $csv->auto($content);
+				    $import_data = array();
 
-					  $csv->auto($content);
+				    foreach($csv->csvdata as $key => $row) {
+						$import_data[] = array(
+							'title'              => $csv->csvdata[$key]['Title'],
+							'description'        => $csv->csvdata[$key]['Description'],
+							'quantity'           => $csv->csvdata[$key]['Quantity'],
+							'price'              => $csv->csvdata[$key]['StartPrice'],
+							'item_id'            => $csv->csvdata[$key]['ItemID'],
+							'image'              => $csv->csvdata[$key]['PicURL'],
+							'weight'             => $csv->csvdata[$key]['WeightMinor'] / 16 + $csv->csvdata[$key]['WeightMajor'],
+							'unit'               => $csv->csvdata[$key]['MeasurementUnit'],
+							'length'             => $csv->csvdata[$key]['PackageLength'],
+							'width'              => $csv->csvdata[$key]['PackageWidth'],
+							'height'             => $csv->csvdata[$key]['PackageDepth'],
+							'shipping_dom'       => $csv->csvdata[$key]['ShippingService-1:Option'],
+							'shipping_intl'      => $csv->csvdata[$key]['IntlShippingService-1:Option'],
+							'is_paypal'          => $csv->csvdata[$key]['PayPalAccepted'],
+							'paypal_email'       => $csv->csvdata[$key]['PayPalEmailAddress'],
+							'shipping_name_dom'  => '',
+							'shipping_name_intl' => '',
+							'manufacturer_id'    => '',
+							'manufacturer_name'  => '',
+							'category_id'        => '',
+							'category_name'      => '',
+							'gallery_images'     => '',
+							'model'              => $csv->csvdata[$key]['CustomLabel']
+						);
+				    }
 
-					  $import_data = array();
+				    foreach($import_data as $key => $row) {					  
+				  	    $import_data[$key]['image'] = parse_url($import_data[$key]['image'], PHP_URL_PATH);
+					 					  
+					    $manufacturers = $this->model_import_csv_import->getManufacturerInfo();
+					    foreach ($manufacturers as $manufacturer) {
+					  	    if (stripos($import_data[$key]['title'],$manufacturer['name']) !== false) {
+						        $import_data[$key]['manufacturer_id'] = (int)$manufacturer['manufacturer_id'];
+					        } 					  	
+					    }
+					  
+					    $categories = $this->model_import_csv_import->getCategoryInfoByManufacturerId((int)$import_data[$key]['manufacturer_id']);
+					    if ($categories) {
+					  	    foreach ($categories as $category) {
+						  	    if (strpos($import_data[$key]['title'], $category['name']) !== false) {
+						  		    $import_data[$key]['category_id'] = (int)$category['category_id'];
+						  	    } 
+					        }
+					    }				  						  										 			
+					    
+					    $import_data[$key]['description'] = str_ireplace ('%0d', '', $import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_ireplace ('%0a', '', $import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_ireplace('@@@@%','', $import_data[$key]['description']);					
+					    
+					    $import_data[$key]['description'] = preg_replace('(\<(/?[^\>]+)\>)', '', $import_data[$key]['description']);
+					    
+					    $import_data[$key]['description'] = str_replace('Browse our many parts at:','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('GSMESS Bits!','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('We\'ve got great feedback from thousands of honest trades, so purchase with confidence!','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('Please understand that we do not know if this will fit your custom application, or other years/models other than those explicitly listed in the title and description, thank you.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('International customers, sometimes you get hit with a ridiculous customs tax before taking delivery of your items; at that, I sympathize, though it\'s out of my control.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('Yes, you have to pay import taxes.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('Domestic customers, as always: No hidden charges. No small print. No hassle returns.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('Other payment forms are still gladly accepted!','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('Please contact us after buying for payment details.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('Customs fees for international buyers are the responsibility of the purchaser, please do not ask me to edit declaration values.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('No hidden charges.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('No small print.','',$import_data[$key]['description']);
+					    $import_data[$key]['description'] = str_replace('No hassle returns.','',$import_data[$key]['description']);						
+					  					  
+					    if($import_data[$key]['shipping_dom'] == 'USPSPriorityFlatRateEnvelope'){
+						    $import_data[$key]['shipping_dom'] = 4;
+					    } elseif ($import_data[$key]['shipping_dom'] == 'USPSPriorityFlatRateBox'){
+						    $import_data[$key]['shipping_dom'] = 5;
+					    } elseif ($import_data[$key]['shipping_dom'] == 'USPSPriorityLargeFlatRateBox'){
+						    $import_data[$key]['shipping_dom'] = 6;
+					    } elseif ($import_data[$key]['shipping_dom'] == 'USPSFirstClass'){
+						    $import_data[$key]['shipping_dom'] = 1;
+					    } else {
+						    $import_data[$key]['shipping_dom'] = 7;//Parcel Select
+					    }
+					    
+					    if($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalFlatRateEnvelope'){
+						    $import_data[$key]['shipping_intl'] = 11;
+					    } elseif($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalFlatRateBox'){
+						    $import_data[$key]['shipping_intl'] = 12;
+					    } elseif ($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalLargeFlatRateBox'){
+						    $import_data[$key]['shipping_intl'] = 13;
+					    } elseif ($import_data[$key]['shipping_intl'] == 'USPSFirstClassMailInternational'){
+						    $import_data[$key]['shipping_intl'] = 9;
+					    } else {
+						    $import_data[$key]['shipping_intl'] = 10;//Priority International
+					    }
 
-					  foreach($csv->csvdata as $key => $row) {
-							$import_data[] = array(
-								'title'              => $csv->csvdata[$key]['Title'],
-								'description'        => $csv->csvdata[$key]['Description'],
-								'quantity'           => $csv->csvdata[$key]['Quantity'],
-								'price'              => $csv->csvdata[$key]['StartPrice'],
-								'item_id'            => $csv->csvdata[$key]['ItemID'],
-								'image'              => $csv->csvdata[$key]['PicURL'],
-								'weight'             => $csv->csvdata[$key]['WeightMinor'] / 16 + $csv->csvdata[$key]['WeightMajor'],
-								'unit'               => $csv->csvdata[$key]['MeasurementUnit'],
-								'length'             => $csv->csvdata[$key]['PackageLength'],
-								'width'              => $csv->csvdata[$key]['PackageWidth'],
-								'height'             => $csv->csvdata[$key]['PackageDepth'],
-								'shipping_dom'       => $csv->csvdata[$key]['ShippingService-1:Option'],
-								'shipping_intl'      => $csv->csvdata[$key]['IntlShippingService-1:Option'],
-								'is_paypal'          => $csv->csvdata[$key]['PayPalAccepted'],
-								'paypal_email'       => $csv->csvdata[$key]['PayPalEmailAddress'],
-								'shipping_name_dom'  => '',
-								'shipping_name_intl' => '',
-								'manufacturer_id'    => '',
-								'manufacturer_name'  => '',
-								'category_id'        => '',
-								'category_name'      => '',
-								'gallery_images'     => '',
-								'model'              => $csv->csvdata[$key]['CustomLabel']
-							);
-					  }
+					    $this->model_import_csv_import->addCsvImportProduct($import_data[$key]);
+				    }
 
-					  foreach($import_data as $key => $row) {
-						  // Get featured image						 
-					  	  $import_data[$key]['image'] = parse_url($import_data[$key]['image'], PHP_URL_PATH);
-						 
-						  // Match Manufacturer						 
-						  $manufacturers = $this->model_import_csv_import->getManufacturerInfo();
-						  foreach ($manufacturers as $manufacturer) {
-						  	if (stripos($import_data[$key]['title'],$manufacturer['name']) !== false) {
-							  $import_data[$key]['manufacturer_id'] = (int)$manufacturer['manufacturer_id'];
-						    } 
-						  	
-						  }
+				    date_default_timezone_set('America/Los_Angeles');
 
-						  // Match Categories
-						  $categories = $this->model_import_csv_import->getCategoryInfoByManufacturerId((int)$import_data[$key]['manufacturer_id']);
-						  if ($categories) {
-						  	foreach ($categories as $category) {
-							  	if (strpos($import_data[$key]['title'], $category['name']) !== false) {
-							  		$import_data[$key]['category_id'] = (int)$category['category_id'];
-							  	} 
-						    }
-	
-						  }				  						  										 			
+				    $import_date = $this->request->post['import_date'];
 
-						  // Clean up product description (Remove @@@@%, %0D & %0A)						  
-						  $import_data[$key]['description'] = str_ireplace ('%0d', '', $import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_ireplace ('%0a', '', $import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_ireplace('@@@@%','', $import_data[$key]['description']);					
+				    $date = new DateTime($import_date);
+					$date->sub(new DateInterval('P3D'));
+					$time_from = $date->format('Y-m-d');
 
-						  // Remove HTML tags
-						  $import_data[$key]['description'] = preg_replace('(\<(/?[^\>]+)\>)', '', $import_data[$key]['description']);
+					$date = new DateTime($import_date);
+					$date->add(new DateInterval('P3D'));
+					$time_to = $date->format('Y-m-d');
 
-						  // Remove left over crap
-						  $import_data[$key]['description'] = str_replace('Browse our many parts at:','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('GSMESS Bits!','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('We\'ve got great feedback from thousands of honest trades, so purchase with confidence!','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('Please understand that we do not know if this will fit your custom application, or other years/models other than those explicitly listed in the title and description, thank you.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('International customers, sometimes you get hit with a ridiculous customs tax before taking delivery of your items; at that, I sympathize, though it\'s out of my control.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('Yes, you have to pay import taxes.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('Domestic customers, as always: No hidden charges. No small print. No hassle returns.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('Other payment forms are still gladly accepted!','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('Please contact us after buying for payment details.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('Customs fees for international buyers are the responsibility of the purchaser, please do not ask me to edit declaration values.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('No hidden charges.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('No small print.','',$import_data[$key]['description']);
-						  $import_data[$key]['description'] = str_replace('No hassle returns.','',$import_data[$key]['description']);						
-						  
-						  // Domestic shipping
-						  if($import_data[$key]['shipping_dom'] == 'USPSPriorityFlatRateEnvelope'){
-							  $import_data[$key]['shipping_dom'] = 4;
-						  } elseif ($import_data[$key]['shipping_dom'] == 'USPSPriorityFlatRateBox'){
-							  $import_data[$key]['shipping_dom'] = 5;
-						  } elseif ($import_data[$key]['shipping_dom'] == 'USPSPriorityLargeFlatRateBox'){
-							  $import_data[$key]['shipping_dom'] = 6;
-						  } elseif ($import_data[$key]['shipping_dom'] == 'USPSFirstClass'){
-							  $import_data[$key]['shipping_dom'] = 1;
-						  } else {
-							  $import_data[$key]['shipping_dom'] = 7;//Parcel Select
-						  }
+					$this->load->model('inventory/stock_control');
+					$import_data = $this->model_inventory_stock_control->getSellerList($time_from . 'T01:00:00.000Z', $time_to . 'T01:00:00.000Z');
 
-						  // International shipping
-						  if($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalFlatRateEnvelope'){
-							  $import_data[$key]['shipping_intl'] = 11;
-						  } elseif($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalFlatRateBox'){
-							  $import_data[$key]['shipping_intl'] = 12;
-						  } elseif ($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalLargeFlatRateBox'){
-							  $import_data[$key]['shipping_intl'] = 13;
-						  } elseif ($import_data[$key]['shipping_intl'] == 'USPSFirstClassMailInternational'){
-							  $import_data[$key]['shipping_intl'] = 9;
-						  } else {
-							  $import_data[$key]['shipping_intl'] = 10;//Priority International
-						  }
+					if (is_array($import_data)) {
+			        	$unlinked   = $this->model_inventory_stock_control->getUnlinkedProducts();
+			      
+				        if($unlinked) {
+				      	    foreach($unlinked as $product){
+					            foreach(array_combine($import_data['id'], $import_data['title']) as $item_id => $ebay_title) {
+					                if ($product['name'] === $ebay_title) {
+					                	$this->model_inventory_stock_control->setProductLink($product['product_id'], $item_id);		                  
+					                }
+					            }
+				      	    }
+				        }		        	       
+					} else if (is_string($import_data)) { // failed response
+						$this->session->data['error_validation'] = $import_data;	
+						$this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'], 'SSL'));
+					}
 
-						 $this->model_import_csv_import->addCsvImportProduct($import_data[$key]);
-					  }
-					  $this->session->data['success'] = $this->language->get('text_csv_success');
-					  $this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
-				  } else {
-					  $this->session->data['error_validation'] = $this->language->get('error_validation');
-					  $this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
-				  }
+				    $this->session->data['success'] = $this->language->get('text_csv_success');
+				    $this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			} else {
+				$this->session->data['error_validation'] = $this->language->get('error_validation');
+				$this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			}
 		}
 
 		$this->data['csv_view'] = $this->model_import_csv_import->getCsvImportProductInfo($start, $limit);
@@ -438,7 +452,7 @@ class ControllerImportCsvImport extends Controller {
 			}
 
 			foreach ($this->request->post['selected'] as $product_id) {
-				$this->model_import_csv_import->deleteProduct($product_id);
+				$this->model_import_csv_import->deleteCsvImportProduct($product_id);
 	  		}
 
 			$this->session->data['success_delete'] = $this->language->get('success_delete');

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `blog` (
   `date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `viewed` int(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (`blog_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=13 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `blog_category` (
   `blog_category_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `blog_category` (
   `date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`blog_category_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=63 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `blog_category_description` (
   `blog_category_id` int(11) NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `blog_comment` (
   `date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`blog_comment_id`),
   KEY `blog_id` (`blog_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=17 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `blog_description` (
   `blog_id` int(11) NOT NULL,
@@ -89,14 +89,14 @@ CREATE TABLE IF NOT EXISTS `blog_image` (
   `image` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `sort_order` int(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`blog_image_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2417 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `blog_link` (
   `blog_link_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) COLLATE utf8_bin NOT NULL,
   `status` tinyint(1) NOT NULL,
   PRIMARY KEY (`blog_link_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=11 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `blog_link_image` (
   `blog_link_image_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `blog_link_image` (
   `link` varchar(255) COLLATE utf8_bin NOT NULL,
   `image` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`blog_link_image_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=97 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `blog_link_image_description` (
   `blog_link_image_id` int(11) NOT NULL,
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `blog_tag` (
   KEY `blog_id` (`blog_id`),
   KEY `language_id` (`language_id`),
   KEY `tag` (`tag`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=546 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `blog_to_category` (
   `blog_id` int(11) NOT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `blog_video` (
   `video` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `sort_order` int(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`blog_video_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2410;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `oc_store_review` (
   `review_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -193,7 +193,7 @@ CREATE TABLE `oc_ebay_listing` (
   `product_id` int(11) NOT NULL,
   `affiliate_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 
 DROP TABLE IF EXISTS `oc_affiliate_to_email`;
@@ -257,7 +257,14 @@ CREATE TABLE `oc_shipping_method` (
   `value` text NOT NULL,
   `key_id` int(11) NOT NULL,
   PRIMARY KEY (`shipping_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE `oc_ebay_log`(
+     log_id int(11) NOT NULL AUTO_INCREMENT,
+     message text NOT NULL DEFAULT '',
+     log_date timestamp NOT NULL DEFAULT NOW(),
+     PRIMARY KEY  (log_id)
+ ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 
 INSERT INTO `oc_ebay_compatibility` (`level`, `id`) VALUES

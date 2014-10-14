@@ -1,11 +1,30 @@
 <?php echo $header; ?>
-<!-- 
+<?php
 
-Admin template for testing ebay calls from opencart
+/*print_r($product_ids);
+echo '<br>';echo '<br>';
 
 
 
- -->
+
+echo '<br>';echo '<br>';
+
+echo 'qty_int<br>';
+print_r($qty_int);
+
+echo '<br>';echo '<br>';
+
+echo 'product_quantity<br>';
+print_r($product_quantity);
+
+echo '<br>';echo '<br>';
+
+echo 'new_qty<br>';
+print_r($new_qty);*/
+
+
+
+?>
 <div id="content">
 
 	<div class="breadcrumb">
@@ -23,28 +42,7 @@ Admin template for testing ebay calls from opencart
     <?php } ?>
 
     <div class="box">
-<?php 
-// print manufacturer names
-foreach ($test as $t) {
-	echo $t['name'] . ' ' . $t['manufacturer_id'] . "<br>";
-}
 
-//print category by manufacturer
-echo 'HONDA <br>';
-foreach ($honda_test as $h) {
-	echo $h['name'] . ' ' . $h['category_id'] . ' ' . $h['manufacturer_id'] . "<br>";
-}
-
-echo 'YAMAHA <br>';
-foreach ($yamaha_test as $h) {
-	echo $h['name'] . "<br>";
-}
-
-
-
-
-
-?>
         <div class="heading">
             <h1><img src="view/image/download.png" alt="" /> <?php echo $heading_title_ebay_profile; ?></h1>
             <h1 class="wait" style="margin-left:1700px; display: none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></h1>
@@ -146,6 +144,7 @@ foreach ($yamaha_test as $h) {
             <h1 class="wait2" style="margin-left:1700px; display: none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></h1>
             <div class="buttons">
               <a onclick="$('#form').attr('action', '<?php echo $ebay_call; ?>'); $('#form').submit(); startProgressBar2();" class="button"><?php echo $button_ebay_call; ?></a>
+              <a href="<?php echo $log_test; ?>" class="button">LOG TEST</a>
               <a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a>
             </div>
         </div><!-- .heading -->
@@ -187,12 +186,7 @@ foreach ($yamaha_test as $h) {
 		 				$ebay_item_id = array();
 		 				$purchase_qty 	 = array();
 			 			foreach(array_combine($getOrders['id'], $getOrders['qty_purchased']) as $item_id => $qty) { 
-			 				$ebay_item_id[] = $item_id;
-			 				$purchase_qty[] = $qty;
-			 			}
-			 			$data = array_combine($ebay_item_id,$purchase_qty);
-			 			foreach($data as $k => $v) {
-			 				echo 'ItemID: ' . $k . ' QuantityPurchased: ' . $v . '<br>';
+			 				echo 'ItemID: ' . var_dump($item_id) . ' QuantityPurchased: ' . var_dump($qty) . '<br>';
 			 			}
 		 			 ?>
 		 			 </td></tr>

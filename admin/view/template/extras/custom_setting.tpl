@@ -68,14 +68,80 @@
                   <td>
                     <select name="config_affiliate_order_complete_status_id">
                       <option value=""><?php echo $text_select; ?></option>
-                      <?php foreach ($order_statuses as $order_status) { ?>
-                        <?php if ($order_status['order_status_id'] == $config_affiliate_order_complete_status_id) { ?>
-                          <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
+                      <?php foreach ($transaction_statuses as $transaction_status) { ?>
+                        <?php if ($transaction_status['transaction_status_id'] == $config_affiliate_order_complete_status_id) { ?>
+                          <option value="<?php echo $transaction_status['transaction_status_id']; ?>" selected="selected"><?php echo $transaction_status['name']; ?></option>
                         <?php } else { ?>
-                          <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+                          <option value="<?php echo $transaction_status['transaction_status_id']; ?>"><?php echo $transaction_status['name']; ?></option>
                         <?php } ?>
                       <?php } ?>
                     </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td><?php echo $entry_category_count_minimum_sidebar; ?></td>
+                  <td><input type="text" name="category_count_minimum_sidebar" value="<?php echo $category_count_minimum_sidebar; ?>" /></td>
+                </tr>
+                <tr>
+                  <td><?php echo $entry_category_count_minimum_menu; ?></td>
+                  <td><input type="text" name="category_count_minimum_menu" value="<?php echo $category_count_minimum_menu; ?>" /></td>
+                </tr>
+                <tr>
+                  <td><span class="required">* </span><?php echo $text_user_token; ?></td>
+                  <td>
+                    <input name="user_token" value="<?php echo $user_token; ?>" type="text" size="100" required>                   
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td><span class="required">* </span><?php echo $text_developer_id; ?></td>
+                  <td>
+                    <input name="developer_id" value="<?php echo $developer_id; ?>" type="text" size="100" required>                    
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td><span class="required">* </span><?php echo $text_application_id; ?></td>
+                  <td>
+                    <input name="application_id" value="<?php echo $application_id; ?>" type="text" size="100" required>                    
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td><span class="required">* </span><?php echo $text_certification_id; ?></td>
+                  <td>
+                    <input name="certification_id" value="<?php echo $certification_id; ?>" type="text" size="100" required>                    
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td><span class="required">* </span><?php echo $text_site_id; ?></td>
+                  <td>
+                    <select name="site_id">
+                      <option value="999"><?php echo $text_select; ?></option>
+                      <?php foreach($ebay_sites as $site) { ?>
+                        <?php if (isset($site_id) && $site_id == $site['site_id'] ) { ?>
+                          <option value="<?php echo $site['site_id']; ?>" selected><?php echo $site['site_name']; ?></option>
+                        <?php } else { ?>
+                          <option value="<?php echo $site['site_id']; ?>"><?php echo $site['site_name']; ?></option>
+                        <?php } ?>
+                      <?php } ?>
+                    </select>                
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="required">* </span><?php echo $text_compat_level; ?><span class="help"><?php echo $text_compat_help; ?></span></td>
+                  <td>
+                    <select name="compatability_level">
+                      <option value="999"><?php echo $text_select; ?></option>
+                      <?php foreach ($compat_levels as $level) { ?>
+                        <?php if (isset($compat) && $compat == $level['level'] ) { ?>
+                          <option value="<?php echo $level['level']; ?>" selected><?php echo $level['level']; ?></option>               
+                        <?php } else { ?>
+                          <option value="<?php echo $level['level']; ?>"><?php echo $level['level']; ?></option>
+                        <?php } ?>
+                      <?php } ?>
+                    </select>                    
                   </td>
                 </tr>
             </table>

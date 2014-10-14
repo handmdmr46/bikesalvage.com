@@ -8,10 +8,10 @@ class ControllerInventoryLinkedProducts extends Controller {
 		$this->language->load('inventory/stock_control');
 		$this->document->setTitle($this->language->get('heading_title_linked_products'));
 		$this->load->model('inventory/stock_control');
-		$this->init();
+		$this->getList();
 	}
 
-	protected function init() {
+	protected function getList() {
 		// Filter
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
@@ -88,8 +88,18 @@ class ControllerInventoryLinkedProducts extends Controller {
 		);
 
 	    // Variables	    
-	    $total                    		 = $this->model_inventory_stock_control->getTotalLinkedProducts($data);
-	    $this->data['linked_products']   = $this->model_inventory_stock_control->getLinkedProducts($data);
+	    $total   = $this->model_inventory_stock_control->getTotalLinkedProducts($data);
+	    $results = $this->model_inventory_stock_control->getLinkedProducts($data);
+	    $this->data['linked_products'] = array();
+
+	    foreach ($results as $result) {
+	    	$this->data['linked_products'][] = array(
+	    		'product_id'   => $result['product_id'],
+				'ebay_item_id' => $result['ebay_item_id'],
+				'title'        => $result['name'],
+				'selected'     => isset($this->request->post['selected']) && in_array($result['product_id'], $this->request->post['selected'])
+	    	);
+	    }
 
 	    // Buttons
 	    $this->data['edit'] = $this->url->link('inventory/linked_products/edit', 'token=' . $this->session->data['token'] . $url, 'SSL');

@@ -11,7 +11,7 @@ $_['heading_title_setting']              = 'Affiliate Settings';
 $_['heading_title_transaction']          = 'Affiliate Transaction';
 $_['heading_title_edit_password']        = 'Affiliate Edit Password';
 $_['heading_title_stock_control_config'] = 'Affiliate Stock Control Config';
-$_['heading_title_ebay_cron']           = 'Affiliate EBay Cron Log';
+$_['heading_title_ebay_cron']            = 'Affiliate EBay Cron Log';
 
 
 
@@ -386,7 +386,7 @@ $_['text_stock_control']                 = 'Stock Control';
 $_['text_config_stock_control']          = 'Stock Control Config';
 $_['entry_stock_control_config']         = 'Activate Ebay Stock Control:';
 $_['text_success']                       = 'Success: You have successfully cleared your error log!';
-$_['text_ebay_cron_log']                 = 'eBay Cron Log';
-$_['button_clear'] = 'Clear';
-$_['text_success_stock_control_config'] = 'SUCCESS: Your account settings have been modified for the stock control server.';
+$_['text_ebay_cron_log']                 = 'eBay Log';
+$_['button_clear']                       = 'Clear';
+$_['text_success_stock_control_config']  = 'SUCCESS: Your account settings have been modified for the stock control server.';
 ?>

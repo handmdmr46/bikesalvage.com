@@ -140,11 +140,11 @@ class ModelImportCsvImport extends Model {
 								`quantity` = '" . (int)$data['quantity'] . "',
 								`image` = '" . $this->db->escape(substr($featured_image, 1)) . "',
 								`manufacturer_id` = '" . (int)$data['manufacturer_id'] . "',
-								`price` = '" . (int)$data['price'] . "',
-								`weight` =  '" . (int)$data['weight'] . "',
-								`length` = '" . (int)$data['length'] . "',
-								`width` = '" . (int)$data['width'] . "',
-								`height` = '" . (int)$data['height'] . "',
+								`price` = '" . (float)$data['price'] . "',
+								`weight` =  '" . (float)$data['weight'] . "',
+								`length` = '" . (float)$data['length'] . "',
+								`width` = '" . (float)$data['width'] . "',
+								`height` = '" . (float)$data['height'] . "',
 								`length_class_id` = '3',
 								`weight_class_id` = '5',
 								`status` = '0',
@@ -260,8 +260,7 @@ class ModelImportCsvImport extends Model {
 			    LEFT JOIN  " . DB_PREFIX . "product_to_category ptc ON p.product_id = ptc.product_id
 			    LEFT JOIN  " . DB_PREFIX . "category_description cd ON ptc.category_id = cd.category_id
 			    LEFT JOIN  " . DB_PREFIX . "manufacturer m ON p.manufacturer_id = m.manufacturer_id
-			    WHERE  p.status = '0'
-			    AND    p.affiliate_id = '0'
+			    WHERE  p.affiliate_id = '0'			    
 			    AND    p.csv_import = '1'";
 
 	    if(isset($start) || isset($limit)) {
@@ -282,6 +281,7 @@ class ModelImportCsvImport extends Model {
 		foreach($query_product->rows as $data) {
 
 				$product_data[] = array(
+					'ebay_id'           => $this->getProductLinkEbayId($data['product_id']),
 					'product_id'        => $data['product_id'],
 					'model'             => $data['model'],
 					'quantity'          => $data['quantity'],
@@ -305,6 +305,16 @@ class ModelImportCsvImport extends Model {
 		}
 
 		return $product_data;
+	}
+
+	public function getProductLinkEbayId($product_id) {
+		$query = $this->db->query("SELECT ebay_item_id FROM " . DB_PREFIX . "ebay_listing WHERE product_id = '" . (int)$product_id . "'");
+		
+		if ($query->num_rows > 0) {
+			return $query->row['ebay_item_id'];
+		} else {
+			return '';
+		}
 	}
 
 	public function clearCsvImportTable() {
@@ -362,7 +372,7 @@ class ModelImportCsvImport extends Model {
 		}
     }
 
-	public function deleteProduct($product_id) {
+	public function deleteCsvImportProduct($product_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");
@@ -380,6 +390,7 @@ class ModelImportCsvImport extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_layout WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_store WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "review WHERE product_id = '" . (int)$product_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "ebay_listing WHERE product_id = '" . (int)$product_id . "'");
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'product_id=" . (int)$product_id. "'");
 

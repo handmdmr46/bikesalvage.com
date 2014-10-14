@@ -99,38 +99,50 @@ $page_count = intval($total_pages->item(0)->nodeValue);
 // Check if any orders were returned
 if ($ebay_item_ids->length > 0) {
 	$log_message .= 'GetOrders TimeStamp: ' . $timeTo . "\n";
-	foreach (array_combine($ebay_item_ids, $qty_purchased) as $ebay_item_id => $quantity_purchased) {
 
-	   		$log_message .= 'EBayItemID:' . $ebay_item_id . ' - ';
-	   		$log_message .= 'QuantityPurchased:' . $quantity_purchased . ' - ';
-	   		// Get Opencart ProductID
-	   		$sql = "SELECT product_id FROM " . DB_PREFIX . "ebay_listing WHERE ebay_item_id = '" . (int)$ebay_item_id . "'";
+	$import_data = array();
+
+	foreach ($ebay_item_ids as $item_id) {
+      $import_data['id'][] = $item_id->nodeValue;
+    }
+
+    foreach ($qty_purchased as $qty) {
+    	$import_data['qty'][] = $qty->nodeValue;
+    }
+
+	foreach (array_combine($import_data['id'], $import_data['qty']) as $ebay_item_id => $quantity_purchased) {
+
+   		$log_message .= 'EBayItemID:' . $ebay_item_id . ' - ';
+   		$log_message .= 'QuantityPurchased:' . $quantity_purchased . ' - ';
+   		// Get Opencart ProductID
+   		$sql = "SELECT product_id FROM " . DB_PREFIX . "ebay_listing WHERE ebay_item_id = '" . (int)$ebay_item_id . "'";
+   		$result = mysql_query($sql, $connection);
+
+   		// if (mysql_num_rows($result) > 0) {
+
+	   		$row = mysql_fetch_assoc($result);
+			$oc_product_id = $row['product_id'];
+	   		if (!$result) {
+	    	  $log_message .= "DB Error, could not query the database\n";
+	    	  $log_message .= 'MySQL Error: ' . mysql_error();
+	    	  exit;
+			}
+			mysql_free_result($result);
+
+			// Get Opencart Product Quantity
+	   		$sql = "SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$oc_product_id . "'";
 	   		$result = mysql_query($sql, $connection);
+	   		$row = mysql_fetch_assoc($result);
+	   		$opencart_product_quantity = $row['quantity'];
+	   		if (!$result) {
+	    	  $log_message .= "DB Error, could not query the database\n";
+	    	  $log_message .= 'MySQL Error: ' . mysql_error();
+	    	  exit;
+			}
+			mysql_free_result($result);
 
-	   		if (mysql_num_rows($result) > 0) {
-
-		   		$row = mysql_fetch_assoc($result);
-				$oc_product_id = $row['product_id'];
-		   		if (!$result) {
-		    	  $log_message .= "DB Error, could not query the database\n";
-		    	  $log_message .= 'MySQL Error: ' . mysql_error();
-		    	  exit;
-				}
-				mysql_free_result($result);
-
-				// Get Opencart Product Quantity
-		   		$sql = "SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$oc_product_id . "'";
-		   		$result = mysql_query($sql, $connection);
-		   		$row = mysql_fetch_assoc($result);
-		   		$opencart_product_quantity = $row['quantity'];
-		   		if (!$result) {
-		    	  $log_message .= "DB Error, could not query the database\n";
-		    	  $log_message .= 'MySQL Error: ' . mysql_error();
-		    	  exit;
-				}
-				mysql_free_result($result);
-
-				// Stock Control - adjust inventory
+			// Stock Control - adjust inventory
+			if ($opencart_product_quantity) {
 				$log_message .= 'ActionTaken:';
 		   		$new_opencart_product_quantity = $opencart_product_quantity - $quantity_purchased;
 		   		if($new_opencart_product_quantity >= 1) {
@@ -143,10 +155,13 @@ if ($ebay_item_ids->length > 0) {
 		   			mysql_query($sql, $connection);
 		   			$log_message .= 'ProductID = ' . $oc_product_id . ' NewQuantity = 0 SET Status = Not Avtive(0)' .  "\n";
 		   		}
-
 		   	} else {
-	   			$log_message .= 'NO MATCH FOUND: EBayItemID = ' . $ebay_item_id . "\n";
-	   		}
+   				$log_message .= 'NO MATCH FOUND: EBayItemID = ' . $ebay_item_id . "\n";
+   			}
+			
+	   	/*} else {
+   			$log_message .= 'NO MATCH FOUND: EBayItemID = ' . $ebay_item_id . "\n";
+   		}*/
 	}
 
 	// eBay Call GetOrders - High Volume = over 50 per page
@@ -193,29 +208,43 @@ if ($ebay_item_ids->length > 0) {
 	    		$log_message .= strtoupper($severity_code) . ': ' . $long_message . ' Error Code: ' . $error_code;
 			}
 
-			foreach (array_combine($ebay_item_ids, $qty_purchased) as $ebay_item_id => $quantity_purchased) {
+			$ebay_item_ids = $doc_response->getElementsByTagName('ItemID');
+			$qty_purchased = $doc_response->getElementsByTagName('QuantityPurchased');
 
+			$import_data = array();
+
+			foreach ($ebay_item_ids as $item_id) {
+		      $import_data['id'][] = $item_id->nodeValue;
+		    }
+
+		    foreach ($qty_purchased as $qty) {
+		    	$import_data['qty'][] = $qty->nodeValue;
+		    }
+		    
+			foreach (array_combine($import_data['id'], $import_data['qty']) as $ebay_item_id => $quantity_purchased) {
 		   		$log_message .= 'EBayItemID:' . $ebay_item_id . ' - ';
 	   		    $log_message .= 'QuantityPurchased:' . $quantity_purchased . ' - ';
-		   		// Get Opencart ProductID
+		   		
 		   		$sql = "SELECT product_id FROM " . DB_PREFIX . "ebay_listing WHERE ebay_item_id = '" . (int)$ebay_item_id . "'";
 		   		$result = mysql_query($sql, $connection);
+
 		   		if (!$result) {
 			    	  $log_message .= "DB Error, could not query the database\n";
 			    	  $log_message .= 'MySQL Error: ' . mysql_error();
 			    	  exit;
 				}
+
 		   		if (mysql_num_rows($result) > 0) {
 
 			   		$row = mysql_fetch_assoc($result);
 					$oc_product_id = $row['product_id'];			   		
 					mysql_free_result($result);
 
-					// Get Opencart Product Quantity
 			   		$sql = "SELECT quantity FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$oc_product_id . "'";
 			   		$result = mysql_query($sql, $connection);
 			   		$row = mysql_fetch_assoc($result);
 			   		$opencart_product_quantity = $row['quantity'];
+
 			   		if (!$result) {
 			    	  $log_message .= "DB Error, could not query the database\n";
 			    	  $log_message .= 'MySQL Error: ' . mysql_error();
@@ -223,37 +252,35 @@ if ($ebay_item_ids->length > 0) {
 					}
 					mysql_free_result($result);
 
-					// Stock Control - adjust inventory
 					$log_message .= 'ActionTaken:';
 			   		$new_opencart_product_quantity = $opencart_product_quantity - $quantity_purchased;
+
 			   		if($new_opencart_product_quantity >= 1) {
 			   			$sql = "UPDATE " . DB_PREFIX . "product SET quantity = '" . (int)$new_opencart_product_quantity . "' WHERE product_id = '" . (int)$oc_product_id . "'";
 			   			mysql_query($sql, $connection);
 			   			$log_message .= 'ProductID = ' . $oc_product_id . ' SET NewQuantity = ' . $new_opencart_product_quantity . "\n";
 			   		}
+
 			   		if($new_opencart_product_quantity < 1) {
 			   			$sql = "UPDATE " . DB_PREFIX . "product SET status = '0' WHERE product_id = '" . (int)$oc_product_id . "'";
 			   			mysql_query($sql, $connection);
 			   			$log_message .= 'ProductID = ' . $oc_product_id . ' NewQuantity = 0 SET Status = Not Avtive(0)' .  "\n";
 			   		}
-
 			   	} else {
 		   			$log_message .= 'NO MATCH FOUND: EBayItemID = ' . $ebay_item_id . "\n";
 		   		}
 			}
-
-
 	    }
 	}
-
 } else {
 	$log_message .= 'NO ORDERS PRESENT AT THIS TIME: TimeStamp - ' . $timeTo . "\n";
 }
+// Write to DB
+$sql = "INSERT INTO " . DB_PREFIX . "ebay_log (message, log_date) VALUES ('" . $log_message . "', NOW())";
+mysql_query($sql, $connection);
 
 // Write To Log File
 $file = DIR_LOGS . 'ebay_cron_log.txt';
 file_put_contents($file, $log_message, FILE_APPEND | LOCK_EX);
 mysql_close($connection);
-
-
 ?>

@@ -5,6 +5,9 @@ final class DBMySQLi {
 	public function __construct($hostname, $username, $password, $database) {
 		$this->link = new mysqli($hostname, $username, $password, $database);
 
+		// Temporary fix to use mysqli with 1&1 hosting 
+		// $this->link = new mysqli('localhost', 'dbo538356846', 'DBPassword', 'db538356846', null, '/kunden/tmp/mysql5.sock');
+
 		if (mysqli_connect_error()) {
 			throw new ErrorException('Error: Could not make a database link (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
 		}

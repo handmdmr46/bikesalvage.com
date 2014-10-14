@@ -58,6 +58,7 @@ $_['text_product_id']                  = 'Product ID';
 $_['text_ebay_item_id']                = 'eBay Item ID';
 $_['text_unlinked_product_pagination'] = 'Unlinked Products Pagination';
 $_['text_linked_product_pagination']   = 'Linked Products Pagination';
+$_['text_please_wait'] 				   = 'Please wait.........';
 
 
 
@@ -104,17 +105,5 @@ $_['success_clear'] 				   = 'SUCCESS: CSV Import table has been cleared.';
 
 // others
 $_['entry_select']                     = 'Please Select One';
-
-
-$_['error_test'] = 'ERROR TEST';
-
-
-
-
-
-
-
-
-
-
+$_['text_ebay_id']                     = 'EbayID';
 ?>
