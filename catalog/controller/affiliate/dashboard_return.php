@@ -3,6 +3,11 @@ class ControllerAffiliateDashboardReturn extends Controller {
 	private $error = array();
 
 	public function index() {
+		if (!$this->affiliate->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_return', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
+
 		$this->language->load('affiliate/dashboard_return');
 
 		$this->document->setTitle($this->language->get('heading_title'));

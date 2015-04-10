@@ -14,7 +14,7 @@ class Affiliate {
 		$this->request = $registry->get('request');
 		$this->session = $registry->get('session');
 
-		if (isset($this->session->data['affiliate_id'])) { 
+		if (isset($this->session->data['affiliate_id'])) {
 			$affiliate_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "affiliate WHERE affiliate_id = '" . (int)$this->session->data['affiliate_id'] . "' AND status = '1'");
 
 			if ($affiliate_query->num_rows) {
@@ -38,7 +38,7 @@ class Affiliate {
 		$affiliate_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "affiliate WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "' AND (password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('" . $this->db->escape($password) . "'))))) OR password = '" . $this->db->escape(md5($password)) . "') AND status = '1' AND approved = '1'");
 
 		if ($affiliate_query->num_rows) {
-			$this->session->data['affiliate_id'] = $affiliate_query->row['affiliate_id'];	
+			$this->session->data['affiliate_id'] = $affiliate_query->row['affiliate_id'];
 
 			$this->affiliate_id = $affiliate_query->row['affiliate_id'];
 			$this->firstname = $affiliate_query->row['firstname'];
@@ -53,6 +53,32 @@ class Affiliate {
 			return false;
 		}
 	}
+
+	// from user.php
+	/*public function login($username, $password) {
+		$user_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "user WHERE username = '" . $this->db->escape($username) . "' AND (password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1('" . $this->db->escape($password) . "'))))) OR password = '" . $this->db->escape(md5($password)) . "') AND status = '1'");
+
+		if ($user_query->num_rows) {
+			$this->session->data['user_id'] = $user_query->row['user_id'];
+
+			$this->user_id = $user_query->row['user_id'];
+			$this->username = $user_query->row['username'];
+
+			$user_group_query = $this->db->query("SELECT permission FROM " . DB_PREFIX . "user_group WHERE user_group_id = '" . (int)$user_query->row['user_group_id'] . "'");
+
+			$permissions = unserialize($user_group_query->row['permission']);
+
+			if (is_array($permissions)) {
+				foreach ($permissions as $key => $value) {
+					$this->permission[$key] = $value;
+				}
+			}
+
+			return true;
+		} else {
+			return false;
+		}
+	}*/
 
 	public function logout() {
 		unset($this->session->data['affiliate_id']);

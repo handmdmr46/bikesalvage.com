@@ -22,9 +22,10 @@
   <div class="box">
     <div class="heading">
       <h1><img src="view/image/download.png" alt="" /> <?php echo $heading_title; ?></h1>
-      
+
       <div class="buttons">
         <a onclick="start_import(); $('#form').attr('action', '<?php echo $import_ids; ?>'); $('#form').submit();" class="button" title="start the eBay ItemID import"><?php echo $button_import; ?></a>
+        <a onclick="start_import(); $('#form').attr('action', '<?php echo $build_seller_list; ?>'); $('#form').submit();" class="button">Build Seller List</a>
         <a href="<?php echo $clear_dates; ?>" class="button" title="clear all eBay Import start to and start from dates"><?php echo $button_clear_dates; ?></a>
         <a href="<?php echo $cancel; ?>" class="button" title="return to admin home"><?php echo $button_cancel; ?></a>
       </div>
@@ -48,7 +49,7 @@
             <td></td>
           </tr>
         </table>
-              
+
           <div id="scheduler_here" class="dhx_cal_container" style='width:90%;height:400px; padding: 35px; margin: 20px;'>
             <div class="dhx_cal_navline" style="padding-left:5px;">
               <div class="dhx_cal_prev_button">&nbsp;</div>
@@ -58,7 +59,7 @@
             <div class="dhx_cal_header"></div>
             <div class="dhx_cal_data"></div>
           </div>
-       
+
       </form>
     </div><!-- .content -->
   </div><!-- .box -->

@@ -1,17 +1,20 @@
 <?php 
 class ControllerAffiliateDashboardCronLog extends Controller { 
 	public function index() {		
+		if (!$this->affiliate->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_cron_log', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
+
 		$this->language->load('affiliate/dashboard');
 		$this->document->setTitle($this->language->get('heading_title_ebay_cron'));	
 
 		$this->data['template_url'] = 'catalog/view/theme/' . $this->config->get('config_template');
 		$affiliate_id = $this->affiliate->getId();
 		
-		// Language
 		$this->data['heading_title'] = $this->language->get('heading_title_ebay_cron');		
 		$this->data['button_clear'] = $this->language->get('button_clear');
 
-		// Success
 		if (isset($this->session->data['success'])) {
 			$this->data['success'] = $this->session->data['success'];
 		
@@ -20,7 +23,6 @@ class ControllerAffiliateDashboardCronLog extends Controller {
 			$this->data['success'] = '';
 		}
 		
-		// Breadcrumbs
   		$this->data['breadcrumbs'] = array();
 
    		$this->data['breadcrumbs'][] = array(

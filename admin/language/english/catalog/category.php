@@ -16,7 +16,7 @@ $_['column_action']          = 'Action';
 
 // Entry
 $_['entry_name']             = 'Category Name:';
-$_['entry_meta_keyword'] 	 = 'Meta Tag Keywords:';
+$_['entry_meta_keyword']     = 'Meta Tag Keywords:';
 $_['entry_meta_description'] = 'Meta Tag Description:';
 $_['entry_description']      = 'Description:';
 $_['entry_parent']           = 'Parent:';
@@ -29,10 +29,10 @@ $_['entry_column']           = 'Columns:<br/><span class="help">Number of column
 $_['entry_sort_order']       = 'Sort Order:';
 $_['entry_status']           = 'Status:';
 $_['entry_layout']           = 'Layout Override:';
-$_['entry_manufacturer'] = 'Manufacturers';
-$_['entry_select'] = 'Please Select';
+$_['entry_manufacturer']     = 'Manufacturers';
+$_['entry_select']           = 'Please Select';
 
-// Error 
+// Error
 $_['error_warning']          = 'Warning: Please check the form carefully for errors!';
 $_['error_permission']       = 'Warning: You do not have permission to modify categories!';
 $_['error_name']             = 'Category Name must be between 2 and 32 characters!';

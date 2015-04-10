@@ -8,24 +8,28 @@
   <?php if ($error_warning) { ?>
   <div class="warning"><?php echo $error_warning; ?></div>
   <?php } ?>
+
   <div class="box">
     <div class="heading">
       <h1><img src="view/image/shipping.png" alt="" /> <?php echo $heading_title; ?></h1>
-      <div class="buttons"><a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a><a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a></div>
+      <div class="buttons">
+        <a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a>
+        <a href="<?php echo $cancel; ?>" class="button"><?php echo $button_cancel; ?></a>
+      </div>
     </div>
     <div class="content">
       <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
         <table class="form">
           <tr>
             <td><span class="required">*</span> <?php echo $entry_user_id; ?></td>
-            <td><input type="text" name="usps_user_id" value="<?php echo $usps_user_id; ?>" />
+            <td><input type="text" name="<?php echo $affiliate_id; ?>_usps_user_id" value="<?php echo $usps_user_id; ?>" />
               <?php if ($error_user_id) { ?>
               <span class="error"><?php echo $error_user_id; ?></span>
               <?php } ?></td>
           </tr>
           <tr>
             <td><span class="required">*</span> <?php echo $entry_postcode; ?></td>
-            <td><input type="text" name="usps_postcode" value="<?php echo $usps_postcode; ?>" />
+            <td><input type="text" name="<?php echo $affiliate_id; ?>_usps_postcode" value="<?php echo $usps_postcode; ?>" />
               <?php if ($error_postcode) { ?>
               <span class="error"><?php echo $error_postcode; ?></span>
               <?php } ?></td>
@@ -424,9 +428,9 @@
           <tr>
             <td><span class="required">*</span> <?php echo $entry_dimension; ?></td>
             <td>
-		      <input type="text" name="usps_length" value="<?php echo $usps_length; ?>" size="4" />
-              <input type="text" name="usps_width" value="<?php echo $usps_width; ?>" size="4" />
-              <input type="text" name="usps_height" value="<?php echo $usps_height; ?>" size="4" />
+		      <input type="text" name="<?php echo $affiliate_id; ?>_usps_length" value="<?php echo $usps_length; ?>" size="4" />
+              <input type="text" name="<?php echo $affiliate_id; ?>_usps_width" value="<?php echo $usps_width; ?>" size="4" />
+              <input type="text" name="<?php echo $affiliate_id; ?>_usps_height" value="<?php echo $usps_height; ?>" size="4" />
 			  <?php if ($error_width) { ?>
               <span class="error"><?php echo $error_width; ?></span>
               <?php } ?>

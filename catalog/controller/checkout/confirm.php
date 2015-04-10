@@ -1,172 +1,133 @@
-<?php 
-class ControllerCheckoutConfirm extends Controller { 
+<?php
+class ControllerCheckoutConfirm extends Controller {
 	/**
 	* Modified for checkout procedure - stock_control
 	*
 	*/
 	public function index() {
 		$redirect = '';
-		
-		if ($this->cart->hasShipping()) {
-			// Validate if shipping address has been set.		
-			$this->load->model('account/address');
-	
-			if ($this->customer->isLogged() && isset($this->session->data['shipping_address_id'])) {					
-				$shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);		
-			} elseif (isset($this->session->data['guest'])) {
-				$shipping_address = $this->session->data['guest']['shipping'];
-			}
-			
-			if (empty($shipping_address)) {								
-				$redirect = $this->url->link('checkout/checkout', '', 'SSL');
-			}
-			
-			// Validate if shipping method has been set.	
-			if (!isset($this->session->data['shipping_method'])) {
-				$redirect = $this->url->link('checkout/checkout', '', 'SSL');
-			}
-		} else {
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-		}
-		
-		// Validate if payment address has been set.
-		$this->load->model('account/address');
-		
-		if ($this->customer->isLogged() && isset($this->session->data['payment_address_id'])) {
-			$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);		
-		} elseif (isset($this->session->data['guest'])) {
-			$payment_address = $this->session->data['guest']['payment'];
-		}	
-				
-		if (empty($payment_address)) {
-			$redirect = $this->url->link('checkout/checkout', '', 'SSL');
-		}			
-		
-		// Validate if payment method has been set.	
-		if (!isset($this->session->data['payment_method'])) {
-			$redirect = $this->url->link('checkout/checkout', '', 'SSL');
-		}
-					
-		// Validate cart has products and has stock.	
-		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
-			$redirect = $this->url->link('checkout/cart');				
-		}	
-		
-		// Validate minimum quantity requirments.			
+
+		// Validate minimum quantity requirments.
 		$products = $this->cart->getProducts();
-				
+		$affiliate_ids = array();
 		foreach ($products as $product) {
 			$product_total = 0;
-			
-			// if products are the same increase the quantity	
+			$affiliate_ids[] = $product['affiliate_id'];
+			// if products are the same increase the quantity
 			foreach ($products as $product_2) {
 				if ($product_2['product_id'] == $product['product_id']) {
 					$product_total += $product_2['quantity'];
 				}
-			}		
-			
+			}
+
 			if ($product['minimum'] > $product_total) {
 				$redirect = $this->url->link('checkout/cart');
-				
+
 				break;
-			}				
-		}
-		
-		if (!$redirect) {
-			$total_data = array();
-			$total = 0;
-			$taxes = $this->cart->getTaxes();
-			 
-			$this->load->model('setting/extension');
-			
-			$sort_order = array(); 
-			
-			$results = $this->model_setting_extension->getExtensions('total');
-						
-			foreach ($results as $key => $value) {
-				$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
-				/*
-				* $sort_order[0] = shipping_sort_order
-				* $sort_order[1] = sub_total_sort_order
-				* $sort_order[2] = tax_sort_order
-				* $sort_order[3] = total_sort_order
-				* $sort_order[4] = credit_sort_order
-				* $sort_order[5] = handling_sort_order
-				* $sort_order[6] = low_order_fee_sort_order
-				* $sort_order[7] = coupon_sort_order
-				* $sort_order[8] = reward_sort_order
-				* $sort_order[9] = voucher_sort_order
-				*/
 			}
-			
-			array_multisort($sort_order, SORT_ASC, $results); // sorts array in ascending order
-			
-			foreach ($results as $result) {
-				if ($this->config->get($result['code'] . '_status')) {
-					/*
-					* shipping_status
-					* sub_total_status
-					* tax_status
-					* total_status
-					* credit_status
-					* handling_status
-					* low_order_fee_status
-					* coupon_status
-					* reward_status
-					* voucher_status
-					*/
-					$this->load->model('total/' . $result['code']);
-					/*
-					**** $this->load->model('total/shipping'); ****
-					**** $this->load->model('total/sub_total'); ****					
-					**** $this->load->model('total/total'); ****
-					* $this->load->model('total/tax');
-					* $this->load->model('total/credit');
-					* $this->load->model('total/handling');
-					* $this->load->model('total/low_order_fee');
-					* $this->load->model('total/coupon');
-					* $this->load->model('total/reward');
-					* $this->load->model('total/voucher');
-					*/
-					$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
-					/*
-					**** $this->model_total_shipping->getTotal($total_data, $total, $taxes); ****
-					**** $this->model_total_sub_total->getTotal($total_data, $total, $taxes); ****
-					**** $this->model_total_total->getTotal($total_data, $total, $taxes); ****
-					* $this->model_total_tax->getTotal($total_data, $total, $taxes);					
-					* $this->model_total_credit->getTotal($total_data, $total, $taxes);
-					* $this->model_total_handling->getTotal($total_data, $total, $taxes);
-					* $this->model_total_low_order_fee->getTotal($total_data, $total, $taxes);
-					* $this->model_total_coupon->getTotal($total_data, $total, $taxes);
-					* $this->model_total_reward->getTotal($total_data, $total, $taxes);
-					* $this->model_total_voucher->getTotal($total_data, $total, $taxes);
-					*/
+		}
+
+		$affiliate_ids = array_unique($affiliate_ids);
+
+		// Validate Shipping
+		if ($this->cart->hasShipping()) {
+			// Validate if shipping address has been set.
+			$this->load->model('account/address');
+
+			if ($this->customer->isLogged() && isset($this->session->data['shipping_address_id'])) {
+				$shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);
+			} elseif (isset($this->session->data['guest'])) {
+				$shipping_address = $this->session->data['guest']['shipping'];
+			}
+
+			if (empty($shipping_address)) {
+				$redirect = $this->url->link('checkout/checkout', '', 'SSL');
+			}
+
+			// Validate if shipping method has been set.
+			foreach ($affiliate_ids as $affiliate_id) {
+				if (!isset($this->session->data['shipping_methods_' . $affiliate_id])) {
+					$redirect = $this->url->link('checkout/checkout', '', 'SSL');
 				}
 			}
-			
-			$sort_order = array(); 
-		  
+		} else {
+			foreach ($affiliate_ids as $affiliate_id) {
+				unset($this->session->data['shipping_methods_' . $affiliate_id]);
+			}
+		}
+
+		// Validate if payment address has been set.
+		$this->load->model('account/address');
+
+		if ($this->customer->isLogged() && isset($this->session->data['payment_address_id'])) {
+			$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
+		} elseif (isset($this->session->data['guest'])) {
+			$payment_address = $this->session->data['guest']['payment'];
+		}
+
+		if (empty($payment_address)) {
+			$redirect = $this->url->link('checkout/checkout', '', 'SSL');
+		}
+
+		// Validate if payment method has been set.
+		if (!isset($this->session->data['payment_method'])) {
+			$redirect = $this->url->link('checkout/checkout', '', 'SSL');
+		}
+
+		// Validate cart has products and has stock.
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+			$redirect = $this->url->link('checkout/cart');
+		}
+
+		if (!$redirect) {
+			$total_data = array();
+			$sort_order = array();
+			$total = 0;
+
+			$this->load->model('setting/extension');
+
+			$results = $this->model_setting_extension->getExtensions('total');
+
+			foreach ($results as $key => $value) {
+				$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
+			}
+
+			array_multisort($sort_order, SORT_ASC, $results); // sorts array in ascending order
+
+			$key = 0;
+			foreach ($results as $result) {
+				if ($this->config->get($result['code'] . '_status')) {
+
+					$this->load->model('total/' . $result['code']);
+
+					foreach($affiliate_ids as $affiliate_id) {
+						$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id, $key);
+					}
+				}
+			}
+
+			$sort_order = array();
+
 			foreach ($total_data as $key => $value) {
 				$sort_order[$key] = $value['sort_order'];
 			}
-	
+
 			array_multisort($sort_order, SORT_ASC, $total_data); // sorts array in ascending order
-	
+
 			$this->language->load('checkout/checkout');
-			
+
 			$data = array();
-			
+
 			$data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
 			$data['store_id'] = $this->config->get('config_store_id');
 			$data['store_name'] = $this->config->get('config_name');
-			
+
 			if ($data['store_id']) {
-				$data['store_url'] = $this->config->get('config_url');		
+				$data['store_url'] = $this->config->get('config_url');
 			} else {
-				$data['store_url'] = HTTP_SERVER;	
+				$data['store_url'] = HTTP_SERVER;
 			}
-			
+
 			// Customer Logged -OR- Guest?
 			if ($this->customer->isLogged()) {
 				$data['customer_id'] = $this->customer->getId();
@@ -176,9 +137,9 @@ class ControllerCheckoutConfirm extends Controller {
 				$data['email'] = $this->customer->getEmail();
 				$data['telephone'] = $this->customer->getTelephone();
 				$data['fax'] = $this->customer->getFax();
-			
+
 				$this->load->model('account/address');
-				
+
 				$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
 			} elseif (isset($this->session->data['guest'])) {
 				$data['customer_id'] = 0;
@@ -188,16 +149,16 @@ class ControllerCheckoutConfirm extends Controller {
 				$data['email'] = $this->session->data['guest']['email'];
 				$data['telephone'] = $this->session->data['guest']['telephone'];
 				$data['fax'] = $this->session->data['guest']['fax'];
-				
+
 				$payment_address = $this->session->data['guest']['payment'];
 			}
-			
-			// Payment 
+
+			// Payment
 			$data['payment_firstname']      = $payment_address['firstname'];
-			$data['payment_lastname']       = $payment_address['lastname'];	
-			$data['payment_company']        = $payment_address['company'];	
-			$data['payment_company_id']     = $payment_address['company_id'];	
-			$data['payment_tax_id']         = $payment_address['tax_id'];	
+			$data['payment_lastname']       = $payment_address['lastname'];
+			$data['payment_company']        = $payment_address['company'];
+			$data['payment_company_id']     = $payment_address['company_id'];
+			$data['payment_tax_id']         = $payment_address['tax_id'];
 			$data['payment_address_1']      = $payment_address['address_1'];
 			$data['payment_address_2']      = $payment_address['address_2'];
 			$data['payment_city']           = $payment_address['city'];
@@ -207,33 +168,33 @@ class ControllerCheckoutConfirm extends Controller {
 			$data['payment_country']        = $payment_address['country'];
 			$data['payment_country_id']     = $payment_address['country_id'];
 			$data['payment_address_format'] = $payment_address['address_format'];
-		    
+
 			// Payment Method
 			if (isset($this->session->data['payment_method']['title'])) {
 				$data['payment_method'] = $this->session->data['payment_method']['title'];
 			} else {
 				$data['payment_method'] = '';
 			}
-			
+
 			if (isset($this->session->data['payment_method']['code'])) {
 				$data['payment_code'] = $this->session->data['payment_method']['code'];
 			} else {
 				$data['payment_code'] = '';
 			}
-			
-			// Shipping information			
+
+			// Buyer Shipping Information
 			if ($this->cart->hasShipping()) {
 				if ($this->customer->isLogged()) {
 					$this->load->model('account/address');
-					
-					$shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);	
+
+					$shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);
 				} elseif (isset($this->session->data['guest'])) {
 					$shipping_address = $this->session->data['guest']['shipping'];
-				}			
-				
+				}
+
 				$data['shipping_firstname']      = $shipping_address['firstname'];
-				$data['shipping_lastname']       = $shipping_address['lastname'];	
-				$data['shipping_company']        = $shipping_address['company'];	
+				$data['shipping_lastname']       = $shipping_address['lastname'];
+				$data['shipping_company']        = $shipping_address['company'];
 				$data['shipping_address_1']      = $shipping_address['address_1'];
 				$data['shipping_address_2']      = $shipping_address['address_2'];
 				$data['shipping_city']           = $shipping_address['city'];
@@ -243,22 +204,22 @@ class ControllerCheckoutConfirm extends Controller {
 				$data['shipping_country']        = $shipping_address['country'];
 				$data['shipping_country_id']     = $shipping_address['country_id'];
 				$data['shipping_address_format'] = $shipping_address['address_format'];
-			
+
 				if (isset($this->session->data['shipping_method']['title'])) {
 					$data['shipping_method'] = $this->session->data['shipping_method']['title'];
 				} else {
 					$data['shipping_method'] = '';
 				}
-				
+
 				if (isset($this->session->data['shipping_method']['code'])) {
 					$data['shipping_code'] = $this->session->data['shipping_method']['code'];
 				} else {
 					$data['shipping_code'] = '';
-				}				
+				}
 			} else {
 				$data['shipping_firstname']      = '';
-				$data['shipping_lastname']       = '';	
-				$data['shipping_company']        = '';	
+				$data['shipping_lastname']       = '';
+				$data['shipping_company']        = '';
 				$data['shipping_address_1']      = '';
 				$data['shipping_address_2']      = '';
 				$data['shipping_city']           = '';
@@ -271,29 +232,29 @@ class ControllerCheckoutConfirm extends Controller {
 				$data['shipping_method']         = '';
 				$data['shipping_code']           = '';
 			}
-			
+
 			$product_data = array();
 			foreach ($this->cart->getProducts() as $product) {
 				// Options
 				$option_data = array();
 				foreach ($product['option'] as $option) {
 					if ($option['type'] != 'file') {
-						$value = $option['option_value'];	
+						$value = $option['option_value'];
 					} else {
 						$value = $this->encryption->decrypt($option['option_value']);
-					}	
-					
+					}
+
 					$option_data[] = array(
 						'product_option_id'       => $option['product_option_id'],
 						'product_option_value_id' => $option['product_option_value_id'],
 						'option_id'               => $option['option_id'],
-						'option_value_id'         => $option['option_value_id'],								   
+						'option_value_id'         => $option['option_value_id'],
 						'name'                    => $option['name'],
 						'value'                   => $value,
 						'type'                    => $option['type']
-					);					
+					);
 				}
-	           			     
+
 				$product_data[] = array(
 					'product_id'          => $product['product_id'],
 					'name'                => $product['name'],
@@ -305,11 +266,11 @@ class ControllerCheckoutConfirm extends Controller {
 					'price'               => $product['price'],
 					'total'               => $product['total'],
 					'tax'                 => $this->tax->getTax($product['price'], $product['tax_class_id']),
-					'reward'              => $product['reward'],					
+					'reward'              => $product['reward'],
 					'affiliate_id'        => $product['affiliate_id']  // added affiliate_id
-				); 
+				);
 			}
-			
+
 			// Gift Voucher
 			$voucher_data = array();
 			if (!empty($this->session->data['vouchers'])) {
@@ -322,12 +283,12 @@ class ControllerCheckoutConfirm extends Controller {
 						'from_name'        => $voucher['from_name'],
 						'from_email'       => $voucher['from_email'],
 						'voucher_theme_id' => $voucher['voucher_theme_id'],
-						'message'          => $voucher['message'],						
+						'message'          => $voucher['message'],
 						'amount'           => $voucher['amount']
 					);
 				}
-			}  
-			
+			}
+
 			$data['products']       = $product_data;
 			$data['vouchers']       = $voucher_data;
 			$data['totals']         = $total_data; // order totals
@@ -340,110 +301,59 @@ class ControllerCheckoutConfirm extends Controller {
 			$data['ip']             = $this->request->server['REMOTE_ADDR'];
 			$data['affiliate_id']   = 0; // to prevent warning
 			$data['commission']     = 0; // to prevent warning
-			
+
 			// forwarded_ip
 			if (!empty($this->request->server['HTTP_X_FORWARDED_FOR'])) {
-				$data['forwarded_ip'] = $this->request->server['HTTP_X_FORWARDED_FOR'];	
+				$data['forwarded_ip'] = $this->request->server['HTTP_X_FORWARDED_FOR'];
 			} elseif(!empty($this->request->server['HTTP_CLIENT_IP'])) {
-				$data['forwarded_ip'] = $this->request->server['HTTP_CLIENT_IP'];	
+				$data['forwarded_ip'] = $this->request->server['HTTP_CLIENT_IP'];
 			} else {
 				$data['forwarded_ip'] = '';
 			}
-			
+
 			// user_agent
 			if (isset($this->request->server['HTTP_USER_AGENT'])) {
-				$data['user_agent'] = $this->request->server['HTTP_USER_AGENT'];	
+				$data['user_agent'] = $this->request->server['HTTP_USER_AGENT'];
 			} else {
 				$data['user_agent'] = '';
 			}
-			
+
 			// accept_language
 			if (isset($this->request->server['HTTP_ACCEPT_LANGUAGE'])) {
-				$data['accept_language'] = $this->request->server['HTTP_ACCEPT_LANGUAGE'];	
+				$data['accept_language'] = $this->request->server['HTTP_ACCEPT_LANGUAGE'];
 			} else {
 				$data['accept_language'] = '';
 			}
-						
-			// Add Master Order 
+
+			// Add Order
 			$this->load->model('checkout/order');
-			$order_id = $this->model_checkout_order->addMasterOrder($data);
+			$order_id = $this->model_checkout_order->addOrder($data); // need change totals in addOrder()
 			$this->session->data['order_id'] = $order_id;
 
-			//New Order Totals
-			$affiliate_ids   = array();
-		
-			foreach ($this->cart->getProducts() as $product) {
-					$affiliate_ids[] = $product['affiliate_id'];
-			}
-
-			$this->load->model('affiliate/dashboard_order_total');
-
-			if ($affiliate_ids) {
-				foreach(array_unique($affiliate_ids) as $affiliate_id) {
-					$affiliate_total      = 0;
-					$affiliate_total_data = array();
-					$affiliate_taxes      = array();
-					$affiliate_taxes      = $this->cart->getAffiliateTaxes($affiliate_id);					
-
-					$this->model_total_shipping->getAffiliateTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes, $affiliate_id);				
-					$this->model_total_sub_total->getAffiliateTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes, $affiliate_id);				
-					$this->model_total_total->getTotal($affiliate_total_data, $affiliate_total, $affiliate_taxes);				
-				
-					$sort_order = array(); 
-			  
-					foreach ($affiliate_total_data as $key => $value) {
-						$sort_order[$key] = $value['sort_order'];
-					}
-		
-					array_multisort($sort_order, SORT_ASC, $affiliate_total_data);
-
-					$this->model_affiliate_dashboard_order_total->setAffiliateOrderTotals($affiliate_total_data, $affiliate_id, $order_id);
-					
-					// Update master order totals for additional affiliate shipping quotes
-					if ($affiliate_id > 0) {
-						foreach ($this->session->data['shipping_methods_' . $affiliate_id] as $k => $v) { $key1 = $k; }
-
-				    	foreach ($this->session->data['shipping_methods_' . $affiliate_id]['usps']['quote'] as $k => $v) { $key2 = $k; }
-				    	
-						foreach ($total_data as $key => $value) {
-							if ($value['code'] == 'shipping') {
-								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$key1]['quote'][$key2]['cost'];
-								$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
-							}
-							if ($value['code'] == 'total') {
-								$total_data[$key]['value'] += $this->session->data['shipping_methods_' . $affiliate_id][$key1]['quote'][$key2]['cost'];
-								$total_data[$key]['text'] = $this->currency->format(max(0, $total_data[$key]['value']));						
-							}
-						}
-					}
-				}
-				$this->model_affiliate_dashboard_order_total->updateOrderTotals($total_data, $order_id);
-			}		
-				
 			$this->data['column_name']         = $this->language->get('column_name');
 			$this->data['column_model']        = $this->language->get('column_model');
 			$this->data['column_quantity']     = $this->language->get('column_quantity');
 			$this->data['column_price']        = $this->language->get('column_price');
 			$this->data['column_total']        = $this->language->get('column_total');
 			$this->data['text_shipping_total'] = $this->language->get('text_shipping_total');
-			
+
 			$this->data['products'] = array();
 			foreach ($this->cart->getProducts() as $product) {
 				// Options
-				$option_data = array();	           
+				$option_data = array();
 				foreach ($product['option'] as $option) {
 					if ($option['type'] != 'file') {
-						$value = $option['option_value'];	
+						$value = $option['option_value'];
 					} else {
-						$filename = $this->encryption->decrypt($option['option_value']);						
+						$filename = $this->encryption->decrypt($option['option_value']);
 						$value = utf8_substr($filename, 0, utf8_strrpos($filename, '.'));
 					}
-										
+
 					$option_data[] = array(
 						'name'  => $option['name'],
 						'value' => (utf8_strlen($value) > 20 ? utf8_substr($value, 0, 20) . '..' : $value)
 					);
-				}  
+				}
 
 				// Recurring
 				$profile_description = '';
@@ -469,7 +379,7 @@ class ControllerCheckoutConfirm extends Controller {
 						$profile_description .= sprintf($this->language->get('text_payment_until_canceled_description'), $recurring_price, $product['recurring_cycle'], $frequencies[$product['recurring_frequency']], $product['recurring_duration']);
 					}
 				}
-	 
+
 				$this->data['products'][] = array(
 					'product_id'          => $product['product_id'],
 					'name'                => $product['name'],
@@ -478,15 +388,15 @@ class ControllerCheckoutConfirm extends Controller {
 					'quantity'            => $product['quantity'],
 					'subtract'            => $product['subtract'],
 					'price'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax'))),
-					'total'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']), 
+					'total'               => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity']),
 					'href'                => $this->url->link('product/product', 'product_id=' . $product['product_id']),
 					'recurring'           => $product['recurring'],
 					'profile_name'        => $product['profile_name'],
 					'profile_description' => $profile_description,
 					'affiliate_id'        => $product['affiliate_id']
-				); 
-			} 
-			
+				);
+			}
+
 			// Gift Voucher
 			$this->data['vouchers'] = array();
 			if (!empty($this->session->data['vouchers'])) {
@@ -496,25 +406,24 @@ class ControllerCheckoutConfirm extends Controller {
 						'amount'      => $this->currency->format($voucher['amount'])
 					);
 				}
-			}  			
-			
-			// Order Totals for Confirm View			
+			}
+
+			// Order Totals for Confirm View
 			$this->data['totals'] = $total_data;
-			
+
 			// **** CONFIRM PAYMENT and FINALIZE ORDER through payment module *****
 			$this->data['payment'] = $this->getChild('payment/' . $this->session->data['payment_method']['code']);
 		} else {
 			$this->data['redirect'] = $redirect;
-		}			
-		
+		}
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/checkout/confirm.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/checkout/confirm.tpl';
 		} else {
 			$this->template = 'default/template/checkout/confirm.tpl';
 		}
-		
-		$this->response->setOutput($this->render());	
+
+		$this->response->setOutput($this->render());
   	}
 }// end class
 ?>

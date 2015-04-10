@@ -1284,7 +1284,7 @@ function image_upload(field, thumb) {
 			}
 		},	
 		bgiframe: false,
-		width: 800,
+		width: 1000,
 		height: 400,
 		resizable: false,
 		modal: false
@@ -1304,6 +1304,8 @@ function addImage() {
 	html += '</tbody>';
 	
 	$('#images tfoot').before(html);
+
+  return  image_row-1;
 	
 	image_row++;
 }

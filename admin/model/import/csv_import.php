@@ -23,7 +23,7 @@ class ModelImportCsvImport extends Model {
 	}
 
 	public function getCategoryInfoByManufacturerId($manufacturer_id) {
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_description cd 
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_description cd
 								   LEFT JOIN " . DB_PREFIX . "category c ON cd.category_id = c.category_id
 								   WHERE c.manufacturer_id = '" . (int)$manufacturer_id . "'");
 
@@ -134,7 +134,6 @@ class ModelImportCsvImport extends Model {
 		$image_array = explode('|', $data['image']);
 		$featured_image = $image_array[0];
 
-		// product
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product
 							SET `model` = '" . $this->db->escape($data['model']) . "',
 								`quantity` = '" . (int)$data['quantity'] . "',
@@ -157,9 +156,6 @@ class ModelImportCsvImport extends Model {
 
 		$product_id = $this->db->getLastId();
 
-		
-
-		// product decription
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product_description
 							SET	 `product_id` = '" . (int)$product_id . "',
 								 `language_id` = '1',
@@ -182,21 +178,13 @@ class ModelImportCsvImport extends Model {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_image  SET `product_id` = '" . (int)$product_id . "', `image` = '" . $this->db->escape($image) . "'");
 		}
 
-		// category
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category SET `product_id` = '" . (int)$product_id . "', `category_id` = '" . (int)$data['category_id'] . "'");
 
-		// shipping domestic
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_shipping SET `product_id` = '" . (int)$product_id . "', `shipping_id` = '" . (int)$data['shipping_dom'] . "'");
 
-		// shipping international
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_shipping SET `product_id` = '" . (int)$product_id . "', `shipping_id` = '" . (int)$data['shipping_intl'] . "'");
 
-
-		// product to store
 		$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_store SET `product_id` = '" . (int)$product_id . "', `store_id` = '0'");
-
-		// product to affiliate
-		$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_affiliate SET `product_id` = '" . (int)$product_id . "', `affiliate_id` = '0'");
 	}
 
 	public function getTotalCsvImportProducts() {
@@ -229,11 +217,7 @@ class ModelImportCsvImport extends Model {
 	}
 
 	public  function getTotalLinkedProducts() {
-		//bikesalvage
 		$count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "ebay_listing WHERE `active` = '0'");
-
-		// affiliates
-		/*$count = $this->db->query("SELECT COUNT(*) AS `total` FROM " . DB_PREFIX . "affiliate_product_link WHERE `affiliate_id` = '0' AND `active` = '0'");*/
 
 		return $count->row['total'];
 	}
@@ -260,7 +244,7 @@ class ModelImportCsvImport extends Model {
 			    LEFT JOIN  " . DB_PREFIX . "product_to_category ptc ON p.product_id = ptc.product_id
 			    LEFT JOIN  " . DB_PREFIX . "category_description cd ON ptc.category_id = cd.category_id
 			    LEFT JOIN  " . DB_PREFIX . "manufacturer m ON p.manufacturer_id = m.manufacturer_id
-			    WHERE  p.affiliate_id = '0'			    
+			    WHERE  p.affiliate_id = '0'
 			    AND    p.csv_import = '1'";
 
 	    if(isset($start) || isset($limit)) {
@@ -309,7 +293,7 @@ class ModelImportCsvImport extends Model {
 
 	public function getProductLinkEbayId($product_id) {
 		$query = $this->db->query("SELECT ebay_item_id FROM " . DB_PREFIX . "ebay_listing WHERE product_id = '" . (int)$product_id . "'");
-		
+
 		if ($query->num_rows > 0) {
 			return $query->row['ebay_item_id'];
 		} else {
@@ -323,7 +307,6 @@ class ModelImportCsvImport extends Model {
 	}
 
     public function editCsvImportProductInfo($product_id, $edit_data) {
-       // product
 		if (isset($edit_data['price'])  || isset($edit_data['quantity'])     || isset($edit_data['model'])  ||
 			isset($edit_data['weight']) || isset($edit_data['lenght'])       || isset($edit_data['width'])  ||
 			isset($edit_data['height']) || isset($edit_data['manufacturer']) || isset($edit_data['featured_image'])) {
@@ -342,7 +325,6 @@ class ModelImportCsvImport extends Model {
 								WHERE  `product_id` = '" . (int)$product_id . "'");
 		}
 
-		// product_description
 		if (isset($edit_data['name']) || isset($edit_data['description'])) {
 			$this->db->query("UPDATE  " . DB_PREFIX . "product_description
 								SET   `name` = '" . $this->db->escape($edit_data['name']) . "',
@@ -350,20 +332,17 @@ class ModelImportCsvImport extends Model {
 								WHERE `product_id` = '" . (int)$product_id . "'");
 		}
 
-		// product_to_category
 		if (isset($edit_data['category'])) {
 			$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_category WHERE `product_id` = '" . (int)$product_id . "'");
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category SET `category_id` = '" . (int)$edit_data['category'] . "', `product_id` = '" . (int)$product_id . "'");
 		}
 
-		// product_to_shipping
 		if (isset($edit_data['shipping_dom']) || isset($edit_data['shipping_intl']) ) {
 			$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_shipping WHERE `product_id` = '" . (int)$product_id . "'");
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_shipping SET `shipping_id` = '" . (int)$edit_data['shipping_dom'] . "',  `product_id` = '" . (int)$product_id . "'");
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_shipping SET `shipping_id` = '" . (int)$edit_data['shipping_intl'] . "', `product_id` = '" . (int)$product_id . "'");
 		}
 
-		// product_image
 		if (isset($edit_data['gallery_images']) ) {
 			$this->db->query("DELETE FROM " . DB_PREFIX . "product_image WHERE `product_id` = '" . (int)$product_id . "'");
 			foreach($edit_data['gallery_images'] as $gallery_image) {
@@ -398,7 +377,7 @@ class ModelImportCsvImport extends Model {
 	}
 
 	public function getManufacturers() {
-		$sql = "SELECT * FROM " . DB_PREFIX . "manufacturer";
+		$sql = "SELECT * FROM " . DB_PREFIX . "manufacturer ORDER BY name";
 		$query = $this->db->query($sql);
 		return $query->rows;
 	}
@@ -466,9 +445,6 @@ class ModelImportCsvImport extends Model {
 		return $query->rows;
 	}
 
-	/**
-	* @return (array) - productID & name 
-	*/
 	public  function getCsvImportProducts() {
 		$sql = "SELECT    p.product_id,
 						  pd.name
@@ -493,7 +469,6 @@ class ModelImportCsvImport extends Model {
 	public  function addEbayListingProductLink($data) {
 
 		foreach ($data as $product_id => $ebay_id) {
-			// bikesalvage
 			$this->db->query("INSERT IGNORE INTO " . DB_PREFIX . "ebay_listing
 							  SET 				 `ebay_item_id` = '" . $this->db->escape($ebay_id) . "',
 							  					 `product_id` = '" . $this->db->escape($product_id) . "',
@@ -505,6 +480,5 @@ class ModelImportCsvImport extends Model {
 							  WHERE  product_id = '" . $this->db->escape($product_id) . "'");
 		}
 	}
-
-} // end class
-
+}
+?>

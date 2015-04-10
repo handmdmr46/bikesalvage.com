@@ -16,6 +16,8 @@
     <div class="success"><?php echo $success; ?></div>
   <?php } ?>
 
+  <div class="wait success" style="display:none; background-image:none;"><img src="view/image/loading.gif" alt="" width="20" height="20" />&nbsp;  <?php echo $text_please_wait; ?></div>
+
   <div class="box">
 
     <div class="heading">
@@ -36,16 +38,12 @@
       <table class="form">
         <tr>
           <td><?php echo $text_choose_file; ?></td>
-          <td><input name="csv" type="file" /><?php if($loading) { echo $loading; } ?></td>
-          <td>Export Date</td>
-          <td>
-            <input name="import_date" id="import-date" type="text" value="<?php if(!empty($import_date)) { echo $import_date; } ?>" required>
-          </td>
+          <td><input name="csv" type="file" /><?php if($loading) { echo $loading; } ?></td>          
         </tr>
-        <td>
-            <div class="wait success" style="float:right; display:none; background-image:none;">Please Wait, this may take awhile..... &nbsp;<img src="view/image/loading.gif" alt="" width="20" height="20" /></div>
-        </td>
-        <td></td>
+        <tr>
+          <td><?php echo $text_export_date; ?></td>
+          <td><input name="import_date" id="import-date" type="text" value="<?php if(!empty($import_date)) { echo $import_date; } ?>" required></td>
+        </tr>
       </table>
     <table class="list" cellpadding="2">
       <thead>

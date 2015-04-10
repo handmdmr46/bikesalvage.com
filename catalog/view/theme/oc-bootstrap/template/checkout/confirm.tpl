@@ -1,18 +1,5 @@
 <?php if (!isset($redirect)) { ?>
-<?php print_r($_SESSION['shipping_methods_7']['usps']); echo '<br>'; ?>
-<?php print_r($_SESSION['shipping_methods']); ?>
-<?php
 
-
-
-/*foreach ($_SESSION['shipping_methods'] as $k => $v) {
-    echo $k . '<br>';
-    print_r($v) . '<br>';
-}*/
-
-
-
-?>
     <div class="checkout-product">
         <table class="table">
             <thead>
@@ -25,12 +12,12 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($products as $product) { ?>  
+                <?php foreach ($products as $product) { ?>
                     <?php if($product['recurring']): ?>
                         <tr>
                             <td colspan="6" style="border:none;">
-                                <span class="glyphicon glyphicon-repeat"></span> 
-                                <span style="float:left;line-height:18px; margin-left:10px;"> 
+                                <span class="glyphicon glyphicon-repeat"></span>
+                                <span style="float:left;line-height:18px; margin-left:10px;">
                                     <strong><?php echo $text_recurring_item ?></strong>
                                 </span>
                                 <?php echo $product['profile_description'] ?>
@@ -66,7 +53,7 @@
                     </tr>
                 <?php } ?>
             </tbody>
-            <tfoot>                
+            <tfoot>
                 <?php foreach ($totals as $total) { ?>
                     <tr>
                         <td colspan="4" class="price">
@@ -76,7 +63,7 @@
                             <strong><?php echo $total['title']; ?>:</strong>
                         </td>
                         <td class="total"><?php echo $total['text']; ?></td>
-                    </tr>                    
+                    </tr>
                 <?php } ?>
             </tfoot>
         </table>
@@ -85,5 +72,5 @@
 <?php } else { ?>
 	<script type="text/javascript"><!--
 		location = '<?php echo $redirect; ?>';
-    //--></script> 
+    //--></script>
 <?php } ?>

@@ -46,7 +46,7 @@
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td><input type="text" name="filter_name" value="<?php echo $filter_name; ?>" /><a onclick="filter();" class="button" style="float:right;"><?php echo $button_filter; ?></a></td>                
+                  <td><input type="text" name="filter_name" value="<?php echo $filter_name; ?>" /><a onclick="filter();" class="button" style="float:right;"><?php echo $button_filter; ?></a></td>
                 </tr>
                 <?php if($linked_products) { ?>
                 <?php foreach($linked_products as $product) { ?>
@@ -67,12 +67,12 @@
               </tbody>
             </table>
       </form>
-      
+
       <div class="pagination"><?php echo $pagination; ?></div>
 
     </div><!-- .content -->
 
-    
+
 
   </div><!-- .box -->
 

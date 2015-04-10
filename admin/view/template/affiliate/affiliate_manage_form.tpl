@@ -46,6 +46,10 @@
                 <?php  } ?></td>
             </tr>
             <tr>
+                <td><?php echo $entry_other_email; ?></td>
+                <td><textarea cols="50" rows="5" name="other_email"><?php echo $other_email; ?></textarea></td>
+            </tr>
+            <tr>
               <td><span class="required">*</span> <?php echo $entry_telephone; ?></td>
               <td><input type="text" name="telephone" value="<?php echo $telephone; ?>" />
                 <?php if ($error_telephone) { ?>
@@ -59,6 +63,10 @@
             <tr>
               <td><?php echo $entry_company; ?></td>
               <td><input type="text" name="company" value="<?php echo $company; ?>" /></td>
+            </tr>
+            <tr>
+              <td><?php echo $entry_website; ?></td>
+              <td><input type="text" name="website" value="<?php echo $website; ?>" /></td>
             </tr>
             <tr>
               <td><span class="required">*</span> <?php echo $entry_address_1; ?></td>
@@ -110,27 +118,6 @@
                 <?php } ?></td>
             </tr>
             <tr>
-              <td><span class="required">*</span> <?php echo $entry_code; ?></td>
-              <td><input type="code" name="code" value="<?php echo $code; ?>"  />
-                <?php if ($error_code) { ?>
-                <span class="error"><?php echo $error_code; ?></span>
-                <?php } ?></td>
-            </tr>
-            <tr>
-              <td><?php echo $entry_password; ?></td>
-              <td><input type="password" name="password" value="<?php echo $password; ?>"  />
-                <?php if ($error_password) { ?>
-                <span class="error"><?php echo $error_password; ?></span>
-                <?php  } ?></td>
-            </tr>
-            <tr>
-              <td><?php echo $entry_confirm; ?></td>
-              <td><input type="password" name="confirm" value="<?php echo $confirm; ?>" />
-                <?php if ($error_confirm) { ?>
-                <span class="error"><?php echo $error_confirm; ?></span>
-                <?php  } ?></td>
-            </tr>
-            <tr>
               <td><?php echo $entry_status; ?></td>
               <td><select name="status">
                   <?php if ($status) { ?>
@@ -144,7 +131,6 @@
             </tr>
           </table>
         </div>
-
         <div id="tab-payment">
           <table class="form">
             <tbody>
@@ -158,60 +144,12 @@
               </tr>
               <tr>
                 <td><?php echo $entry_payment; ?></td>
-                <td><?php if ($payment == 'cheque') { ?>
-                  <input type="radio" name="payment" value="cheque" id="cheque" checked="checked" />
-                  <?php } else { ?>
-                  <input type="radio" name="payment" value="cheque" id="cheque" />
-                  <?php } ?>
-                  <label for="cheque"><?php echo $text_cheque; ?></label>
-                  <?php if ($payment == 'paypal') { ?>
-                  <input type="radio" name="payment" value="paypal" id="paypal" checked="checked" />
-                  <?php } else { ?>
-                  <input type="radio" name="payment" value="paypal" id="paypal" />
-                  <?php } ?>
-                  <label for="paypal"><?php echo $text_paypal; ?></label>
-                  <?php if ($payment == 'bank') { ?>
-                  <input type="radio" name="payment" value="bank" id="bank" checked="checked" />
-                  <?php } else { ?>
-                  <input type="radio" name="payment" value="bank" id="bank" />
-                  <?php } ?>
-                  <label for="bank"><?php echo $text_bank; ?></label></td>
+                <td><input type="text" name="payment" value="<?php echo $payment; ?>" readonly/></td>
               </tr>
-            </tbody>
-            <tbody id="payment-cheque" class="payment">
               <tr>
                 <td><?php echo $entry_cheque; ?></td>
                 <td><input type="text" name="cheque" value="<?php echo $cheque; ?>" /></td>
               </tr>
-            </tbody>
-            <tbody id="payment-paypal" class="payment">
-              <tr>
-                <td><?php echo $entry_paypal; ?></td>
-                <td><input type="text" name="paypal" value="<?php echo $paypal; ?>" /></td>
-              </tr>
-            </tbody>
-            <tbody id="payment-bank" class="payment">
-              <tr>
-                <td><?php echo $entry_bank_name; ?></td>
-                <td><input type="text" name="bank_name" value="<?php echo $bank_name; ?>" /></td>
-              </tr>
-              <tr>
-                <td><?php echo $entry_bank_branch_number; ?></td>
-                <td><input type="text" name="bank_branch_number" value="<?php echo $bank_branch_number; ?>" /></td>
-              </tr>
-              <tr>
-                <td><?php echo $entry_bank_swift_code; ?></td>
-                <td><input type="text" name="bank_swift_code" value="<?php echo $bank_swift_code; ?>" /></td>
-              </tr>
-              <tr>
-                <td><span class="required">*</span> <?php echo $entry_bank_account_name; ?></td>
-                <td><input type="text" name="bank_account_name" value="<?php echo $bank_account_name; ?>" /></td>
-              </tr>
-              <tr>
-                <td><span class="required">*</span> <?php echo $entry_bank_account_number; ?></td>
-                <td><input type="text" name="bank_account_number" value="<?php echo $bank_account_number; ?>" /></td>
-              </tr>
-            </tbody>
           </table>
         </div>
         <div id="tab-transaction">
@@ -252,7 +190,7 @@
   		url: 'index.php?route=affiliate/affiliate/country&token=<?php echo $token; ?>&country_id=' + this.value,
   		dataType: 'json',
   		beforeSend: function() {
-  			$('select[name=\'payment_country_id\']').after('<span class="wait">&nbsp;<img src="view/image/loading.gif" alt="" /></span>');
+  			$('select[name=\'country_id\']').after('<span class="wait">&nbsp;<img src="view/image/loading.gif" alt="" /></span>');
   		},
   		complete: function() {
   			$('.wait').remove();
@@ -289,17 +227,6 @@
   });
 
   $('select[name=\'country_id\']').trigger('change');
-//--></script> 
-
-<!-- Payment -->
-<script type="text/javascript"><!--
-  $('input[name=\'payment\']').bind('change', function() {
-  	$('.payment').hide();
-  	
-  	$('#payment-' + this.value).show();
-  });
-
-  $('input[name=\'payment\']:checked').trigger('change');
 //--></script> 
 
 <!-- Transaction -->

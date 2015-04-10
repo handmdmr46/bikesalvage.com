@@ -1,10 +1,11 @@
 <?php
 class ControllerAffiliateDashboardLinkedProducts extends Controller {
-	/**
-	* View all linked products
-	*
-	*/
 	public function index() {
+		if (!$this->affiliate->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_linked_products', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
+
 		$this->language->load('affiliate/dashboard_stock_control');
 		$this->document->setTitle($this->language->get('heading_title_linked_products'));
 		$this->load->model('affiliate/dashboard_stock_control');
@@ -14,7 +15,7 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
 	protected function init() {
 		$affiliate_id = $this->affiliate->getId();
 		$this->data['template_url'] = 'catalog/view/theme/' . $this->config->get('config_template');
-		// Filter
+
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -31,7 +32,6 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
 	      $url .= '&page=' . $this->request->get['page'];
 	    }
 
-		// Breadcrumbs
 	    $this->data['breadcrumbs'] = array();
 
 		$this->data['breadcrumbs'][] = array(
@@ -46,7 +46,6 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
        		'separator' => ' :: '
 		);
 
-		//Language
 		$this->data['heading_title']      = $this->language->get('heading_title_linked_products');
 		$this->data['button_edit']        = $this->language->get('button_edit');
 		$this->data['button_cancel']      = $this->language->get('button_cancel');
@@ -57,7 +56,6 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
 		$this->data['button_filter']      = $this->language->get('button_filter');
 		$this->data['loading']            = $this->language->get('loading');
 
-		// Error
 	    if (isset($this->session->data['error'])) {
 	      $this->data['error'] = $this->session->data['error'];
 	      unset($this->session->data['error']);
@@ -65,7 +63,6 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
 	      $this->data['error'] = '';
 	    }
 
-	    // Success
 	    if (isset($this->session->data['success'])) {
 	      $this->data['success'] = $this->session->data['success'];
 	      unset($this->session->data['success']);
@@ -73,7 +70,6 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
 	      $this->data['success'] = '';
 	    }
 
-	    // Page, Start & Limit -- pagination --
 	    if (isset($this->request->get['page'])) {
 	      $page = $this->request->get['page'];
 	      $this->data['page'] = $this->request->get['page'];
@@ -90,16 +86,13 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
 			'limit'           => $limit
 		);
 
-	    // Variables	    
 	    $total                    		 = $this->model_affiliate_dashboard_stock_control->getTotalLinkedProducts($data, $affiliate_id);
 	    $this->data['linked_products']   = $this->model_affiliate_dashboard_stock_control->getLinkedProducts($data, $affiliate_id);
 
-	    // Buttons
 	    $this->data['edit'] = $this->url->link('affiliate/dashboard_linked_products/edit', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['remove'] = $this->url->link('affiliate/dashboard_linked_products/remove', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
-	    // Pagination
 	    $pagination        = new Pagination();
 	    $pagination->total = $total;
 	    $pagination->page  = $page;
@@ -181,6 +174,4 @@ class ControllerAffiliateDashboardLinkedProducts extends Controller {
 	    $this->session->data['error'] = $this->language->get('error_edit');
 	    $this->redirect($this->url->link('affiliate/dashboard_linked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	}
-
-
-}// end class
+}

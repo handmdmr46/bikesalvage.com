@@ -3,7 +3,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 	/**
 	* Controls inventory for products hosted on both OpenCart and eBay
 	*
-	*/	
+	*/
 	public function getEbayProfile($affiliate_id) {
 		$sql = "SELECT * FROM " . DB_PREFIX . "ebay_settings WHERE `affiliate_id` = '" . (int)$affiliate_id . "'";
 		$query = $this->db->query($sql);
@@ -22,7 +22,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 									  `site_id` = '" . $this->db->escape($data['site_id']) . "',
 									  `affiliate_id` = '" . (int)$affiliate_id . "'");
 	}
-	
+
 	public function getEbayCompatibilityLevels() {
 		$sql = "SELECT * FROM " . DB_PREFIX . "ebay_compatibility ORDER BY id DESC";
 		$query = $this->db->query($sql);
@@ -42,7 +42,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 
 	public function getTotalLinkedProducts($data= array(), $affiliate_id) {
 		$sql = "SELECT COUNT(DISTINCT el.product_id) AS total FROM " . DB_PREFIX . "ebay_listing el LEFT JOIN " . DB_PREFIX . "product_description pd ON (el.product_id = pd.product_id)";
-		
+
 		$sql .= " WHERE affiliate_id = '" . (int)$affiliate_id . "'";
 
 		if (!empty($data['filter_name'])) {
@@ -56,7 +56,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 
 	public function getTotalUnlinkedProducts($data= array(), $affiliate_id) {
 		$sql = "SELECT COUNT(DISTINCT p.product_id) AS total FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)";
-		
+
 		$sql .= " WHERE `linked` = '0' AND `affiliate_id` = '" . (int)$affiliate_id . "' AND `status` = '0'";
 
 		if (!empty($data['filter_name'])) {
@@ -104,13 +104,13 @@ class ModelAffiliateDashboardStockControl extends Model {
 					'selected'     => isset($this->request->post['selected']) && in_array($data['product_id'], $this->request->post['selected'])
 				);
 		}
-		
+
 		return $product_data;
 	}
 
 	public function getUnlinkedProducts($data = array(), $affiliate_id) {
-		$sql = "SELECT    * 
-		        FROM      " . DB_PREFIX . "product p 
+		$sql = "SELECT    *
+		        FROM      " . DB_PREFIX . "product p
 		        LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id)
 		        WHERE     p.affiliate_id = '" . (int)$affiliate_id . "'
 		        AND       p.linked = '0'";
@@ -147,7 +147,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 	}
 
 	public function setLinkedProductEbayItemId($product_id, $ebay_id) {
-		if (isset($ebay_id) ) {			
+		if (isset($ebay_id) ) {
 			$this->db->query("UPDATE " . DB_PREFIX . "ebay_listing SET ebay_item_id = '" . $this->db->escape($ebay_id) . "' WHERE product_id = '" . $this->db->escape($product_id) . "'");
 		}
 	}
@@ -168,7 +168,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 		$call_name = 'GetOrders';
 		$profile = $this->getEbayProfile();
 		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compat'], $profile['site_id'], $call_name);
-		
+
 		$xml = '<?xml version="1.0" encoding="utf-8"?>';
 		$xml .= '<GetOrdersRequest xmlns="urn:ebay:apis:eBLBaseComponents">';
 		$xml .= '<RequesterCredentials>';
@@ -177,7 +177,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 		$xml .= '<Pagination ComplexType="PaginationType">';
 	    $xml .= '<EntriesPerPage>50</EntriesPerPage>';
 		$xml .= '<PageNumber>1</PageNumber>';
-		$xml .= '</Pagination>';			
+		$xml .= '</Pagination>';
 		$xml .= '<WarningLevel>Low</WarningLevel>';
 		$xml .= '<OutputSelector>PaginationResult</OutputSelector>';
 		$xml .= '<OutputSelector>OrderArray.Order.OrderID</OutputSelector>';
@@ -201,7 +201,7 @@ class ModelAffiliateDashboardStockControl extends Model {
         $doc_response = new DomDocument();
         $doc_response->loadXML($xml_response);
         $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;
-        
+
 
         if($message == 'Failure') {
         	$severity_code = $doc_response->getElementsByTagName('SeverityCode')->item(0)->nodeValue;
@@ -216,7 +216,7 @@ class ModelAffiliateDashboardStockControl extends Model {
         $item_ids = $doc_response->getElementsByTagName('ItemID');
         $qty_purchased = $doc_response->getElementsByTagName('QuantityPurchased');
         $total_pages = $doc_response->getElementsByTagName('TotalNumberOfPages');
-        $page_count = intval($total_pages->item(0)->nodeValue);	        
+        $page_count = intval($total_pages->item(0)->nodeValue);
         $import_data = array();
 
         foreach ($titles as $title) {
@@ -234,7 +234,7 @@ class ModelAffiliateDashboardStockControl extends Model {
         if($page_count > 1) {
         	for($i = 2; $i <= $page_count; $i++) {
         		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compatability_level'], $profile['site_id'], $call_name);
-        		
+
         		$xml = '<?xml version="1.0" encoding="utf-8"?>';
 				$xml .= '<GetOrdersRequest xmlns="urn:ebay:apis:eBLBaseComponents">';
 				$xml .= '<RequesterCredentials>';
@@ -263,12 +263,12 @@ class ModelAffiliateDashboardStockControl extends Model {
 				   $this->language->load('affiliate/stock_control');
 	     		   $response = $this->language->get('error_ebay_api_call');
 	        	   return $response;
-        		}	
+        		}
 
 		        $doc_response = new DomDocument();
 		        $doc_response->loadXML($xml_response);
 		        $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;
-        		
+
         		if($message == 'Failure') {
         			$severity_code = $doc_response->getElementsByTagName('SeverityCode')->item(0)->nodeValue;
         			$error_code = $doc_response->getElementsByTagName('ErrorCode')->item(0)->nodeValue;
@@ -288,7 +288,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 
 		        foreach ($quantity_purchased as $quantity) {
 		        	$import_data['quantity_purchased'][] = $quantity->nodeValue;
-		        }				        		        
+		        }
 		    }
 	    }
 
@@ -299,7 +299,7 @@ class ModelAffiliateDashboardStockControl extends Model {
 		$call_name = 'GetItem';
 		$profile = $this->getEbayProfile();
 		$ebay_call = new Ebaycall($profile['developer_id'], $profile['application_id'], $profile['certification_id'], $profile['compat'], $profile['site_id'], $call_name);
-		
+
 		$xml = '<?xml version="1.0" encoding="utf-8"?>';
 		$xml .= '<GetItemRequest xmlns="urn:ebay:apis:eBLBaseComponents">';
 		$xml .= '<RequesterCredentials>';
@@ -323,7 +323,7 @@ class ModelAffiliateDashboardStockControl extends Model {
         $doc_response = new DomDocument();
         $doc_response->loadXML($xml_response);
         $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;
-        
+
         if($message == 'Failure') {
         	$severity_code = $doc_response->getElementsByTagName('SeverityCode')->item(0)->nodeValue;
         	$error_code = $doc_response->getElementsByTagName('ErrorCode')->item(0)->nodeValue;
@@ -332,8 +332,8 @@ class ModelAffiliateDashboardStockControl extends Model {
 	        $response = strtoupper($severity_code) . ': ' . $long_message . ' Error Code: ' . $error_code;
 			return $response;
         }
-        
-        $quantity = $doc_response->getElementsByTagName('Quantity')->item(0)->nodeValue;	
+
+        $quantity = $doc_response->getElementsByTagName('Quantity')->item(0)->nodeValue;
         return $quantity;
 	}
 
@@ -347,7 +347,6 @@ class ModelAffiliateDashboardStockControl extends Model {
 		return $ebay_item_id->row['ebay_item_id'];
 	}
 
-	// tested working
 	public function reviseEbayItemQuantity($ebay_item_id, $new_quantity) {
 		$call_name = 'ReviseInventoryStatus';
 		$profile = $this->getEbayProfile();
@@ -371,19 +370,19 @@ class ModelAffiliateDashboardStockControl extends Model {
 
         if(stristr($xml_response, 'HTTP 404') || $xml_response == '') {
 	        $this->language->load('affiliate/stock_control');
-	        $ebay_call_response = $this->language->get('error_ebay_api_call');	        
+	        $ebay_call_response = $this->language->get('error_ebay_api_call');
         }
 
         $doc_response = new DomDocument();
         $doc_response->loadXML($xml_response);
-        $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;                
+        $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;
 
         if($message == 'Failure') {
         	$severity_code = $doc_response->getElementsByTagName('SeverityCode')->item(0)->nodeValue;
         	$error_code = $doc_response->getElementsByTagName('ErrorCode')->item(0)->nodeValue;
         	$short_message = $doc_response->getElementsByTagName('ShortMessage')->item(0)->nodeValue;
         	$long_message = $doc_response->getElementsByTagName('LongMessage')->item(0)->nodeValue;
-	        $ebay_call_response = strtoupper($severity_code) . ': ' . $long_message . ' Error Code: ' . $error_code;	        
+	        $ebay_call_response = strtoupper($severity_code) . ': ' . $long_message . ' Error Code: ' . $error_code;
         }
 
         if($message == 'Success') {
@@ -416,19 +415,19 @@ class ModelAffiliateDashboardStockControl extends Model {
 
         if(stristr($xml_response, 'HTTP 404') || $xml_response == '') {
 	        $this->language->load('affiliate/stock_control');
-	        $ebay_call_response = $this->language->get('error_ebay_api_call');	        
+	        $ebay_call_response = $this->language->get('error_ebay_api_call');
         }
 
         $doc_response = new DomDocument();
         $doc_response->loadXML($xml_response);
-        $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;                
+        $message = $doc_response->getElementsByTagName('Ack')->item(0)->nodeValue;
 
         if($message == 'Failure') {
         	$severity_code = $doc_response->getElementsByTagName('SeverityCode')->item(0)->nodeValue;
         	$error_code = $doc_response->getElementsByTagName('ErrorCode')->item(0)->nodeValue;
         	$short_message = $doc_response->getElementsByTagName('ShortMessage')->item(0)->nodeValue;
         	$long_message = $doc_response->getElementsByTagName('LongMessage')->item(0)->nodeValue;
-	        $ebay_call_response = strtoupper($severity_code) . ': ' . $long_message . ' Error Code: ' . $error_code;	        
+	        $ebay_call_response = strtoupper($severity_code) . ': ' . $long_message . ' Error Code: ' . $error_code;
         }
 
         if($message == 'Success') {

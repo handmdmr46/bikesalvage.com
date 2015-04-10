@@ -1,8 +1,24 @@
 <?php
 class ModelTotalShipping extends Model {
-	public function getTotal(&$total_data, &$total, &$taxes) {
+
+	public function getTotal(&$total_data, &$total, $affiliate_id, &$key) {
+		if ($this->cart->hasShipping() && isset($this->session->data['shipping_methods_' . $affiliate_id])) {
+			$total_data[] = array(
+				'code'       => 'shipping',
+				'title'      => $this->session->data['shipping_methods_' . $affiliate_id]['quote'][$key]['title'],
+				'text'       => $this->currency->format($this->session->data['shipping_methods_' . $affiliate_id]['quote'][$key]['cost']),
+				'value'      => $this->session->data['shipping_methods_' . $affiliate_id]['quote'][$key]['cost'],
+				'sort_order' => $this->config->get('shipping_sort_order')
+			);
+
+			$total += $this->session->data['shipping_methods_' . $affiliate_id]['quote'][$key]['cost'];
+			$key++;
+		}
+	}
+
+	public function getTotalOriginal(&$total_data, &$total, &$taxes) {
 		if ($this->cart->hasShipping() && isset($this->session->data['shipping_method'])) {
-			$total_data[] = array( 
+			$total_data[] = array(
 				'code'       => 'shipping',
 				'title'      => $this->session->data['shipping_method']['title'],
 				'text'       => $this->currency->format($this->session->data['shipping_method']['cost']),
@@ -23,13 +39,13 @@ class ModelTotalShipping extends Model {
 			}
 
 			$total += $this->session->data['shipping_method']['cost'];
-		}			
+		}
 	}
 
 	public function getAffiliateTotal(&$total_data, &$total, &$taxes, $affiliate_id) {
 		if ($this->cart->hasShipping() && isset($this->session->data['shipping_method'])) {
 
-			$total_data[] = array( 
+			$total_data[] = array(
 				'code'       => 'shipping',
 				'title'      => $this->session->data['shipping_method']['title'],
 				'text'       => $this->currency->format($this->session->data['shipping_method']['cost']),
@@ -54,9 +70,9 @@ class ModelTotalShipping extends Model {
 
 			    foreach ($this->session->data['shipping_methods_' . $affiliate_id]['usps']['quote'] as $k => $v) { $key2 = $k; }
 
-				$total += $this->session->data['shipping_methods_' . $affiliate_id][$key1]['quote'][$key2]['cost']; 
+				$total += $this->session->data['shipping_methods_' . $affiliate_id][$key1]['quote'][$key2]['cost'];
 			}
-		}			
+		}
 	}
 }
 ?>

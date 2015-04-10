@@ -1,8 +1,8 @@
 <?php
 // Heading
-$_['heading_title']          = 'Products'; 
+$_['heading_title']          = 'Master Products';
 
-// Text  
+// Text
 $_['text_success']           = 'Success: You have modified products!';
 $_['text_plus']              = '+';
 $_['text_minus']             = '-';
@@ -17,7 +17,7 @@ $_['text_amount']            = 'Fixed Amount';
 
 // Column
 $_['column_name']            = 'Product Name';
-$_['column_model']           = 'Model';
+$_['column_model']           = 'Part Number';
 $_['column_image']           = 'Image';
 $_['column_price']           = 'Price';
 $_['column_quantity']        = 'Quantity';
@@ -31,7 +31,7 @@ $_['entry_meta_description'] = 'Meta Tag Description:';
 $_['entry_description']      = 'Description:';
 $_['entry_store']            = 'Stores:';
 $_['entry_keyword']          = 'SEO Keyword:<br /><span class="help">Do not use spaces instead replace spaces with - and make sure the keyword is globally unique.</span>';
-$_['entry_model']            = 'Model:';
+$_['entry_model']            = 'Part Number:';
 $_['entry_sku']              = 'SKU:<br/><span class="help">Stock Keeping Unit</span>';
 $_['entry_upc']              = 'UPC:<br/><span class="help">Universal Product Code</span>';
 $_['entry_ean']              = 'EAN:<br/><span class="help">European Article Number</span>';
@@ -39,7 +39,7 @@ $_['entry_jan']              = 'JAN:<br/><span class="help">Japanese Article Num
 $_['entry_isbn']             = 'ISBN:<br/><span class="help">International Standard Book Number</span>';
 $_['entry_mpn']              = 'MPN:<br/><span class="help">Manufacturer Part Number</span>';
 $_['entry_location']         = 'Location:';
-$_['entry_shipping']         = 'Requires Shipping:'; 
+$_['entry_shipping']         = 'Requires Shipping:';
 $_['entry_manufacturer']     = 'Manufacturer:<br /><span class="help">(Autocomplete)</span>';
 $_['entry_date_available']   = 'Date Available:';
 $_['entry_quantity']         = 'Quantity:';

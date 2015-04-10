@@ -1,5 +1,5 @@
 <?php
-// Heading 
+// Heading
 $_['heading_title']                           = 'Checkout';
 
 // Text
@@ -30,7 +30,7 @@ $_['text_shipping_method']                    = 'Please select the preferred shi
 $_['text_sold_by_admin']                      = 'Sold by: %s';
 $_['text_payment_method']                     = 'Please select the preferred payment method to use on this order.';
 $_['text_comments']                           = 'Add Comments About Your Order';
-$_['text_other_sellers']                      = 'NOTICE: Your shopping cart may contain products from more than one seller. Please select the preferred shipping method to use for each seller(s).';
+$_['text_other_sellers']                      = '<span style="color:#FF0000;"><strong>NOTICE:</strong> Your shopping cart may contain products from more than one seller. Please select the preferred shipping method to use for each seller(s).</span>';
 $_['text_recurring_item']                     = 'Recurring item';
 $_['text_payment_profile']                    = 'Payment Profile';
 $_['text_trial_description']                  = '%s every %d %s(s) for %d payment(s) then';
@@ -74,7 +74,7 @@ $_['entry_shipping']                          = 'My delivery and billing address
 // Error
 $_['error_warning']                           = 'There was a problem while trying to process your order! If the problem persists please try selecting a different payment method or you can contact the store owner by <a href="%s">clicking here</a>.';
 $_['error_login']                             = 'Warning: No match for E-Mail Address and/or Password.';
-$_['error_approved']                          = 'Warning: Your account requires approval before you can login.'; 
+$_['error_approved']                          = 'Warning: Your account requires approval before you can login.';
 $_['error_exists']                            = 'Warning: E-Mail Address is already registered!';
 $_['error_firstname']                         = 'First Name must be between 1 and 32 characters!';
 $_['error_lastname']                          = 'Last Name must be between 1 and 32 characters!';

@@ -1,11 +1,12 @@
 <?php
 class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
-	/**
-	* View all un-linked products, add product link manually 
-	*
-	*/
 	public function index() {
-		$this->language->load('affiliate/dashboard_stock_control');
+		if (!$this->affiliate->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_unlinked_products', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
+
+		$this->load->language('affiliate/dashboard_stock_control');
 		$this->document->setTitle($this->language->get('heading_title_unlinked_products'));
 		$this->load->model('affiliate/dashboard_stock_control');
 		$this->init();
@@ -14,7 +15,7 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 	protected function init() {
 		$affiliate_id = $this->affiliate->getId();
 		$this->data['template_url'] = 'catalog/view/theme/' . $this->config->get('config_template');
-		// Filter
+
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = $this->request->get['filter_name'];
 		} else {
@@ -31,7 +32,6 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 	      $url .= '&page=' . $this->request->get['page'];
 	    }
 
-		// Breadcrumbs
 	    $this->data['breadcrumbs'] = array();
 
 		$this->data['breadcrumbs'][] = array(
@@ -46,7 +46,6 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
        		'separator' => ' :: '
 		);
 
-		//Language
 		$this->data['heading_title']       = $this->language->get('heading_title_unlinked_products');
 		$this->data['button_edit']         = $this->language->get('button_edit');
 		$this->data['button_cancel']       = $this->language->get('button_cancel');
@@ -59,7 +58,6 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 
 		$this->data['token'] = $this->session->data['token'];
 
-		// Error
 	    if (isset($this->session->data['error'])) {
 	      $this->data['error'] = $this->session->data['error'];
 	      unset($this->session->data['error']);
@@ -67,7 +65,6 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 	      $this->data['error'] = '';
 	    }
 
-	    // Success
 	    if (isset($this->session->data['success'])) {
 	      $this->data['success'] = $this->session->data['success'];
 	      unset($this->session->data['success']);
@@ -75,7 +72,6 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 	      $this->data['success'] = '';
 	    }
 
-	    // Page, Start & Limit -- pagination --
 	    if (isset($this->request->get['page'])) {
 	      $page = $this->request->get['page'];
 	      $this->data['page'] = $this->request->get['page'];
@@ -87,20 +83,17 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 	    $limit = 100;
 
 	    $data = array(
-			'filter_name'	  => $filter_name, 
+			'filter_name'	  => $filter_name,
 			'start'           => ($page - 1) * $limit,
 			'limit'           => $limit
 		);
 
-	    // Buttons
 	    $this->data['link_product'] = $this->url->link('affiliate/dashboard_unlinked_products/linkProduct', 'token=' . $this->session->data['token'] . $url, 'SSL');
 	    $this->data['cancel'] = $this->url->link('affiliate/dashboard', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
-	    // Variables	    
 		$total                           = $this->model_affiliate_dashboard_stock_control->getTotalUnlinkedProducts($data, $affiliate_id);
 		$this->data['unlinked_products'] = $this->model_affiliate_dashboard_stock_control->getUnlinkedProducts($data, $affiliate_id);
 
-	    // Pagination
 	    $pagination        = new Pagination();
 	    $pagination->total = $total;
 	    $pagination->page  = $page;
@@ -113,7 +106,7 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 	    $this->data['filter_name'] = $filter_name;
 
 	    $this->template = $this->config->get('config_template') . '/template/affiliate/dashboard_unlinked_products.tpl';
-		
+
 		$this->children = array(
 			'affiliate/common/header',
 			'affiliate/common/footer'
@@ -152,23 +145,4 @@ class ControllerAffiliateDashboardUnlinkedProducts extends Controller {
 			$this->session->data['error'] = $this->language->get('error_edit');
 			$this->redirect($this->url->link('affiliate/dashboard_unlinked_products', 'token=' . $this->session->data['token'] . $url, 'SSL'));
 	}
-
-	// Not Used 
-	/*protected function validateLinkProduct() {
-		$boolean = 1;
-
-		foreach($this->request->post['selected'] as $pid) {	
-			
-				if ((utf8_strlen($pid . '_ebay_item_id') < 1) || (utf8_strlen($pid . '_ebay_item_id') > 12)) {
-					$this->session->data['error'] = 'testing `validateLinkProduct()';
-					$boolean = 0;
-				}
-			
-			
-		}
-		return $boolean;
-	}*/
-
-
-
-}// end class
+}

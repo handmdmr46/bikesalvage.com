@@ -43,7 +43,7 @@ $_['text_order']                       = 'Admin Orders';
 $_['text_order_status']                = 'Order Statuses';
 $_['text_opencart']                    = 'Homepage';
 $_['text_payment']                     = 'Payments';
-$_['text_product']                     = 'Products';
+$_['text_product']                     = 'Master Products';
 $_['text_profile']                     = 'Profiles';
 $_['text_reports']                     = 'Reports';
 $_['text_report_sale_order']           = 'Orders';
@@ -108,7 +108,7 @@ $_['text_add_blog_link']               = 'Blog Links';
 $_['text_blog_configuration']          = 'Blog Configuration';
 $_['text_url_alias']                   = 'SEO URL Rewritter';
 
-// Affiliates 
+// Affiliates
 $_['text_affiliate']                   = 'Affiliates';
 $_['text_affiliate_import']            = 'Imports';
 $_['text_affiliate_setting']           = 'Settings';
@@ -130,16 +130,17 @@ $_['text_linked_products']             = 'Linked Products';
 $_['text_unlinked_products']           = 'Unlinked Products';
 $_['text_ebay_log']                    = 'eBay Log';
 $_['text_inventory']                   = 'Inventory';
+$_['text_ebay_seller_list']            = 'eBay Seller List';
 
 // Product Upload
-$_['text_product_upload']              = 'Product Upload';
+$_['text_admin_product']               = 'Admin Products';
 
 // Extras
 $_['text_manage_url_alias']            = 'Manage SEO URL';
-$_['text_custom_setting']            = 'Custom Settings';
-$_['text_review_store'] = 'Reviews';
+$_['text_custom_setting']              = 'Custom Settings';
+$_['text_review_store']                = 'Reviews';
 
 // Order Master
-$_['text_order_master']                       = 'Master Orders';
-$_['text_transaction_status'] = 'Transaction Statuses';
+$_['text_order_master']                = 'Master Orders';
+$_['text_transaction_status']          = 'Transaction Statuses';
 ?>

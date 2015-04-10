@@ -60,8 +60,10 @@ class ControllerImportCsvImport extends Controller {
 		$this->data['text_confirm_edit']        = $this->language->get('text_confirm_edit');
 		$this->data['entry_select']             = $this->language->get('entry_select');
 		$this->data['text_search_image']        = $this->language->get('text_search_image');
-		$this->data['text_search_image_help']   = $this->language->get('text_search_image_help');		
+		$this->data['text_search_image_help']   = $this->language->get('text_search_image_help');
 		$this->data['text_ebay_id']             = $this->language->get('text_ebay_id');
+		$this->data['text_please_wait']         = $this->language->get('text_please_wait');
+		$this->data['text_export_date']         = $this->language->get('text_export_date');
 
 		$this->data['token'] = $this->session->data['token'];
 
@@ -89,6 +91,13 @@ class ControllerImportCsvImport extends Controller {
 		if (isset($this->session->data['error_edit'])) {
 			$this->data['error_warning'] = $this->session->data['error_edit'];
 			unset($this->session->data['error_edit']);
+		} else {
+			$this->data['error_warning'] = '';
+		}
+
+		if (isset($this->session->data['error_duplicate_title'])) {
+			$this->data['error_warning'] = $this->session->data['error_duplicate_title'];
+			unset($this->session->data['error_duplicate_title']);
 		} else {
 			$this->data['error_warning'] = '';
 		}
@@ -143,7 +152,7 @@ class ControllerImportCsvImport extends Controller {
 		$this->data['delete'] = $this->url->link('import/csv_import/delete', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['edit'] = $this->url->link('import/csv_import/edit', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['clear'] = $this->url->link('import/csv_import/clear', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['loading'] = '';		
+		$this->data['loading'] = '';
 		$csv_mimetypes = array(
 			'text/csv',
 			'text/plain',
@@ -204,31 +213,40 @@ class ControllerImportCsvImport extends Controller {
 						);
 				    }
 
-				    foreach($import_data as $key => $row) {					  
+				    foreach($import_data as $key => $row) {
+
+				    	foreach($import_data as $key2 => $row2) {
+				    		if ($import_data[$key]['title'] === $import_data[$key2]['title']) {
+				    			$this->session->data['error_duplicate_title'] = $this->language->get('error_duplicate_title');
+								$this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+				    		}
+				    	}
+
 				  	    $import_data[$key]['image'] = parse_url($import_data[$key]['image'], PHP_URL_PATH);
-					 					  
+				  	    $import_data[$key]['image'] = str_replace('image/', '', $import_data[$key]['image']);
+
 					    $manufacturers = $this->model_import_csv_import->getManufacturerInfo();
 					    foreach ($manufacturers as $manufacturer) {
 					  	    if (stripos($import_data[$key]['title'],$manufacturer['name']) !== false) {
 						        $import_data[$key]['manufacturer_id'] = (int)$manufacturer['manufacturer_id'];
-					        } 					  	
+					        }
 					    }
-					  
+
 					    $categories = $this->model_import_csv_import->getCategoryInfoByManufacturerId((int)$import_data[$key]['manufacturer_id']);
 					    if ($categories) {
 					  	    foreach ($categories as $category) {
 						  	    if (strpos($import_data[$key]['title'], $category['name']) !== false) {
 						  		    $import_data[$key]['category_id'] = (int)$category['category_id'];
-						  	    } 
+						  	    }
 					        }
-					    }				  						  										 			
-					    
+					    }
+
 					    $import_data[$key]['description'] = str_ireplace ('%0d', '', $import_data[$key]['description']);
 					    $import_data[$key]['description'] = str_ireplace ('%0a', '', $import_data[$key]['description']);
-					    $import_data[$key]['description'] = str_ireplace('@@@@%','', $import_data[$key]['description']);					
-					    
+					    $import_data[$key]['description'] = str_ireplace('@@@@%','', $import_data[$key]['description']);
+
 					    $import_data[$key]['description'] = preg_replace('(\<(/?[^\>]+)\>)', '', $import_data[$key]['description']);
-					    
+
 					    $import_data[$key]['description'] = str_replace('Browse our many parts at:','',$import_data[$key]['description']);
 					    $import_data[$key]['description'] = str_replace('GSMESS Bits!','',$import_data[$key]['description']);
 					    $import_data[$key]['description'] = str_replace('We\'ve got great feedback from thousands of honest trades, so purchase with confidence!','',$import_data[$key]['description']);
@@ -241,8 +259,8 @@ class ControllerImportCsvImport extends Controller {
 					    $import_data[$key]['description'] = str_replace('Customs fees for international buyers are the responsibility of the purchaser, please do not ask me to edit declaration values.','',$import_data[$key]['description']);
 					    $import_data[$key]['description'] = str_replace('No hidden charges.','',$import_data[$key]['description']);
 					    $import_data[$key]['description'] = str_replace('No small print.','',$import_data[$key]['description']);
-					    $import_data[$key]['description'] = str_replace('No hassle returns.','',$import_data[$key]['description']);						
-					  					  
+					    $import_data[$key]['description'] = str_replace('No hassle returns.','',$import_data[$key]['description']);
+
 					    if($import_data[$key]['shipping_dom'] == 'USPSPriorityFlatRateEnvelope'){
 						    $import_data[$key]['shipping_dom'] = 4;
 					    } elseif ($import_data[$key]['shipping_dom'] == 'USPSPriorityFlatRateBox'){
@@ -254,7 +272,7 @@ class ControllerImportCsvImport extends Controller {
 					    } else {
 						    $import_data[$key]['shipping_dom'] = 7;//Parcel Select
 					    }
-					    
+
 					    if($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalFlatRateEnvelope'){
 						    $import_data[$key]['shipping_intl'] = 11;
 					    } elseif($import_data[$key]['shipping_intl'] == 'USPSPriorityMailInternationalFlatRateBox'){
@@ -287,18 +305,18 @@ class ControllerImportCsvImport extends Controller {
 
 					if (is_array($import_data)) {
 			        	$unlinked   = $this->model_inventory_stock_control->getUnlinkedProducts();
-			      
+
 				        if($unlinked) {
 				      	    foreach($unlinked as $product){
 					            foreach(array_combine($import_data['id'], $import_data['title']) as $item_id => $ebay_title) {
 					                if ($product['name'] === $ebay_title) {
-					                	$this->model_inventory_stock_control->setProductLink($product['product_id'], $item_id);		                  
+					                	$this->model_inventory_stock_control->setProductLink($product['product_id'], $item_id);
 					                }
 					            }
 				      	    }
-				        }		        	       
+				        }
 					} else if (is_string($import_data)) { // failed response
-						$this->session->data['error_validation'] = $import_data;	
+						$this->session->data['error_validation'] = $import_data;
 						$this->redirect($this->url->link('import/csv_import', 'token=' . $this->session->data['token'], 'SSL'));
 					}
 
@@ -491,6 +509,5 @@ class ControllerImportCsvImport extends Controller {
 			return false;
 		}
 	}
-
-
-}// end class
+}
+?>

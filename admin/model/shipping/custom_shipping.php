@@ -14,5 +14,4 @@ class ModelShippingCustomShipping extends Model {
 		
 		return $query->rows;
 	}
-	
-}// end class
+}

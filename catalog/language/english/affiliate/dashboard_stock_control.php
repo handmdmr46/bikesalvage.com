@@ -1,9 +1,4 @@
 <?php
-/**
-* language file inventory stock control
-*
-*/
-// Text 
 $_['heading_title_stock_control']     =	'Stock Control';
 $_['heading_title_ebay_profile']      = 'Stock Control | eBay Profile';
 $_['heading_title_ebay_call']         = 'Stock Control | eBay API Call';
@@ -22,7 +17,6 @@ $_['text_ebay_item_id']               = 'eBay ItemID';
 $_['text_product_id']                 = 'ProductID';
 $_['text_product_title']              = 'Product Title';
 
-// Buttons
 $_['button_set_ebay_profile']         =	'Save Profile';
 $_['button_load_profile']             =	'Load Profile';
 $_['button_ebay_call']                =	'eBay Call';
@@ -31,7 +25,6 @@ $_['button_edit']                     = 'Edit';
 $_['button_delete']                   = 'Remove';
 $_['button_link_product']             = 'Link Product';
 
-// Error
 $_['error_user_token']                = 'ERROR: eBay User Token is required for the API call';
 $_['error_certification_id']          = 'ERROR: eBay Certification ID is required for the API call';
 $_['error_developer_id']              = 'ERROR: eBay Developer ID is required for the API call';
@@ -44,7 +37,6 @@ $_['error']                           = 'WARNING: There was an error in your req
 $_['error_ebay_api_call']             = 'ERROR: The eBay call request has failed, timed out or the entered data is incorrect. Check all fields for correct data and re-send. If problem\'s persist contact the site administrator.';
 $_['error_edit']                      = 'ERROR: There was a problem editing the selected product(s), please try again. If problem\'s persist contact the site administrator.';
 
-// Success
 $_['success_profile']                 = 'SUCCESS: eBay developer profile has been saved.';
 $_['success_get_item']                = 'SUCCESS: eBay call getItem completed';
 $_['success_get_orders']              = 'SUCCESS: eBay call getOrders completed';

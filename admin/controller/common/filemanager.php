@@ -26,6 +26,8 @@ class ControllerCommonFileManager extends Controller {
 		$this->data['button_upload'] = $this->language->get('button_upload');
 		$this->data['button_refresh'] = $this->language->get('button_refresh');
 		$this->data['button_submit'] = $this->language->get('button_submit');
+		$this->data['button_addimage'] = $this->language->get('button_addimage');
+        $this->data['button_search'] = $this->language->get('button_search');
 
 		$this->data['error_select'] = $this->language->get('error_select');
 		$this->data['error_directory'] = $this->language->get('error_directory');
@@ -62,6 +64,20 @@ class ControllerCommonFileManager extends Controller {
 			$this->response->setOutput($this->model_tool_image->resize(html_entity_decode($this->request->get['image'], ENT_QUOTES, 'UTF-8'), 100, 100));
 		}
 	}
+
+	public function image_ext() {
+        $this->load->language('common/filemanager');
+        $this->load->model('tool/image');
+        $json=array();
+
+        if (isset($this->request->get['image'])) {
+            $json['text'] = $this->model_tool_image->resize(html_entity_decode($this->request->get['image'], ENT_QUOTES, 'UTF-8'), 100, 100);
+            $json['image'] = $this->request->get['image'];
+            $json['success'] = $this->language->get('image_success_added');
+        }
+
+        $this->response->setOutput(json_encode($json));
+    }
 
 	public function directory() {
 		$json = array();
@@ -336,7 +352,7 @@ class ControllerCommonFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	function recursiveCopy($source, $destination) {
+	public function recursiveCopy($source, $destination) {
 		$directory = opendir($source);
 
 		@mkdir($destination);
@@ -414,7 +430,7 @@ class ControllerCommonFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function upload() {
+	public function upload_original() {
 		$this->language->load('common/filemanager');
 
 		$json = array();
@@ -493,5 +509,96 @@ class ControllerCommonFileManager extends Controller {
 
 		$this->response->setOutput(json_encode($json));
 	}
+
+	public function upload() {
+        $this->load->language('common/filemanager');
+
+        $json = array();
+
+        if (isset($this->request->post['directory'])) {
+            if (isset($this->request->files['image']) && $this->request->files['image']['tmp_name']) {
+
+            for ( $idx = 0; $idx < count($this->request->files['image']['name']); $idx++ ) {
+
+                $filename = basename(html_entity_decode($this->request->files['image']['name'][$idx], ENT_QUOTES, 'UTF-8'));
+
+                if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
+                    $json['error'] = $this->language->get('error_filename');
+                }
+
+                $directory = rtrim(DIR_IMAGE . 'data/' . str_replace('../', '', $this->request->post['directory']), '/');
+
+                if (!is_dir($directory)) {
+                    $json['error'] = $this->language->get('error_directory');
+                }
+
+                if ($this->request->files['image']['size'][$idx] > 300000) {
+                    $json['error'] = $this->language->get('error_file_size');
+                }
+
+                $allowed = array(
+                    'image/jpeg',
+                    'image/pjpeg',
+                    'image/png',
+                    'image/x-png',
+                    'image/gif',
+                    'application/x-shockwave-flash'
+                );
+
+                if (!in_array($this->request->files['image']['type'][$idx], $allowed)) {
+                    $json['error'] = $this->language->get('error_file_type');
+                }
+
+                $allowed = array(
+                    '.jpg',
+                    '.jpeg',
+                    '.gif',
+                    '.png',
+                    '.flv'
+                );
+
+                if (!in_array(strtolower(strrchr($filename, '.')), $allowed)) {
+                    $json['error'] = $this->language->get('error_file_type');
+                }
+
+                // Check to see if any PHP files are trying to be uploaded
+                $content = file_get_contents($this->request->files['image']['tmp_name'][$idx]);
+
+                if (preg_match('/\<\?php/i', $content)) {
+                    $json['error'] = $this->language->get('error_file_type');
+                }
+
+                if ($this->request->files['image']['error'][$idx] != UPLOAD_ERR_OK) {
+                    $json['error'] = 'error_upload_' . $this->request->files['image']['error'][$idx];
+                }
+
+                if (!isset($json['error'])) {
+                    $new_filename =  $directory . '/' . $filename;
+                    if (@move_uploaded_file( $this->request->files['image']['tmp_name'][$idx], $new_filename)) {
+                        $json['success'] = $this->language->get('text_uploaded');
+                        $json['image'][] = rtrim('data/' . str_replace('../', '', $this->request->post['directory']), '/') . '/' . $filename;
+                    } else {
+                        $json['error'] = $this->language->get('error_uploaded');
+                    }
+                }
+
+            }//foreach
+
+            } else {
+                $json['error'] = $this->language->get('error_file');
+            }
+
+
+        } else {
+            $json['error'] = $this->language->get('error_directory');
+        }
+
+        if (!$this->user->hasPermission('modify', 'common/filemanager')) {
+            $json['error'] = $this->language->get('error_permission');
+        }
+
+
+        $this->response->setOutput(json_encode($json));
+    }
 }
 ?>

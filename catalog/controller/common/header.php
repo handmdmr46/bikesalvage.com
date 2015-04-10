@@ -1,11 +1,11 @@
-<?php   
+<?php
 class ControllerCommonHeader extends Controller {
 	protected function index() {
 		$this->data['title'] = $this->document->getTitle();
 
 		// blog
 		$this->document->addScript('catalog/view/javascript/jquery/extras/blog.js');
-			
+
 		if (file_exists('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css')) {
 			$this->document->addStyle('catalog/view/theme/' . $this->config->get('config_template') . '/stylesheet/magic.css');
 		} else {
@@ -29,7 +29,7 @@ class ControllerCommonHeader extends Controller {
 		$this->data['base'] = $server;
 		$this->data['description'] = $this->document->getDescription();
 		$this->data['keywords'] = $this->document->getKeywords();
-		$this->data['links'] = $this->document->getLinks();	 
+		$this->data['links'] = $this->document->getLinks();
 		$this->data['styles'] = $this->document->getStyles();
 		$this->data['scripts'] = $this->document->getScripts();
 		$this->data['lang'] = $this->language->get('code');
@@ -57,7 +57,7 @@ class ControllerCommonHeader extends Controller {
 			$this->data['logo'] = $server . 'image/' . $this->config->get('config_logo');
 		} else {
 			$this->data['logo'] = '';
-		}		
+		}
 
 		$this->language->load('common/header');
 		$this->language->load('common/footer');
@@ -146,7 +146,7 @@ class ControllerCommonHeader extends Controller {
 			}
 		}
 
-		// Search		
+		// Search
 		if (isset($this->request->get['search'])) {
 			$this->data['search'] = $this->request->get['search'];
 		} else {
@@ -165,8 +165,8 @@ class ControllerCommonHeader extends Controller {
 		foreach ($manufacturers as $manufacturer) {
 			$model_data = array();
 			$categories = $this->model_catalog_category->getCategoriesByManufacturerId($manufacturer['manufacturer_id']);
-			foreach($categories as $result) {				
-				$total = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => $result['category_id']));				
+			foreach($categories as $result) {
+				$total = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => $result['category_id']));
 				if($total >= (int)$this->config->get('category_count_minimum_menu')) {
 					$model_data[] = array(
 						'name' => $result['name'] . ($this->config->get('config_product_count') ? ' (' . $total . ')' : ''),
@@ -202,7 +202,7 @@ class ControllerCommonHeader extends Controller {
 				);
 			}
 		}
-		
+
 		// others
 		$this->data['home']              = $this->url->link('common/home');
 		$this->data['all_manufacturers'] = $this->url->link('product/manufacturer');
@@ -213,7 +213,7 @@ class ControllerCommonHeader extends Controller {
 		$this->data['return']            = $this->url->link('account/return/insert', '', 'SSL');
 		$this->data['sitemap']           = $this->url->link('information/sitemap');
 		$this->data['review']            = $this->url->link('review/reviews');
-		
+
 		// extras
 		$this->data['manufacturer']      = $this->url->link('product/manufacturer');
 		$this->data['voucher']           = $this->url->link('account/voucher', '', 'SSL');
@@ -233,7 +233,7 @@ class ControllerCommonHeader extends Controller {
 		}
 
 		$this->render();
-	} 	
+	}
 
 }// end class
 ?>

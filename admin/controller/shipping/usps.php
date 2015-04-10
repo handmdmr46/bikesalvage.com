@@ -4,19 +4,23 @@ class ControllerShippingUsps extends Controller {
 
 	public function index() {
 		$this->language->load('shipping/usps');
-
 		$this->document->setTitle($this->language->get('heading_title'));
-
 		$this->load->model('setting/setting'); // no change needed
 
+		$affiliate_id = 0;
+
+		$this->data['affiliate_id'] = $affiliate_id;
+		$group = $affiliate_id . '_usps';
+
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->model_setting_setting->editSetting('usps', $this->request->post);
+			$this->model_setting_setting->editSetting($group, $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
 			$this->redirect($this->url->link('extension/shipping', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
+		// Language
 		$this->data['heading_title'] = $this->language->get('heading_title');
 
 		$this->data['text_enabled'] = $this->language->get('text_enabled');
@@ -146,18 +150,19 @@ class ControllerShippingUsps extends Controller {
 
 		$this->data['cancel'] = $this->url->link('extension/shipping', 'token=' . $this->session->data['token'], 'SSL');
 
-		if (isset($this->request->post['usps_user_id'])) {
-			$this->data['usps_user_id'] = $this->request->post['usps_user_id'];
+		if (isset($this->request->post[$affiliate_id . '_usps_user_id'])) {
+			$this->data['usps_user_id'] = $this->request->post[$affiliate_id . '_usps_user_id'];
 		} else {
-			$this->data['usps_user_id'] = $this->config->get('usps_user_id');
+			$this->data['usps_user_id'] = $this->config->get($affiliate_id . '_usps_user_id');
 		}
 
-		if (isset($this->request->post['usps_postcode'])) {
-			$this->data['usps_postcode'] = $this->request->post['usps_postcode'];
+		if (isset($this->request->post[$affiliate_id . '_usps_postcode'])) {
+			$this->data['usps_postcode'] = $this->request->post[$affiliate_id . '_usps_postcode'];
 		} else {
-			$this->data['usps_postcode'] = $this->config->get('usps_postcode');
+			$this->data['usps_postcode'] = $this->config->get($affiliate_id . '_usps_postcode');
 		}
 
+		// Domestic
 		if (isset($this->request->post['usps_domestic_00'])) {
 			$this->data['usps_domestic_00'] = $this->request->post['usps_domestic_00'];
 		} else {
@@ -289,7 +294,7 @@ class ControllerShippingUsps extends Controller {
 		} else {
 			$this->data['usps_domestic_28'] = $this->config->get('usps_domestic_28');
 		}
-
+		// International
 		if (isset($this->request->post['usps_international_1'])) {
 			$this->data['usps_international_1'] = $this->request->post['usps_international_1'];
 		} else {
@@ -433,29 +438,24 @@ class ControllerShippingUsps extends Controller {
 			$this->data['usps_machinable'] = $this->config->get('usps_machinable');
 		}
 
-		if (isset($this->request->post['usps_length'])) {
-			$this->data['usps_length'] = $this->request->post['usps_length'];
+		if (isset($this->request->post[$affiliate_id . '_usps_length'])) {
+			$this->data['usps_length'] = $this->request->post[$affiliate_id . '_usps_length'];
 		} else {
-			$this->data['usps_length'] = $this->config->get('usps_length');
+			$this->data['usps_length'] = $this->config->get($affiliate_id . '_usps_length');
 		}
 
-		if (isset($this->request->post['usps_width'])) {
-			$this->data['usps_width'] = $this->request->post['usps_width'];
+		if (isset($this->request->post[$affiliate_id . '_usps_width'])) {
+			$this->data['usps_width'] = $this->request->post[$affiliate_id . '_usps_width'];
 		} else {
-			$this->data['usps_width'] = $this->config->get('usps_width');
+			$this->data['usps_width'] = $this->config->get($affiliate_id . '_usps_width');
 		}
 
-		if (isset($this->request->post['usps_height'])) {
-			$this->data['usps_height'] = $this->request->post['usps_height'];
+		if (isset($this->request->post[$affiliate_id . '_usps_height'])) {
+			$this->data['usps_height'] = $this->request->post[$affiliate_id . '_usps_height'];
 		} else {
-			$this->data['usps_height'] = $this->config->get('usps_height');
+			$this->data['usps_height'] = $this->config->get($affiliate_id . '_usps_height');
 		}
 
-		if (isset($this->request->post['usps_length'])) {
-			$this->data['usps_length'] = $this->request->post['usps_length'];
-		} else {
-			$this->data['usps_length'] = $this->config->get('usps_length');
-		}
 
 		if (isset($this->request->post['usps_display_time'])) {
 			$this->data['usps_display_time'] = $this->request->post['usps_display_time'];
@@ -531,23 +531,25 @@ class ControllerShippingUsps extends Controller {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		if (!$this->request->post['usps_user_id']) {
+		$affiliate_id = 0;
+
+		if (!$this->request->post[$affiliate_id . '_usps_user_id']) {
 			$this->error['user_id'] = $this->language->get('error_user_id');
 		}
 
-		if (!$this->request->post['usps_postcode']) {
+		if (!$this->request->post[$affiliate_id . '_usps_postcode']) {
 			$this->error['postcode'] = $this->language->get('error_postcode');
 		}
 
-		if (!$this->request->post['usps_width']) {
+		if (!$this->request->post[$affiliate_id . '_usps_width']) {
 			$this->error['width'] = $this->language->get('error_width');
 		}
 
-		if (!$this->request->post['usps_height']) {
+		if (!$this->request->post[$affiliate_id . '_usps_height']) {
 			$this->error['height'] = $this->language->get('error_height');
 		}
 
-		if (!$this->request->post['usps_length']) {
+		if (!$this->request->post[$affiliate_id . '_usps_length']) {
 			$this->error['length'] = $this->language->get('error_length');
 		}
 

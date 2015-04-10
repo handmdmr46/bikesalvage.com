@@ -1,6 +1,11 @@
 <?php 
 class ControllerAffiliateDashboardOrderManual extends Controller {
 	public function index() {
+		if (!$this->affiliate->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_order_manual', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
+
 		$this->language->load('checkout/manual');
 
 		$json = array();

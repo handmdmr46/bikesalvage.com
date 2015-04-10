@@ -42,12 +42,12 @@ class ModelExtrasProductShipping extends Model {
 								   WHERE     p2s.product_id = '" . (int)$product_id . "'");
 
 		
-		if ($query->num_rows > 0) {
+		/*if ($query->num_rows > 0) {
 			return $query->rows;
 		} else {
 			return array($this->config->get('domestic_shipping_default_id'), $this->config->get('domestic_shipping_default_id')); 
-		}
-		
+		}*/
+		return $query->rows;
 	}
 	
 	

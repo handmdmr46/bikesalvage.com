@@ -677,6 +677,12 @@ class ControllerProductProduct extends Controller {
 
 		$json = array();
 
+		if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+			$base = HTTPS_SERVER;
+		} else {
+			$base = HTTP_SERVER;
+		}
+
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
 			if ((utf8_strlen($this->request->post['name']) < 3) || (utf8_strlen($this->request->post['name']) > 25)) {
 				$json['error'] = $this->language->get('error_name');
@@ -697,7 +703,7 @@ class ControllerProductProduct extends Controller {
 			if (!isset($json['error'])) {
 				$this->model_catalog_review->addReview($this->request->get['product_id'], $this->request->post);
 
-				$json['success'] = $this->language->get('text_success');
+				$json['success'] = sprintf($this->language->get('text_success'), $base . 'index.php?route=information/contact');
 			}
 		}
 

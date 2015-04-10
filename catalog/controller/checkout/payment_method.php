@@ -1,4 +1,4 @@
-<?php  
+<?php
 class ControllerCheckoutPaymentMethod extends Controller {
 	public function index() {
 		$this->language->load('checkout/checkout');
@@ -6,20 +6,27 @@ class ControllerCheckoutPaymentMethod extends Controller {
 		$this->load->model('account/address');
 
 		if ($this->customer->isLogged() && isset($this->session->data['payment_address_id'])) {
-			$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);		
+			$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
 		} elseif (isset($this->session->data['guest'])) {
 			$payment_address = $this->session->data['guest']['payment'];
-		}	
+		}
 
 		if (!empty($payment_address)) {
 			// Totals
-			$total_data = array();					
+			$affiliate_ids = array();
+			$total_data = array();
 			$total = 0;
 			$taxes = $this->cart->getTaxes();
 
 			$this->load->model('setting/extension');
 
-			$sort_order = array(); 
+			foreach($this->cart->getProducts() as $product) {
+				$affiliate_ids[] = $product['affiliate_id'];
+			}
+
+			$affiliate_ids = array_unique($affiliate_ids);
+
+			$sort_order = array();
 
 			$results = $this->model_setting_extension->getExtensions('total');
 
@@ -29,11 +36,15 @@ class ControllerCheckoutPaymentMethod extends Controller {
 
 			array_multisort($sort_order, SORT_ASC, $results);
 
-			foreach ($results as $result) {
-				if ($this->config->get($result['code'] . '_status')) {
-					$this->load->model('total/' . $result['code']);
-
-					$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
+			$key = 0;
+			foreach ($affiliate_ids as $affiliate_id) {
+				foreach ($results as $result) {
+					if ($this->config->get($result['code'] . '_status')) {
+						$this->load->model('total/' . $result['code']);
+						foreach($affiliate_ids as $affiliate_id) {
+							$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id, $key);
+						}
+					}
 				}
 			}
 
@@ -66,17 +77,16 @@ class ControllerCheckoutPaymentMethod extends Controller {
 				}
 			}
 
-			$sort_order = array(); 
+			$sort_order = array();
 
 			foreach ($method_data as $key => $value) {
 				$sort_order[$key] = $value['sort_order'];
 			}
 
-			array_multisort($sort_order, SORT_ASC, $method_data);			
+			array_multisort($sort_order, SORT_ASC, $method_data);
 
-			$this->session->data['payment_methods'] = $method_data;	
-
-		}			
+			$this->session->data['payment_methods'] = $method_data;
+		}
 
 		$this->data['text_payment_method'] = $this->language->get('text_payment_method');
 		$this->data['text_comments'] = $this->language->get('text_comments');
@@ -87,10 +97,10 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			$this->data['error_warning'] = sprintf($this->language->get('error_no_payment'), $this->url->link('information/contact'));
 		} else {
 			$this->data['error_warning'] = '';
-		}	
+		}
 
 		if (isset($this->session->data['payment_methods'])) {
-			$this->data['payment_methods'] = $this->session->data['payment_methods']; 
+			$this->data['payment_methods'] = $this->session->data['payment_methods'];
 		} else {
 			$this->data['payment_methods'] = array();
 		}
@@ -121,7 +131,7 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			$this->data['text_agree'] = '';
 		}
 
-		if (isset($this->session->data['agree'])) { 
+		if (isset($this->session->data['agree'])) {
 			$this->data['agree'] = $this->session->data['agree'];
 		} else {
 			$this->data['agree'] = '';
@@ -145,21 +155,21 @@ class ControllerCheckoutPaymentMethod extends Controller {
 		$this->load->model('account/address');
 
 		if ($this->customer->isLogged() && isset($this->session->data['payment_address_id'])) {
-			$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);		
+			$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
 		} elseif (isset($this->session->data['guest'])) {
 			$payment_address = $this->session->data['guest']['payment'];
-		}	
+		}
 
 		if (empty($payment_address)) {
 			$json['redirect'] = $this->url->link('checkout/checkout', '', 'SSL');
-		}		
+		}
 
-		// Validate cart has products and has stock.			
+		// Validate cart has products and has stock.
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
-			$json['redirect'] = $this->url->link('checkout/cart');				
-		}	
+			$json['redirect'] = $this->url->link('checkout/cart');
+		}
 
-		// Validate minimum quantity requirments.			
+		// Validate minimum quantity requirments.
 		$products = $this->cart->getProducts();
 
 		foreach ($products as $product) {
@@ -169,13 +179,13 @@ class ControllerCheckoutPaymentMethod extends Controller {
 				if ($product_2['product_id'] == $product['product_id']) {
 					$product_total += $product_2['quantity'];
 				}
-			}		
+			}
 
 			if ($product['minimum'] > $product_total) {
 				$json['redirect'] = $this->url->link('checkout/cart');
 
 				break;
-			}				
+			}
 		}
 
 		if (!$json) {
@@ -183,7 +193,7 @@ class ControllerCheckoutPaymentMethod extends Controller {
 				$json['error']['warning'] = $this->language->get('error_payment');
 			} elseif (!isset($this->session->data['payment_methods'][$this->request->post['payment_method']])) {
 				$json['error']['warning'] = $this->language->get('error_payment');
-			}	
+			}
 
 			if ($this->config->get('config_checkout_id')) {
 				$this->load->model('catalog/information');
@@ -199,7 +209,7 @@ class ControllerCheckoutPaymentMethod extends Controller {
 				$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];
 
 				$this->session->data['comment'] = strip_tags($this->request->post['comment']);
-			}							
+			}
 		}
 
 		$this->response->setOutput(json_encode($json));

@@ -3,13 +3,8 @@ class ControllerAffiliateDashboardEditPassword extends Controller {
 	private $error = array();
 
 	public function index() {
-		if ((isset($this->session->data['token']) && !isset($this->request->get['token'])) || ((isset($this->request->get['token']) && (isset($this->session->data['token']) && ($this->request->get['token'] != $this->session->data['token']))))) {
-		    $this->session->data['redirect'] = $this->url->link('affiliate/dashboard', '', 'SSL');
-	  		$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
-		}
-		
 		if (!$this->affiliate->isLogged()) {
-			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_profile', '', 'SSL');
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_edit_password', '', 'SSL');
 			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
 		}
 
@@ -24,7 +19,6 @@ class ControllerAffiliateDashboardEditPassword extends Controller {
 
 
 	protected function getForm() { 
-		// Breadcrumbs
 		$this->data['breadcrumbs'] = array();
 
 		$this->data['breadcrumbs'][] = array(
@@ -39,7 +33,6 @@ class ControllerAffiliateDashboardEditPassword extends Controller {
 			'separator' => ' :: '
 		);
 
-		// Language
 		$this->data['heading_title_edit_password']  = $this->language->get('heading_title_edit_password');
 
 		$this->data['entry_password'] = $this->language->get('entry_password');
@@ -47,7 +40,6 @@ class ControllerAffiliateDashboardEditPassword extends Controller {
 		$this->data['button_save']    = $this->language->get('button_save');
 		$this->data['button_cancel']  = $this->language->get('button_cancel');
 
-		// Error
 		if (isset($this->error['warning'])) {
 			$this->data['error_warning'] = $this->error['warning'];
 		} else {
@@ -66,7 +58,6 @@ class ControllerAffiliateDashboardEditPassword extends Controller {
 			$this->data['error_confirm'] = '';
 		}
 
-		// Success	
 		if (isset($this->session->data['success'])) {
     		$this->data['success'] = $this->session->data['success'];
 			unset($this->session->data['success']);

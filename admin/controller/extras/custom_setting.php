@@ -11,7 +11,6 @@ class ControllerExtrasCustomSetting extends Controller {
   	}
 
 	protected function getList() {
-		// Language
 		$this->data['heading_title']                         = $this->language->get('heading_title');
 		$this->data['entry_international_shipping_methods']  = $this->language->get('entry_international_shipping_methods');
 		$this->data['entry_domestic_shipping_methods']       = $this->language->get('entry_domestic_shipping_methods');
@@ -34,11 +33,9 @@ class ControllerExtrasCustomSetting extends Controller {
 		$this->data['token'] = $this->session->data['token']; 
 		$url = '';
 
-		// Buttons   		
    		$this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
    		$this->data['action'] = $this->url->link('extras/custom_setting', 'token=' . $this->session->data['token'], 'SSL');
 
-		// Breadcrumbs
   		$this->data['breadcrumbs'] = array();
 
    		$this->data['breadcrumbs'][] = array(
@@ -53,14 +50,12 @@ class ControllerExtrasCustomSetting extends Controller {
       		'separator' => ' :: '
    		);
 
-   		// Error
  		if (isset($this->error['warning'])) {
 			$this->data['error'] = $this->error['warning'];
 		} else {
 			$this->data['error'] = '';
 		}		
 
-   		// Success
 		if (isset($this->session->data['success'])) {
 			$this->data['success'] = $this->session->data['success'];		
 			unset($this->session->data['success']);
@@ -113,7 +108,6 @@ class ControllerExtrasCustomSetting extends Controller {
 			$this->data['category_count_minimum_menu'] = $this->config->get('category_count_minimum_menu');
 		}
 
-		// Ebay Profile
 		$this->load->model('import/csv_import');
 		$profiles                        = $this->model_import_csv_import->getEbayProfile();
 	    $this->data['ebay_sites']        = $this->model_import_csv_import->getEbaySiteIds();
@@ -166,8 +160,12 @@ class ControllerExtrasCustomSetting extends Controller {
 	}
 
 	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extras/custom_setting')) {
+		/*if (!$this->user->hasPermission('modify', 'extras/custom_setting')) {
 			$this->error['warning'] = $this->language->get('error_permission');
+		}*/
+
+		if ($this->error && !isset($this->error['warning'])) {
+			$this->error['warning'] = $this->language->get('error_warning');
 		}
 
 		if (!$this->error) {

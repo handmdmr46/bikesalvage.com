@@ -69,7 +69,7 @@ $(document).ready(function(){
         <ul>
           <li><a href="<?php echo $category; ?>"><?php echo $text_category; ?></a></li>
           <li><a href="<?php echo $product; ?>"><?php echo $text_product; ?></a></li>
-          <li><a href="<?php echo $product_upload; ?>"><?php echo $text_product_upload; ?></a></li>
+          <li><a href="<?php echo $admin_product; ?>"><?php echo $text_admin_product; ?></a></li>
           <li><a href="<?php echo $filter; ?>"><?php echo $text_filter; ?></a></li>
           <li><a href="<?php echo $profile; ?>"><?php echo $text_profile; ?></a></li>
           <li><a class="parent"><?php echo $text_attribute; ?></a>
@@ -93,43 +93,6 @@ $(document).ready(function(){
           <li><a href="<?php echo $payment; ?>"><?php echo $text_payment; ?></a></li>
           <li><a href="<?php echo $total; ?>"><?php echo $text_total; ?></a></li>
           <li><a href="<?php echo $feed; ?>"><?php echo $text_feed; ?></a></li>
-          <?php if ($openbay_show_menu == 1) { ?>
-            <li><a class="parent"><?php echo $text_openbay_extension; ?></a>
-                <ul>
-                    <li><a href="<?php echo $openbay_link_extension; ?>"><?php echo $text_openbay_dashboard; ?></a></li>
-                    <li><a href="<?php echo $openbay_link_orders; ?>"><?php echo $text_openbay_orders; ?></a></li>
-                    <li><a href="<?php echo $openbay_link_items; ?>"><?php echo $text_openbay_items; ?></a></li>
-
-                    <?php if($openbay_markets['ebay'] == 1){ ?>
-                    <li><a class="parent" href="<?php echo $openbay_link_ebay; ?>"><?php echo $text_openbay_ebay; ?></a>
-                        <ul>
-                            <li><a href="<?php echo $openbay_link_ebay_settings; ?>"><?php echo $text_openbay_settings; ?></a></li>
-                            <li><a href="<?php echo $openbay_link_ebay_links; ?>"><?php echo $text_openbay_links; ?></a></li>
-                            <li><a href="<?php echo $openbay_link_ebay_orderimport; ?>"><?php echo $text_openbay_order_import; ?></a></li>
-                       </ul>
-                    </li>
-                    <?php } ?>
-
-                    <?php if($openbay_markets['amazon'] == 1){ ?>
-                    <li><a class="parent" href="<?php echo $openbay_link_amazon; ?>"><?php echo $text_openbay_amazon; ?></a>
-                        <ul>
-                            <li><a href="<?php echo $openbay_link_amazon_settings; ?>"><?php echo $text_openbay_settings; ?></a></li>
-                            <li><a href="<?php echo $openbay_link_amazon_links; ?>"><?php echo $text_openbay_links; ?></a></li>
-                        </ul>
-                    </li>
-                    <?php } ?>
-
-                    <?php if($openbay_markets['amazonus'] == 1){ ?>
-                    <li><a class="parent" href="<?php echo $openbay_link_amazonus; ?>"><?php echo $text_openbay_amazonus; ?></a>
-                        <ul>
-                            <li><a href="<?php echo $openbay_link_amazonus_settings; ?>"><?php echo $text_openbay_settings; ?></a></li>
-                            <li><a href="<?php echo $openbay_link_amazonus_links; ?>"><?php echo $text_openbay_links; ?></a></li>
-                        </ul>
-                    </li>
-                    <?php } ?>
-                </ul>
-            </li>
-          <?php } ?>
         </ul>
       </li>
       <!-- sale -->
@@ -222,11 +185,10 @@ $(document).ready(function(){
        <!-- inventory -->
       <li id="inventory"><a class="top"><?php echo $text_inventory; ?></a>
         <ul>
-          <li><a href="<?php echo $stock_control; ?>"><?php echo $text_stock_control; ?></a></li>
           <li><a href="<?php echo $linked_products; ?>"><?php echo $text_linked_products; ?></a></li>
           <li><a href="<?php echo $unlinked_products; ?>"><?php echo $text_unlinked_products; ?></a></li>
           <li><a href="<?php echo $ebay_log; ?>"><?php echo $text_ebay_log; ?></a></li>
-          <li><a href="<?php echo $ebay_log_database; ?>"><?php echo $text_ebay_log; ?>_2</a></li>
+          <li><a href="<?php echo $ebay_seller_list; ?>"><?php echo $text_ebay_seller_list; ?></a></li>
         </ul>
       </li>
       <!-- reports -->
@@ -255,28 +217,23 @@ $(document).ready(function(){
               <li><a href="<?php echo $report_customer_credit; ?>"><?php echo $text_report_customer_credit; ?></a></li>
             </ul>
           </li>
-          <!-- <li><a class="parent"><?php echo $text_affiliate; ?></a>
-            <ul>
-              <li><a href="<?php echo $report_affiliate_commission; ?>"><?php echo $text_report_affiliate_commission; ?></a></li>
-            </ul>
-          </li> -->
         </ul>
       </li>
       <!-- blog -->
       <li id="blog"><a class="top"><?php echo $text_blog; ?></a>
-              <ul>
-                <li><a href="<?php echo $add_blog; ?>"><?php echo $text_add_blog; ?></a></li>
-                <li><a href="<?php echo $blog_category; ?>"><?php echo $text_blog_category; ?></a></li>
-                <li><a href="<?php echo $blog_comments; ?>"><?php echo $text_blog_comments; ?></a></li>
-                <li><a href="<?php echo $add_blog_link; ?>"><?php echo $text_add_blog_link; ?></a></li>
-                <li><a href="<?php echo $blog_feed; ?>"><?php echo $text_blog_feed; ?></a></li>
-                <li><a href="<?php echo $blog_configuration; ?>"><?php echo $text_blog_configuration; ?></a></li>
-              </ul>
+        <ul>
+          <li><a href="<?php echo $add_blog; ?>"><?php echo $text_add_blog; ?></a></li>
+          <li><a href="<?php echo $blog_category; ?>"><?php echo $text_blog_category; ?></a></li>
+          <li><a href="<?php echo $blog_comments; ?>"><?php echo $text_blog_comments; ?></a></li>
+          <li><a href="<?php echo $add_blog_link; ?>"><?php echo $text_add_blog_link; ?></a></li>
+          <li><a href="<?php echo $blog_feed; ?>"><?php echo $text_blog_feed; ?></a></li>
+          <li><a href="<?php echo $blog_configuration; ?>"><?php echo $text_blog_configuration; ?></a></li>
+        </ul>
       </li>
       <!-- extras -->
       <li id="extras"><a class="top"><?php echo $text_extras; ?></a>
-        <ul>          
-          <li><a href="<?php echo $custom_setting; ?>"><?php echo $text_custom_setting; ?></a></li>          
+        <ul>
+          <li><a href="<?php echo $custom_setting; ?>"><?php echo $text_custom_setting; ?></a></li>
           <li><a href="<?php echo $review_store; ?>"><?php echo $text_review_store; ?></a></li>
         </ul>
       </li>

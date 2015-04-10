@@ -18,8 +18,8 @@ $_['text_edit']                               = 'Edit';
 $_['button_add_voucher']                      = 'Add Voucher';
 $_['tab_voucher']                             = 'Voucher';
 $_['tab_total']                               = 'Total';
-$_['tab_customer']                            = 'Customer';    
-$_['text_no_results']                         = 'No Results';                		
+$_['tab_customer']                            = 'Customer';
+$_['text_no_results']                         = 'No Results';
 
 // Tabs
 $_['tab_order']                               = 'Order Details';
@@ -149,7 +149,7 @@ $_['column_date_added']                       = 'Date Added';
 $_['column_date_modified']                    = 'Date Modified';
 $_['column_total']                            = 'Total';
 $_['column_product']                          = 'Product';
-$_['column_model']                            = 'Model';
+$_['column_model']                            = 'Part Number';
 $_['column_quantity']                         = 'Quantity';
 $_['column_price']                            = 'Unit Price';
 $_['column_download']                         = 'Download Name';

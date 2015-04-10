@@ -1,6 +1,7 @@
 <?php
 // Heading
 $_['heading_title']             = 'Affiliates';
+$_['heading_title_affiliate_products'] = 'Affiliate Products';
 
 // Text
 $_['text_success']              = 'Success: You have modified affiliates!';
@@ -91,4 +92,11 @@ $_['error_code']                = 'Tracking Code required!';
 $_['tab_product']               = 'Products';
 $_['tab_sale']                  = 'Sales';
 $_['button_edit_transaction']   = 'Edit Transaction';
+$_['entry_other_email']         = 'Additional Alert Emails<span class="help">Any additional emails you want to receive the alert email, in addition to the main affiliate email. (comma separated)</span>';
+$_['entry_website']             = 'Web Site:';
+$_['entry_featured_image'] = 'Featured Image:';
+$_['entry_shipping_methods'] = 'Shipping_methods:';
+$_['entry_gallery_image_link'] = 'Gallery Image';
+$_['button_add_image_link'] = 'Add Image';
+$_['button_remove'] = 'Remove';
 ?>

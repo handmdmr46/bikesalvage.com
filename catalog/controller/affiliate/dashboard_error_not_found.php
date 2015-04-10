@@ -1,6 +1,11 @@
 <?php    
 class ControllerAffiliateDashboardErrorNotFound extends Controller {    
 	public function index() { 
+		if (!$this->affiliate->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_error_not_found', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
+
 		$this->language->load('affiliate/dashboard_error_not_found');
 
 		$this->document->setTitle($this->language->get('heading_title'));

@@ -1,10 +1,7 @@
 <?php
-
-// headint title
 $_['heading_title_csv_import']         = 'CSV Import';
 $_['heading_title_ebayid_import']      = 'eBay ItemID Import';
 
-// text
 $_['text_choose_file']                 = 'Select CSV file<span class="help">Turbolister exported csv files only, must export them in the FileExchange format.</span>';
 $_['text_skip_image']                  = 'Skip Image Description';
 $_['text_skip_image_help']             = 'Prevents duplicate gallery images by skipping first image match if they\'re embedded in the description';

@@ -1,29 +1,23 @@
 <?php
-class ControllerAffiliateDashboardProfile extends Controller {
+class ControllerAffiliateDashboardSettingProfile extends Controller {
 	private $error = array();
 
 	public function index() {
-		if ((isset($this->session->data['token']) && !isset($this->request->get['token'])) || ((isset($this->request->get['token']) && (isset($this->session->data['token']) && ($this->request->get['token'] != $this->session->data['token']))))) {
-		    $this->session->data['redirect'] = $this->url->link('affiliate/dashboard', '', 'SSL');
-	  		$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
-		}
-		
 		if (!$this->affiliate->isLogged()) {
-			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_profile', '', 'SSL');
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_setting_profile', '', 'SSL');
 			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
 		}
 
 		$this->data['template_url'] = 'catalog/view/theme/' . $this->config->get('config_template');
 
 		$this->language->load('affiliate/dashboard');
-		$this->load->model('affiliate/dashboard_profile');
+		$this->load->model('affiliate/dashboard_setting_profile');
 		$this->document->setTitle($this->language->get('heading_title_profile'));
 		 
     	$this->getForm();
     }
 
     protected function getForm() {
-		// Breadcrumbs
   		$this->data['breadcrumbs'] = array();
 
    		$this->data['breadcrumbs'][] = array(
@@ -34,11 +28,10 @@ class ControllerAffiliateDashboardProfile extends Controller {
 
    		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title_profile'),
-			'href'      => $this->url->link('affiliate/dashboard_profile', 'token=' . $this->session->data['token'], 'SSL'),       		
+			'href'      => $this->url->link('affiliate/dashboard_setting_profile', 'token=' . $this->session->data['token'], 'SSL'),       		
       		'separator' => ' :: '
    		);
 
-		// Language		
     	$this->data['heading_title_profile'] = $this->language->get('heading_title_profile');
 
 		$this->data['text_select'] = $this->language->get('text_select');
@@ -80,6 +73,7 @@ class ControllerAffiliateDashboardProfile extends Controller {
 		$this->data['entry_confirm'] = $this->language->get('entry_confirm');
 		$this->data['button_save'] = $this->language->get('button_save');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
+		$this->data['entry_commission']          = $this->language->get('entry_commission');
 		
 		// Error
 		if (isset($this->error['warning'])) {
@@ -162,13 +156,13 @@ class ControllerAffiliateDashboardProfile extends Controller {
 			$this->data['success'] = '';
 		}
 		
-        $this->data['action'] = $this->url->link('affiliate/dashboard_profile/edit', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['action'] = $this->url->link('affiliate/dashboard_setting_profile/edit', 'token=' . $this->session->data['token'], 'SSL');
 		
 		$this->data['cancel'] = $this->url->link('affiliate/dashboard', 'token=' . $this->session->data['token'], 'SSL');
 		
 		$this->data['token'] = $this->session->data['token'];	
 		
-		$this->data['result'] = $this->model_affiliate_dashboard_profile->getAffiliate($this->affiliate->getId());
+		$this->data['result'] = $this->model_affiliate_dashboard_setting_profile->getAffiliate($this->affiliate->getId());
 		
 		// Fields
 		if (isset($this->request->post['firstname'])) {
@@ -287,6 +281,14 @@ class ControllerAffiliateDashboardProfile extends Controller {
 		
     	$this->data['countries'] = $this->model_affiliate_dashboard_country->getcountries();
 
+    	if (isset($this->request->post['commission'])) {
+			$this->data['commission'] = $this->request->post['commission'];
+		} elseif (!empty($this->data['result']['commission'])) {
+			$this->data['commission'] = $this->data['result']['commission'];
+		} else {
+			$this->data['commission'] = $this->config->get('config_commission');
+		}
+
 		if (isset($this->request->post['tax'])) {
     		$this->data['tax'] = $this->request->post['tax'];
 		} elseif (!empty($this->data['result']['tax'])) {
@@ -310,56 +312,8 @@ class ControllerAffiliateDashboardProfile extends Controller {
 		} else {
 			$this->data['cheque'] = '';
 		}
-
-		if (isset($this->request->post['paypal'])) {
-    		$this->data['paypal'] = $this->request->post['paypal'];
-		} elseif (!empty($this->data['result']['paypal'])) {
-			$this->data['paypal'] = $this->data['result']['paypal'];
-		} else {
-			$this->data['paypal'] = '';
-		}
-
-		if (isset($this->request->post['bank_name'])) {
-    		$this->data['bank_name'] = $this->request->post['bank_name'];
-		} elseif (!empty($this->data['result']['bank_name'])) {
-			$this->data['bank_name'] = $this->data['result']['bank_name'];
-		} else {
-			$this->data['bank_name'] = '';
-		}
-
-		if (isset($this->request->post['bank_branch_number'])) {
-    		$this->data['bank_branch_number'] = $this->request->post['bank_branch_number'];
-		} elseif (!empty($this->data['result']['bank_branch_number'])) {
-			$this->data['bank_branch_number'] = $this->data['result']['bank_branch_number'];
-		} else {
-			$this->data['bank_branch_number'] = '';
-		}
-
-		if (isset($this->request->post['bank_swift_code'])) {
-    		$this->data['bank_swift_code'] = $this->request->post['bank_swift_code'];
-		} elseif (!empty($this->data['result']['bank_swift_code'])) {
-			$this->data['bank_swift_code'] = $this->data['result']['bank_swift_code'];
-		} else {
-			$this->data['bank_swift_code'] = '';
-		}
-
-		if (isset($this->request->post['bank_account_name'])) {
-    		$this->data['bank_account_name'] = $this->request->post['bank_account_name'];
-		} elseif (!empty($this->data['result']['bank_account_name'])) {
-			$this->data['bank_account_name'] = $this->data['result']['bank_account_name'];
-		} else {
-			$this->data['bank_account_name'] = '';
-		}
 		
-		if (isset($this->request->post['bank_account_number'])) {
-    		$this->data['bank_account_number'] = $this->request->post['bank_account_number'];
-		} elseif (!empty($this->data['result']['bank_account_number'])) {
-			$this->data['bank_account_number'] = $this->data['result']['bank_account_number'];
-		} else {
-			$this->data['bank_account_number'] = '';
-		}
-		
-		$this->template = $this->config->get('config_template') . '/template/affiliate/dashboard_profile.tpl';
+		$this->template = $this->config->get('config_template') . '/template/affiliate/dashboard_setting_profile.tpl';
 		
 		$this->children = array(
 			'affiliate/common/header',
@@ -374,16 +328,16 @@ class ControllerAffiliateDashboardProfile extends Controller {
 
 		$this->language->load('affiliate/dashboard');
 
-		$this->load->model('affiliate/dashboard_profile');
+		$this->load->model('affiliate/dashboard_setting_profile');
 
 		$this->document->setTitle($this->language->get('heading_title_profile'));
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-			$this->model_affiliate_dashboard_profile->editAffiliate($this->request->post, $this->affiliate->getId());
+			$this->model_affiliate_dashboard_setting_profile->editAffiliate($this->request->post, $this->affiliate->getId());
 
-			$this->session->data['success'] = $this->language->get('text_success');
+			$this->session->data['success'] = $this->language->get('success_edit_profile');
 
-			$this->redirect($this->url->link('affiliate/dashboard_profile', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->redirect($this->url->link('affiliate/dashboard_setting_profile', 'token=' . $this->session->data['token'], 'SSL'));
 	    }
 
 	    $this->getForm();

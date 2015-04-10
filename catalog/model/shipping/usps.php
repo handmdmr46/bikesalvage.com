@@ -362,30 +362,29 @@ class ModelShippingUsps extends Model {
 					foreach($this->cart->getProducts() as $result) {
 						if ($result['affiliate_id'] == 0) {
 							$allowed[] = $this->model_extras_product_shipping->getProductShippingMethod($result['product_id']);
-						}						
+						}
 					}
 
 					$allowed = $this->array_flatten($allowed);
 
 					if ($rate_response || $intl_rate_response) {
 						if ($address['iso_code_2'] == 'US') { /* Domestic Mail Service */
-							
-							// Shipping method hireacy
+
 							if (in_array(4,$allowed)) { 		// 4 = Parcel Post
-								$allowed = array(4);										
+								$allowed = array(4);
 							}elseif (in_array(1,$allowed)) {	// 1 = Priority Mail
-								$allowed = array(1);										
+								$allowed = array(1);
 							}elseif (in_array(22,$allowed)) {	// 22 = Large Flat Rate Box
-								$allowed = array(22);										
+								$allowed = array(22);
 							}elseif (in_array(17,$allowed)) {	// 17 = Regular Flat Rate Box
-								$allowed = array(17);										
+								$allowed = array(17);
 							}elseif (in_array(16,$allowed)) {	// 16 = Flat Rate Envelope
-								$allowed = array(16);										
+								$allowed = array(16);
 							}elseif (in_array(0,$allowed)) {	// 0 = First Class Mail
-								$allowed = array(0);								
+								$allowed = array(0);
 							}else{
-								$allowed = array(1);			// no method assigned, set it to priority mail
-							}							
+								$allowed = $this->config->get('domestic_shipping_default_id');
+							}
 
 							$package = $rate_response->getElementsByTagName('Package')->item(0);
 
@@ -417,7 +416,7 @@ class ModelShippingUsps extends Model {
 												'tax_class_id' => $this->config->get('usps_tax_class_id'),
 												'text'         => $this->currency->format($this->tax->calculate($this->currency->convert($cost, 'USD', $this->currency->getCode()), $this->config->get('usps_tax_class_id'), $this->config->get('config_tax')), $this->currency->getCode(), 1.0000000)
 											);
-										}										
+										}
 									}
 								}
 							} else {
@@ -431,20 +430,20 @@ class ModelShippingUsps extends Model {
 									'error'      => $error->getElementsByTagName('Description')->item(0)->nodeValue
 								);
 							}
-						} else { /* International Mail Service */							
-							
+						} else { /* International Mail Service */
+
 							if (in_array(2,$allowed)) {				// priority mail
-								$allowed = array(2);								
+								$allowed = array(2);
 							} elseif (in_array(11,$allowed)) {		// flat rate box large
-								$allowed = array(11);								
+								$allowed = array(11);
 							} elseif (in_array(9,$allowed)) {		// flat rate box
-								$allowed = array(9);								
+								$allowed = array(9);
 							} elseif (in_array(8,$allowed)) {		// flat rate envelope
-								$allowed = array(8);								
+								$allowed = array(8);
 							} elseif (in_array(15,$allowed)) {		// first class
-								$allowed = array(15);							
+								$allowed = array(15);
 							} else {
-								$allowed = array(2);				// no method assigned, set it to priority international mail
+								$allowed = $this->config->get('international_shipping_default_id');
 							}
 
 							$package = $intl_rate_response->getElementsByTagName('Package')->item(0);
@@ -489,7 +488,7 @@ class ModelShippingUsps extends Model {
 				$title_data = array();
 
 				$title_data[] = $this->getAdminShippingInfo();
-				
+
 				$method_data = array(
 					'code'       => 'usps',
 					'title'      => $title_data,
@@ -506,7 +505,7 @@ class ModelShippingUsps extends Model {
 	public function getAffiliateQuote($address, $affiliate_id) {
 		$this->language->load('shipping/usps');
 
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('usps_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");		
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('usps_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
 
 		if (!$this->config->get('usps_geo_zone_id')) {
 			$status = true;
@@ -858,32 +857,34 @@ class ModelShippingUsps extends Model {
 
 					$this->load->model('extras/product_shipping');
 					$allowed = array();
-					foreach($this->cart->getProducts() as $result) {
-						if ($result['affiliate_id'] == $affiliate_id) {
-							$allowed[] = $this->model_extras_product_shipping->getProductShippingMethod($result['product_id']);
-						}						
+					foreach($this->cart->getProducts() as $product) {
+						if ($product['affiliate_id'] == $affiliate_id) {
+							$allowed[] = $this->model_extras_product_shipping->getProductShippingMethod($product['product_id']);
+						}
 					}
 
 					$allowed = $this->array_flatten($allowed);
-
+					// $allowed = array('4');
 					if ($rate_response || $intl_rate_response) {
-						if ($address['iso_code_2'] == 'US') { 	
-							
-							if (in_array(4,$allowed)) { 		// 4 = Parcel Post
-								$allowed = array(4);										
-							}elseif (in_array(1,$allowed)) {	// 1 = Priority Mail
-								$allowed = array(1);										
+						if ($address['iso_code_2'] == 'US') {
+
+
+							/*if (in_array(4,$allowed)) { 		// 4 = Parcel Post // doesnt work???? -- CLASSID 4 is Standard Post from usps api call example
+								$allowed = array(4);
+							}else*/if (in_array(1,$allowed)) {	// 1 = Priority Mail
+								$allowed = array(1);
 							}elseif (in_array(22,$allowed)) {	// 22 = Large Flat Rate Box
-								$allowed = array(22);										
+								$allowed = array(22);
 							}elseif (in_array(17,$allowed)) {	// 17 = Regular Flat Rate Box
-								$allowed = array(17);										
+								$allowed = array(17);
 							}elseif (in_array(16,$allowed)) {	// 16 = Flat Rate Envelope
-								$allowed = array(16);										
-							}elseif (in_array(0,$allowed)) {	// 0 = First Class Mail
-								$allowed = array(0);								
+								$allowed = array(16);
+							}elseif (in_array(0,$allowed)) {	// 0 = First Class Mail // doesnt work????
+								$allowed = array(0);
 							}else{
-								$allowed = array(1);			// no method assigned, set it to priority mail
-							}							
+								$allowed = array(22);
+							}
+
 
 							$package = $rate_response->getElementsByTagName('Package')->item(0);
 
@@ -897,18 +898,18 @@ class ModelShippingUsps extends Model {
 										if ($classid == '0') {
 											$mailservice = $postage->getElementsByTagName('MailService')->item(0)->nodeValue;
 
-											foreach ($firstclasses as $k => $firstclass)  {
-												if ($firstclass == $mailservice) {
+											foreach ($firstclasses as $k => $firstclass)  { // CLASSID 01 = 'First-Class Mail Parcel' CLASSID 02 = 'First-Class Mail Large Envelope'
+												if ($firstclass == $mailservice) {			// CLASSID 03 = 'First-Class Mail Letter' CLASSID 04 = 'First-Class Mail Postcards'
 													$classid = $classid . $k;
 													break;
 												}
 											}
-										}									
+										}
 
 										if (($this->config->get('usps_domestic_' . $classid))) {
 											$cost = $postage->getElementsByTagName('Rate')->item(0)->nodeValue;
 
-											$quote_data[$classid] = array(
+											$quote_data[] = array(
 												'code'         => 'usps.' . $classid,
 												'title'        => $postage->getElementsByTagName('MailService')->item(0)->nodeValue,
 												'cost'         => $this->currency->convert($cost, 'USD', $this->config->get('config_currency')),
@@ -917,7 +918,7 @@ class ModelShippingUsps extends Model {
 											);
 										}
 									}
-								} 
+								}
 							} else {
 								$error = $package->getElementsByTagName('Error')->item(0);
 
@@ -929,20 +930,20 @@ class ModelShippingUsps extends Model {
 									'error'      => $error->getElementsByTagName('Description')->item(0)->nodeValue
 								);
 							}
-						} else { /* International Mail Service */														
-							
+						} else { /* International Mail Service */
+
 							if (in_array(2,$allowed)) {				// priority mail
-								$allowed = array(2);								
+								$allowed = array(2);
 							} elseif (in_array(11,$allowed)) {		// flat rate box large
-								$allowed = array(11);								
+								$allowed = array(11);
 							} elseif (in_array(9,$allowed)) {		// flat rate box
-								$allowed = array(9);								
+								$allowed = array(9);
 							} elseif (in_array(8,$allowed)) {		// flat rate envelope
-								$allowed = array(8);								
+								$allowed = array(8);
 							} elseif (in_array(15,$allowed)) {		// first class
-								$allowed = array(15);							
+								$allowed = array(15);
 							} else {
-								$allowed = array(2);				// no method assigned, set it to priority international mail
+								$allowed = $this->config->get('international_shipping_default_id');
 							}
 
 							$package = $intl_rate_response->getElementsByTagName('Package')->item(0);
@@ -961,7 +962,7 @@ class ModelShippingUsps extends Model {
 
 									$cost = $service->getElementsByTagName('Postage')->item(0)->nodeValue;
 
-									$quote_data[$id] = array(
+									$quote_data[] = array(
 										'code'         => 'usps.' . $id,
 										'title'        => $title,
 										'cost'         => $this->currency->convert($cost, 'USD', $this->config->get('config_currency')),
@@ -984,14 +985,18 @@ class ModelShippingUsps extends Model {
 			}
 
 			if ($quote_data) {
-				
 
-				$title_data = array();
-				$title_data[] = $this->getAffiliateShippingInfo($affiliate_id);
+
+				$seller_info = array();
+				if ($affiliate_id > 0) {
+					$seller_info[] = $this->getAffiliateShippingInfo($affiliate_id);
+				} else {
+					$seller_info[] = $this->getAdminShippingInfo();
+				}
 
 				$method_data = array(
 					'code'       => 'usps',
-					'title'      => $title_data,
+					'info'       => $seller_info,
 					'quote'      => $quote_data,
 					'sort_order' => $this->config->get('usps_sort_order'),
 					'error'      => false
@@ -1004,7 +1009,7 @@ class ModelShippingUsps extends Model {
 
 	private function getAffiliateShippingInfo($affiliate_id) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "affiliate a WHERE a.affiliate_id = '" . (int)$affiliate_id . "'");
-			                                                  
+
 		$zone = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone z WHERE z.zone_id = '" . (int)$query->row['zone_id'] . "'");
 
 		$weight = $this->weight->convert($this->cart->getWeightByAffiliateId($affiliate_id), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
@@ -1047,6 +1052,5 @@ class ModelShippingUsps extends Model {
 		}
 		return $array;
 	}
-
-}// end class
+}
 ?>

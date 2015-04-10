@@ -3,11 +3,6 @@ class ControllerAffiliateDashboardOrder extends Controller {
 	private $error = array();
 
 	public function index() {
-		if ((isset($this->session->data['token']) && !isset($this->request->get['token'])) || ((isset($this->request->get['token']) && (isset($this->session->data['token']) && ($this->request->get['token'] != $this->session->data['token']))))) {
-		    $this->session->data['redirect'] = $this->url->link('affiliate/dashboard_import_csv', '', 'SSL');
-	  		$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
-		}
-
 		if (!$this->affiliate->isLogged()) {
 			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_order', '', 'SSL');
 			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));

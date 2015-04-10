@@ -2,15 +2,10 @@
 class ControllerAffiliateDashboardTransaction extends Controller {
 
 	public function index() {
-		if ((isset($this->session->data['token']) && !isset($this->request->get['token'])) || ((isset($this->request->get['token']) && (isset($this->session->data['token']) && ($this->request->get['token'] != $this->session->data['token']))))) {
-		    $this->session->data['redirect'] = $this->url->link('affiliate/dashboard', '', 'SSL');
-	  		$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
-		}
-
 		if (!$this->affiliate->isLogged()) {
-			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard', '', 'SSL');
-	  		$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
-    	} 
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_transaction', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
 
     	$this->data['template_url'] = 'catalog/view/theme/' . $this->config->get('config_template');
 
@@ -28,7 +23,6 @@ class ControllerAffiliateDashboardTransaction extends Controller {
 	public function transaction() {
 		$url = '';
 
-		// Breadcrumbs
 		$this->data['breadcrumbs'] = array();
 
 		$this->data['breadcrumbs'][] = array(
@@ -45,7 +39,6 @@ class ControllerAffiliateDashboardTransaction extends Controller {
 
 		$affiliate_id = $this->affiliate->getId();
 
-		// Langaugae
 		$this->data['text_no_results']    = $this->language->get('text_no_results');
 		$this->data['text_balance']       = $this->language->get('text_balance');
 		$this->data['column_date_added']  = $this->language->get('column_date_added');
@@ -63,7 +56,6 @@ class ControllerAffiliateDashboardTransaction extends Controller {
 			$page = 1;
 		}  
 
-		
 		$total_commission                   = $this->model_affiliate_dashboard_transaction->getOrderProductCommissionTotalByAffiliateId($affiliate_id);
 		$order_product_total                = $this->model_affiliate_dashboard_transaction->getOrderProductTotalByAffiliateId($affiliate_id);
 		$this->data['balance_due']          = $this->currency->format(($order_product_total - $total_commission) - $order_product_total, $this->config->get('config_currency'));
@@ -82,8 +74,6 @@ class ControllerAffiliateDashboardTransaction extends Controller {
 				'date_added'  => date($this->language->get('date_format_short'), strtotime($result['date_added']))
 			);
 		}
-
-		
 
 		$transaction_total = $this->model_affiliate_dashboard_transaction->getTotalTransactions($affiliate_id);
 
@@ -129,6 +119,5 @@ class ControllerAffiliateDashboardTransaction extends Controller {
 
     	$this->transaction();
   	}
-
-}// end class
+}
 ?>

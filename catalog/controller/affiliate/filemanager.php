@@ -3,7 +3,7 @@ class ControllerAffiliateFileManager extends Controller {
 	private $error = array();
 
 	public function index() {
-		$this->language->load('affiliate/filemanager');
+		$this->load->language('affiliate/filemanager');
 
 		$this->data['title'] = $this->language->get('heading_title');
 
@@ -28,6 +28,7 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->data['button_upload'] = $this->language->get('button_upload');
 		$this->data['button_refresh'] = $this->language->get('button_refresh');
 		$this->data['button_submit'] = $this->language->get('button_submit');
+		$this->data['button_search'] = $this->language->get('button_search');
 
 		$this->data['error_select'] = $this->language->get('error_select');
 		$this->data['error_directory'] = $this->language->get('error_directory');
@@ -40,7 +41,6 @@ class ControllerAffiliateFileManager extends Controller {
 			$this->data['directory'] = HTTP_SERVER . 'image/affiliate/';
 		}
 
-		// define('DIR_IMAGE', '/Applications/MAMP/htdocs/open-cart1.6/image/');
 		$directory = rtrim(DIR_IMAGE . 'affiliate');
 
 		if (!is_dir($directory)) {
@@ -49,8 +49,10 @@ class ControllerAffiliateFileManager extends Controller {
 
 		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
 
-		if (!is_dir($directory . '/' . $this->data['affiliate_dir'])) {
-			mkdir($directory . '/' . str_replace('../', '', $this->data['affiliate_dir']), 0777);
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
+
+		if (!is_dir($directory . '/' . $affiliate_directory)) {
+			mkdir($directory . '/' . str_replace('../', '', $affiliate_directory), 0777);
 		}
 
 		$this->load->model('tool/image');
@@ -74,20 +76,6 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput($this->render());
 	}
 
-	/* ___________________FUNCTION REFERENCE___________________
-	*
-	*	DIR_IMAGE                                -- '/Applications/MAMP/htdocs/open-cart/image/' --
-	*	glob(pattern,flags)                      -- The glob() function returns an array of filenames or directories matching a specified pattern -- GLOB_ONLYDIR returns only directories which match the pattern --
-	*	str_replace(find,replace,string,count)   -- The str_replace() function replaces some characters with some other characters in a string --
-	*	rtrim(string,charlist)                   -- The rtrim() function removes whitespace or other predefined characters from the right side of a string --
-	*	basename(path,suffix)                    -- The basename() function returns the filename from a path --
-	*	str_replace(find,replace,string,count)   -- find and replace a string --
-	*	mkdir(path,mode,recursive,context)       -- this uses mkdir(path,mode) --
-	*	is_dir(file)                             -- The is_dir() function checks whether the specified file is a directory --
-	*   strlen(string)                           -- The strlen() function returns the length of a string --
-	*
-	*/
-
 	public function image() {
 		$this->load->model('tool/image');
 
@@ -98,24 +86,33 @@ class ControllerAffiliateFileManager extends Controller {
 		}
 	}
 
-	// gets directory folder to start in @ left-column -- on start --
+	public function image_ext() {
+        $this->load->language('common/filemanager');
+        $this->load->model('tool/image');
+        $json=array();
+
+        if (isset($this->request->get['image'])) {
+            $json['text'] = $this->model_tool_image->resize(html_entity_decode($this->request->get['image'], ENT_QUOTES, 'UTF-8'), 100, 100);
+            $json['image'] = $this->request->get['image'];
+            $json['success'] = $this->language->get('image_success_added');
+        }
+
+        $this->response->setOutput(json_encode($json));
+    }
+
 	public function directory() {
 		$json = array();
 
 		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
 
 		if (isset($this->request->post['directory'])) {
-
-			// what folder to start in?
 			$directories = glob(rtrim(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . str_replace('../', '', $this->request->post['directory']) , '/') . '/*', GLOB_ONLYDIR);
 
 			if ($directories) {
 				$i = 0;
 
 				foreach ($directories as $directory) {
-
 					$json[$i]['data'] = basename($directory);
-
 					$json[$i]['attributes']['directory'] = utf8_substr($directory, strlen(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . $this->request->post['directory']));
 
 					$children = glob(rtrim($directory, '/') . '/*', GLOB_ONLYDIR);
@@ -132,17 +129,15 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	// gets image files from the directory, displays thumbnails in right-column
 	public function files() {
 		$json = array();
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
-		// gets files from 'affiliate/' directory folder
 		if (!empty($this->request->post['directory'])) {
-			$directory = DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . str_replace('../', '', $this->request->post['directory']);
+			$directory = DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', $this->request->post['directory']);
 		} else {
-			$directory = DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/';
+			$directory = DIR_IMAGE . 'affiliate/' . $affiliate_directory;
 		}
 
 		$allowed = array(
@@ -186,7 +181,7 @@ class ControllerAffiliateFileManager extends Controller {
 
 					$json[] = array(
 						'filename' => basename($file),
-						'file'     => utf8_substr($file, utf8_strlen(DIR_IMAGE . 'affiliate/')),
+						'file'     => utf8_substr($file, utf8_strlen(DIR_IMAGE . 'affiliate/' . $affiliate_directory)),
 						'size'     => round(utf8_substr($size, 0, utf8_strpos($size, '.') + 4), 2) . $suffix[$i]
 					);
 				}
@@ -196,17 +191,16 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	// creates new directory folder
 	public function create() {
-		$this->language->load('affiliate/filemanager');
+		$this->load->language('affiliate/filemanager');
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
 		$json = array();
 
 		if (isset($this->request->post['directory'])) {
 			if (isset($this->request->post['name']) || $this->request->post['name']) {
-				$directory = rtrim(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . str_replace('../', '', $this->request->post['directory']), '/');
+				$directory = rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', $this->request->post['directory']), '/');
 
 				if (!is_dir($directory)) {
 					$json['error'] = $this->language->get('error_directory');
@@ -231,22 +225,21 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	// deletes selected directory folder
 	public function delete() {
-		$this->language->load('affiliate/filemanager');
+		$this->load->language('affiliate/filemanager');
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
 		$json = array();
 
 		if (isset($this->request->post['path'])) {
-			$path = rtrim(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . str_replace('../', '', html_entity_decode($this->request->post['path'], ENT_QUOTES, 'UTF-8')), '/');
+			$path = rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', html_entity_decode($this->request->post['path'], ENT_QUOTES, 'UTF-8')), '/');
 
 			if (!file_exists($path)) {
 				$json['error'] = $this->language->get('error_select');
 			}
 
-			if ($path == rtrim(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/', '/')) {
+			if ($path == rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory, '/')) {
 				$json['error'] = $this->language->get('error_delete');
 			}
 		} else {
@@ -290,16 +283,15 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	// moves selected image to new directory folder
 	public function move() {
-		$this->language->load('affiliate/filemanager');
+		$this->load->language('affiliate/filemanager');
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
 		$json = array();
 
 		if (isset($this->request->post['from']) && isset($this->request->post['to'])) {
-			$from = rtrim(DIR_IMAGE . 'affiliate/' . str_replace('../', '', html_entity_decode($this->request->post['from'], ENT_QUOTES, 'UTF-8')), '/');
+			$from = rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', html_entity_decode($this->request->post['from'], ENT_QUOTES, 'UTF-8')), '/');
 
 			if (!file_exists($from)) {
 				$json['error'] = $this->language->get('error_missing');
@@ -309,7 +301,7 @@ class ControllerAffiliateFileManager extends Controller {
 				$json['error'] = $this->language->get('error_default');
 			}
 
-			$to = rtrim(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . str_replace('../', '', html_entity_decode($this->request->post['to'], ENT_QUOTES, 'UTF-8')), '/');
+			$to = rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', html_entity_decode($this->request->post['to'], ENT_QUOTES, 'UTF-8')), '/');
 
 			if (!file_exists($to)) {
 				$json['error'] = $this->language->get('error_move');
@@ -331,11 +323,10 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	// copy image to new directory folder
 	public function copy() {
-		$this->language->load('affiliate/filemanager');
+		$this->load->language('affiliate/filemanager');
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
 		$json = array();
 
@@ -344,7 +335,7 @@ class ControllerAffiliateFileManager extends Controller {
 				$json['error'] = $this->language->get('error_filename');
 			}
 
-			$old_name = rtrim(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . str_replace('../', '', html_entity_decode($this->request->post['path'], ENT_QUOTES, 'UTF-8')), '/');
+			$old_name = rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', html_entity_decode($this->request->post['path'], ENT_QUOTES, 'UTF-8')), '/');
 
 			if (!file_exists($old_name) || $old_name == DIR_IMAGE . 'data') {
 				$json['error'] = $this->language->get('error_copy');
@@ -378,11 +369,8 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	// recursive copy image to new directory folder
-	function recursiveCopy($source, $destination) {
+	public function recursiveCopy($source, $destination) {
 		$directory = opendir($source);
-
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
 
 		@mkdir($destination);
 
@@ -399,21 +387,18 @@ class ControllerAffiliateFileManager extends Controller {
 		closedir($directory);
 	}
 
-	// sends output to protected function recursiveFolders()
 	public function folders() {
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
-		$this->response->setOutput($this->recursiveFolders(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/'));
-
+		$this->response->setOutput($this->recursiveFolders(DIR_IMAGE . 'affiliate/' . $affiliate_directory));
 	}
 
-	// displays directory folders in select list -- example -- move() function
 	protected function recursiveFolders($directory) {
 		$output = '';
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
-		$output .= '<option value="' . utf8_substr($directory, strlen(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/')) . '">' . utf8_substr($directory, strlen(DIR_IMAGE . 'affiliate/'. $this->data['affiliate_dir'] . '/')) . '</option>';
+		$output .= '<option value="' . utf8_substr($directory, strlen(DIR_IMAGE . 'affiliate/' . $affiliate_directory)) . '">' . utf8_substr($directory, strlen(DIR_IMAGE . 'affiliate/'. $affiliate_directory)) . '</option>';
 
 		$directories = glob(rtrim(str_replace('../', '', $directory), '/') . '/*', GLOB_ONLYDIR);
 
@@ -424,11 +409,10 @@ class ControllerAffiliateFileManager extends Controller {
 		return $output;
 	}
 
-	// rename the selected image
 	public function rename() {
-		$this->language->load('affiliate/filemanager');
+		$this->load->language('affiliate/filemanager');
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		$affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
 		$json = array();
 
@@ -437,7 +421,7 @@ class ControllerAffiliateFileManager extends Controller {
 				$json['error'] = $this->language->get('error_filename');
 			}
 
-			$old_name = rtrim(DIR_IMAGE . 'affiliate/' . str_replace('../', '', html_entity_decode($this->request->post['path'], ENT_QUOTES, 'UTF-8')), '/');
+			$old_name = rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', html_entity_decode($this->request->post['path'], ENT_QUOTES, 'UTF-8')), '/');
 
 			if (!file_exists($old_name) || $old_name == DIR_IMAGE . 'data') {
 				$json['error'] = $this->language->get('error_rename');
@@ -465,11 +449,12 @@ class ControllerAffiliateFileManager extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	// gets image from your computer and uploads to the web server
-	public function upload() {
-		$this->language->load('affiliate/filemanager');
+	public function uploadOriginal() {
+		$this->load->language('affiliate/filemanager');
 
-		$this->data['affiliate_dir'] = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId());
+		// $affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
+
+		$affiliate_directory = 'affiliate/' . strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
 
 		$json = array();
 
@@ -482,7 +467,7 @@ class ControllerAffiliateFileManager extends Controller {
 				}
 
 				// upload directory
-				$directory = rtrim(DIR_IMAGE . 'affiliate/' . $this->data['affiliate_dir'] . '/' . str_replace('../', '', $this->request->post['directory']), '/');
+				$directory = rtrim(DIR_IMAGE . $affiliate_directory . str_replace('../', '', $this->request->post['directory']), '/');
 
 				if (!is_dir($directory)) {
 					$json['error'] = $this->language->get('error_directory');
@@ -537,5 +522,93 @@ class ControllerAffiliateFileManager extends Controller {
 
 		$this->response->setOutput(json_encode($json));
 	}
+
+	public function upload() {
+        $this->load->language('affiliate/filemanager');
+
+        $affiliate_directory = strtolower($this->affiliate->getLastname() . '_' . $this->affiliate->getId()) . '/';
+
+        $json = array();
+
+        if (isset($this->request->post['directory'])) {
+            if (isset($this->request->files['image']) && $this->request->files['image']['tmp_name']) {
+
+            for ( $idx = 0; $idx < count($this->request->files['image']['name']); $idx++ ) {
+
+                $filename = basename(html_entity_decode($this->request->files['image']['name'][$idx], ENT_QUOTES, 'UTF-8'));
+
+                if ((strlen($filename) < 3) || (strlen($filename) > 255)) {
+                    $json['error'] = $this->language->get('error_filename');
+                }
+
+                $directory = rtrim(DIR_IMAGE . 'affiliate/' . $affiliate_directory . str_replace('../', '', $this->request->post['directory']), '/');
+
+                if (!is_dir($directory)) {
+                    $json['error'] = $this->language->get('error_directory');
+                }
+
+                if ($this->request->files['image']['size'][$idx] > 300000) {
+                    $json['error'] = $this->language->get('error_file_size');
+                }
+
+                $allowed = array(
+                    'image/jpeg',
+                    'image/pjpeg',
+                    'image/png',
+                    'image/x-png',
+                    'image/gif',
+                    'application/x-shockwave-flash'
+                );
+
+                if (!in_array($this->request->files['image']['type'][$idx], $allowed)) {
+                    $json['error'] = $this->language->get('error_file_type');
+                }
+
+                $allowed = array(
+                    '.jpg',
+                    '.jpeg',
+                    '.gif',
+                    '.png',
+                    '.flv'
+                );
+
+                if (!in_array(strtolower(strrchr($filename, '.')), $allowed)) {
+                    $json['error'] = $this->language->get('error_file_type');
+                }
+
+                // Check to see if any PHP files are trying to be uploaded
+                $content = file_get_contents($this->request->files['image']['tmp_name'][$idx]);
+
+                if (preg_match('/\<\?php/i', $content)) {
+                    $json['error'] = $this->language->get('error_file_type');
+                }
+
+                if ($this->request->files['image']['error'][$idx] != UPLOAD_ERR_OK) {
+                    $json['error'] = 'error_upload_' . $this->request->files['image']['error'][$idx];
+                }
+
+                if (!isset($json['error'])) {
+                    $new_filename =  $directory . '/' . $filename;
+                    if (@move_uploaded_file( $this->request->files['image']['tmp_name'][$idx], $new_filename)) {
+                        $json['success'] = $this->language->get('text_uploaded');
+                        $json['image'][] = rtrim('affiliate/' . $affiliate_directory . str_replace('../', '', $this->request->post['directory']), '/') . '/' . $filename;
+                    } else {
+                        $json['error'] = $this->language->get('error_uploaded');
+                    }
+                }
+
+            }
+
+            } else {
+                $json['error'] = $this->language->get('error_file');
+            }
+
+
+        } else {
+            $json['error'] = $this->language->get('error_directory');
+        }
+
+        $this->response->setOutput(json_encode($json));
+    }
 }
 ?>

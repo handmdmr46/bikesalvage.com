@@ -6,10 +6,10 @@ contact: martin@mdhmotors.com
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 /*
--- Blog 
+-- Blog
 */
 
-CREATE TABLE IF NOT EXISTS `blog` (
+CREATE TABLE IF NOT EXISTS `oc_blog` (
   `blog_id` int(11) NOT NULL AUTO_INCREMENT,
   `bottom` int(1) NOT NULL DEFAULT '0',
   `image` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `blog` (
   PRIMARY KEY (`blog_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `blog_category` (
+CREATE TABLE IF NOT EXISTS `oc_blog_category` (
   `blog_category_id` int(11) NOT NULL AUTO_INCREMENT,
   `image` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `parent_id` int(11) NOT NULL DEFAULT '0',
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `blog_category` (
   PRIMARY KEY (`blog_category_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `blog_category_description` (
+CREATE TABLE IF NOT EXISTS `oc_blog_category_description` (
   `blog_category_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
   `name` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT '',
@@ -44,20 +44,20 @@ CREATE TABLE IF NOT EXISTS `blog_category_description` (
   KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_category_to_layout` (
+CREATE TABLE IF NOT EXISTS `oc_blog_category_to_layout` (
   `blog_category_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
   `layout_id` int(11) NOT NULL,
   PRIMARY KEY (`blog_category_id`,`store_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_category_to_store` (
+CREATE TABLE IF NOT EXISTS `oc_blog_category_to_store` (
   `blog_category_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
   PRIMARY KEY (`blog_category_id`,`store_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_comment` (
+CREATE TABLE IF NOT EXISTS `oc_blog_comment` (
   `blog_comment_id` int(11) NOT NULL AUTO_INCREMENT,
   `blog_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `blog_comment` (
   KEY `blog_id` (`blog_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `blog_description` (
+CREATE TABLE IF NOT EXISTS `oc_blog_description` (
   `blog_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
   `title` varchar(64) COLLATE utf8_bin NOT NULL DEFAULT '',
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `blog_description` (
   PRIMARY KEY (`blog_id`,`language_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_image` (
+CREATE TABLE IF NOT EXISTS `oc_blog_image` (
   `blog_image_id` int(11) NOT NULL AUTO_INCREMENT,
   `blog_id` int(11) NOT NULL,
   `image` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -91,14 +91,14 @@ CREATE TABLE IF NOT EXISTS `blog_image` (
   PRIMARY KEY (`blog_image_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `blog_link` (
+CREATE TABLE IF NOT EXISTS `oc_blog_link` (
   `blog_link_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) COLLATE utf8_bin NOT NULL,
   `status` tinyint(1) NOT NULL,
   PRIMARY KEY (`blog_link_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `blog_link_image` (
+CREATE TABLE IF NOT EXISTS `oc_blog_link_image` (
   `blog_link_image_id` int(11) NOT NULL AUTO_INCREMENT,
   `blog_link_id` int(11) NOT NULL,
   `link` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `blog_link_image` (
   PRIMARY KEY (`blog_link_image_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `blog_link_image_description` (
+CREATE TABLE IF NOT EXISTS `oc_blog_link_image_description` (
   `blog_link_image_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
   `blog_link_id` int(11) NOT NULL,
@@ -114,19 +114,19 @@ CREATE TABLE IF NOT EXISTS `blog_link_image_description` (
   PRIMARY KEY (`blog_link_image_id`,`language_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_product_related` (
+CREATE TABLE IF NOT EXISTS `oc_blog_product_related` (
   `blog_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   PRIMARY KEY (`blog_id`,`product_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_related` (
+CREATE TABLE IF NOT EXISTS `oc_blog_related` (
   `blog_id` int(11) NOT NULL,
   `related_id` int(11) NOT NULL,
   PRIMARY KEY (`blog_id`,`related_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_tag` (
+CREATE TABLE IF NOT EXISTS `oc_blog_tag` (
   `blog_tag_id` int(11) NOT NULL AUTO_INCREMENT,
   `blog_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
@@ -137,32 +137,38 @@ CREATE TABLE IF NOT EXISTS `blog_tag` (
   KEY `tag` (`tag`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `blog_to_category` (
+CREATE TABLE IF NOT EXISTS `oc_blog_to_category` (
   `blog_id` int(11) NOT NULL,
   `blog_category_id` int(11) NOT NULL,
   PRIMARY KEY (`blog_id`,`blog_category_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_to_layout` (
+CREATE TABLE IF NOT EXISTS `oc_blog_to_layout` (
   `blog_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
   `layout_id` int(11) NOT NULL,
   PRIMARY KEY (`blog_id`,`store_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_to_store` (
+CREATE TABLE IF NOT EXISTS `oc_blog_to_store` (
   `blog_id` int(11) NOT NULL,
   `store_id` int(11) NOT NULL,
   PRIMARY KEY (`blog_id`,`store_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE IF NOT EXISTS `blog_video` (
+CREATE TABLE IF NOT EXISTS `oc_blog_video` (
   `blog_video_id` int(11) NOT NULL AUTO_INCREMENT,
   `blog_id` int(11) NOT NULL,
   `video` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `sort_order` int(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`blog_video_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `oc_product_to_affiliate` (
+  `affiliate_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  PRIMARY KEY (`affiliate_id`,`product_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `oc_store_review` (
   `review_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -393,9 +399,48 @@ ADD COLUMN  `last_modified` datetime NOT NULL;
 ALTER TABLE `oc_return`
 ADD COLUMN  `affiliate_id` int(11) NOT NULL DEFAULT'0';
 
+ALTER TABLE `oc_order` DROP COLUMN `affiliate_id`;
+
 CREATE TABLE `oc_transaction_status` (
   `transaction_status_id` int(11) NOT NULL AUTO_INCREMENT,
   `language_id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
   PRIMARY KEY (`transaction_status_id`,`language_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+/* new stuff */
+
+CREATE TABLE `oc_ebay_seller_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ebay_item_id` char(100) NOT NULL,
+  `ebay_title` char(100) NOT NULL,
+  `listing_status` char(32) NOT NULL,
+  `end_time` char(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE `oc_no_syn` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ebay_item_id` varchar(100) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+/*CREATE TABLE `oc_ebay_listing` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ebay_item_id` char(100) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `affiliate_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;*/
+
+UPDATE oc_setting SET group = '0_usps', key = '0_usps_length' WHERE key = 'usps_length';
+
+UPDATE oc_setting SET group = '0_usps', key = '0_usps_width' WHERE key = 'usps_width';
+
+UPDATE oc_setting SET group = '0_usps', key = '0_usps_height' WHERE key = 'usps_height';
+
+UPDATE oc_setting SET group = '0_usps', key = '0_usps_postcode' WHERE key = 'usps_postcode';
+
+UPDATE oc_setting SET group = '0_usps', key = '0_usps_user_id' WHERE key = 'usps_user_id';

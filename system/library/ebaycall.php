@@ -70,5 +70,14 @@ class Ebaycall {
 		return $headers;
 	}
 
+	/*
+	X-EBAY-API-COMPATIBILITY-LEVEL:		873
+	X-EBAY-API-DEV-NAME:				9e1dcda5-aa2f-403a-a9f4-3f4d8ee02f51
+	X-EBAY-API-APP-NAME:				redlandc-dd25-44a9-af22-30050675c6b3
+	X-EBAY-API-CERT-NAME:				7e447e44-5a74-45ff-98b5-812c4466ad31
+	X-EBAY-API-SITEID:					0
+	X-EBAY-API-CALL-NAME:
+	*/
+
 
 }

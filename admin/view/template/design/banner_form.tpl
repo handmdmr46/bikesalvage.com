@@ -119,7 +119,7 @@ function image_upload(field, thumb) {
 			}
 		},	
 		bgiframe: false,
-		width: 700,
+		width: 1000,
 		height: 400,
 		resizable: false,
 		modal: false

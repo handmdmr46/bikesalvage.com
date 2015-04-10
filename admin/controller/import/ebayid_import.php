@@ -3,9 +3,9 @@ class ControllerImportEbayidImport extends Controller {
 	private $error = array();
 
 	public function index() {
-		$this->language->load('import/csv_import');
-		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
+		$this->load->language('import/csv_import');
 		$this->load->model('import/csv_import');
+		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
 		$this->document->addScript('view/javascript/event_scheduler/codebase/dhtmlxscheduler.js');
     	$this->document->addScript('view/javascript/event_scheduler/codebase/ext/dhtmlxscheduler_year_view.js');
     	$this->document->addStyle('view/javascript/event_scheduler/codebase/dhtmlxscheduler.css');
@@ -14,7 +14,6 @@ class ControllerImportEbayidImport extends Controller {
 	}
 
 	protected function getForm() {
-	    // Breadcrumbs
 	    $this->data['breadcrumbs'] = array();
 
 		$this->data['breadcrumbs'][] = array(
@@ -29,7 +28,6 @@ class ControllerImportEbayidImport extends Controller {
        		'separator' => ' :: '
 		);
 
-	   	// Language
 		$this->data['heading_title']                    = $this->language->get('heading_title_ebayid_import');
 		$this->data['button_import']                    = $this->language->get('button_import');
 		$this->data['button_cancel']                    = $this->language->get('button_cancel');
@@ -48,14 +46,12 @@ class ControllerImportEbayidImport extends Controller {
 		$this->data['text_select'] 						= $this->language->get('text_select');
 		$this->data['text_please_wait'] 				= $this->language->get('text_please_wait');
 
-	    // Error
  		if (isset($this->error['warning'])) {
 			$this->data['error'] = $this->error['warning'];
 		} else {
 			$this->data['error'] = '';
 		}
 
-	    // Success
 	    if (isset($this->session->data['success'])) {
 	      $this->data['success'] = $this->session->data['success'];
 	      unset($this->session->data['success']);
@@ -65,15 +61,11 @@ class ControllerImportEbayidImport extends Controller {
 
 	    $url = '';
 
-	    // Buttons
-	    $this->data['import_ids'] = $this->url->link('import/ebayid_import/importIds', 'token=' . $this->session->data['token'] . $url, 'SSL');	    
-	    $this->data['clear_dates'] = $this->url->link('import/ebayid_import/clearDates', 'token=' . $this->session->data['token'] . $url, 'SSL');
-	    $this->data['cancel'] = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$this->data['import_ids']        = $this->url->link('import/ebayid_import/importIds', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$this->data['clear_dates']       = $this->url->link('import/ebayid_import/clearDates', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$this->data['build_seller_list'] = $this->url->link('import/ebayid_import/buildSellerList', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$this->data['cancel']            = $this->url->link('common/home', 'token=' . $this->session->data['token'] . $url, 'SSL');
 
-	    $profiles                        = $this->model_import_csv_import->getEbayProfile();
-	    $this->data['ebay_sites']        = $this->model_import_csv_import->getEbaySiteIds();
-	    $this->data['compat_levels']     = $this->model_import_csv_import->getEbayCompatibilityLevels();
-	    $this->data['dates']             = $this->model_import_csv_import->getEbayImportStartDates();
 
 	    $this->template = 'import/ebayid_import.tpl';
 
@@ -86,11 +78,10 @@ class ControllerImportEbayidImport extends Controller {
 	}
 
     public  function importIds() {
-	    $this->language->load('import/csv_import');	    
-		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
-		$this->load->model('import/csv_import');
+	    $this->load->language('import/csv_import');
+	    $this->load->model('import/csv_import');
 		$this->load->model('inventory/stock_control');
-		
+		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
 
 	    if ($this->request->server['REQUEST_METHOD'] == 'POST' && $this->validate()) {
 	    	$time_from = $this->request->post['start_date'] . 'T01:35:27.000Z';
@@ -98,29 +89,56 @@ class ControllerImportEbayidImport extends Controller {
 	        $this->model_import_csv_import->setEbayImportStartDates($this->request->post);
 
 	        $import_data = $this->model_inventory_stock_control->getSellerList($time_from, $time_to);
+	        $match = 0;
 
 	        if (is_array($import_data)) {
 		        $unlinked   = $this->model_inventory_stock_control->getUnlinkedProducts();
-		      
+
 		        if($unlinked) {
 		      	    foreach($unlinked as $product){
 			            foreach(array_combine($import_data['id'], $import_data['title']) as $item_id => $ebay_title) {
 			                if ($product['name'] === $ebay_title) {
-			                	$this->model_inventory_stock_control->setProductLink($product['product_id'], $item_id);		                  
+			                	$this->model_inventory_stock_control->setProductLink($product['product_id'], $item_id);
+			                	$match++;
 			                }
 			            }
 		      	    }
-		        }		        
+		        }
 
-		        $this->session->data['success'] = $this->language->get('success_import');
-		        $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));		       
+		        $this->session->data['success'] = sprintf($this->language->get('success_import'), $match);
+		        $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
 			} else if (is_string($import_data)) { // failed response
-				$this->error['warning'] = $import_data;	
+				$this->error['warning'] = $import_data;
 				$this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 	    }
 
 	    $this->getForm();
+    }
+
+    public function buildSellerList() {
+    	$this->load->language('import/csv_import');
+	    $this->load->model('import/csv_import');
+		$this->load->model('inventory/stock_control');
+		$this->document->setTitle($this->language->get('heading_title_ebayid_import'));
+
+		if ($this->request->server['REQUEST_METHOD'] == 'POST' && $this->validate()) {
+			$time_from   = $this->request->post['start_date'] . 'T01:35:27.000Z';
+			$time_to     = $this->request->post['end_date'] . 'T01:35:27.000Z';
+			$import_data = array();
+			$import_data = $this->model_inventory_stock_control->getSellerList($time_from, $time_to);
+
+			if (is_array($import_data)) {
+				foreach($import_data as $data) {
+					$this->model_inventory_stock_control->buildSellerList($data);
+				}
+			} else if (is_string($import_data)) { // failed response
+				$this->error['warning'] = $import_data;
+				$this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
+			}
+		}
+
+		$this->getForm();
     }
 
     protected function validate() {
@@ -146,6 +164,5 @@ class ControllerImportEbayidImport extends Controller {
 
 	    $this->redirect($this->url->link('import/ebayid_import', 'token=' . $this->session->data['token'], 'SSL'));
     }
-
-}// end class
-
+}
+?>

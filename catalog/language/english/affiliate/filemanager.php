@@ -1,7 +1,7 @@
 <?php
 // Heading
 $_['heading_title']    = 'Image Manager';
- 
+
 // Text
 $_['text_uploaded']    = 'Success: Your file has been uploaded!';
 $_['text_file_delete'] = 'File has been deleted!';
@@ -18,7 +18,7 @@ $_['entry_copy']       = 'Name:';
 $_['entry_rename']     = 'Name:';
 
 // Error
-$_['error_token']			= 'Token has expired, you must to log in for a valid token certificate';
+$_['error_token']      = 'Token has expired, you must to log in for a valid token certificate';
 $_['error_select']     = 'Warning: Please select a directory or file!';
 $_['error_file']       = 'Warning: Please select a file!';
 $_['error_directory']  = 'Warning: Please select a directory!';
@@ -45,4 +45,5 @@ $_['button_rename']    = 'Rename';
 $_['button_upload']    = 'Upload';
 $_['button_refresh']   = 'Refresh';
 $_['button_submit']    = 'Submit';
+$_['button_search']    = 'Search Image';
 ?>

@@ -3,12 +3,13 @@
 * language file inventory stock control
 *
 */
-// Text 
+// Text
 $_['heading_title_stock_control']     =	'Stock Control';
 $_['heading_title_ebay_profile']      = 'Stock Control | eBay Profile';
 $_['heading_title_ebay_call']         = 'Stock Control | eBay API Call';
 $_['heading_title_linked_products']   = 'Linked Products';
 $_['heading_title_unlinked_products'] = 'Unlinked Products';
+$_['heading_title_ebay_seller_list']  = 'eBay Seller List';
 $_['text_ebay_user_token']            = 'eBay User Token';
 $_['text_developer_id']               = 'eBay Developer ID';
 $_['text_site_id']                    = 'eBay Site ID';

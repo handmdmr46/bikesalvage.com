@@ -1,9 +1,14 @@
 <?php
-class ControllerAffiliateDashboardShipping extends Controller {
+class ControllerAffiliateDashboardSettingShipping extends Controller {
 	private $error = array();
 
 	public function index() {
-		$this->language->load('affiliate/dashboard_shipping');
+		if (!$this->affiliate->isLogged()) {
+			$this->session->data['redirect'] = $this->url->link('affiliate/dashboard_setting_shipping', '', 'SSL');
+			$this->redirect($this->url->link('affiliate/login', '', 'SSL'));
+		}
+
+		$this->load->language('affiliate/dashboard_setting_shipping');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -12,7 +17,7 @@ class ControllerAffiliateDashboardShipping extends Controller {
 		$this->load->model('setting/setting');
 
 		$affiliate_id = $this->affiliate->getId();
-		
+
 		$this->data['affiliate_id'] = $affiliate_id;
 		$group = $affiliate_id . '_usps';
 
@@ -21,17 +26,22 @@ class ControllerAffiliateDashboardShipping extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->redirect($this->url->link('affiliate/dashboard_shipping', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->redirect($this->url->link('affiliate/dashboard_setting_shipping', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
-		$this->data['heading_title']        = $this->language->get('heading_title');
-		$this->data['entry_user_id']        = $this->language->get('entry_user_id');
-		$this->data['entry_postcode']       = $this->language->get('entry_postcode');
-		$this->data['entry_dimension']      = $this->language->get('entry_dimension');
-		$this->data['button_save']          = $this->language->get('button_save');
-		$this->data['button_cancel']        = $this->language->get('button_cancel');
+		$this->data['heading_title']              = $this->language->get('heading_title');
+		$this->data['entry_user_id']              = $this->language->get('entry_user_id');
+		$this->data['entry_postcode']             = $this->language->get('entry_postcode');
+		$this->data['entry_dimension']            = $this->language->get('entry_dimension');
+		$this->data['entry_usps_shipping_status'] = $this->language->get('entry_usps_shipping_status');
+		$this->data['button_save']                = $this->language->get('button_save');
+		$this->data['button_cancel']              = $this->language->get('button_cancel');
+		$this->data['text_yes']                   = $this->language->get('text_yes');
+		$this->data['text_no']                    = $this->language->get('text_no');
+		$this->data['text_none']                  = $this->language->get('text_none');
+		$this->data['text_usps_developer_link']   = $this->language->get('text_usps_developer_link');
+		$this->data['entry_usps_developer_link']  = $this->language->get('entry_usps_developer_link');
 
-		// Error
 		if (isset($this->error['warning'])) {
 			$this->data['error_warning'] = $this->error['warning'];
 		} else {
@@ -68,7 +78,6 @@ class ControllerAffiliateDashboardShipping extends Controller {
 			$this->data['error_height'] = '';
 		}
 
-		// Success
 		if (isset($this->session->data['success'])) {
     		$this->data['success'] = $this->session->data['success'];
 			unset($this->session->data['success']);
@@ -86,13 +95,20 @@ class ControllerAffiliateDashboardShipping extends Controller {
 
 		$this->data['breadcrumbs'][] = array(
 			'text'      => $this->language->get('text_shipping'),
-			'href'      => $this->url->link('affiliate/dashboard_shipping', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('affiliate/dashboard_setting_shipping', 'token=' . $this->session->data['token'], 'SSL'),
 			'separator' => ' :: '
 		);
 
-		$this->data['action'] = $this->url->link('affiliate/dashboard_shipping', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['action'] = $this->url->link('affiliate/dashboard_setting_shipping', 'token=' . $this->session->data['token'], 'SSL');
 
-		$this->data['cancel'] = $this->url->link('affiliate/dashboard', 'token=' . $this->session->data['token'], 'SSL');		
+		$this->data['cancel'] = $this->url->link('affiliate/dashboard', 'token=' . $this->session->data['token'], 'SSL');
+
+		// used for: is (affiliate signed up yet || not)
+		if (isset($this->request->post[$affiliate_id . '_usps_shipping_status'])) {
+			$this->data['usps_shipping_status'] = $this->request->post[$affiliate_id . '_usps_shipping_status'];
+		} else {
+			$this->data['usps_shipping_status'] = $this->config->get($affiliate_id . '_usps_shipping_status');
+		}
 
 		if (isset($this->request->post[$affiliate_id . '_usps_user_id'])) {
 			$this->data['usps_user_id'] = $this->request->post[$affiliate_id . '_usps_user_id'];
@@ -124,15 +140,15 @@ class ControllerAffiliateDashboardShipping extends Controller {
 			$this->data['usps_height'] = $this->request->post[$affiliate_id . '_usps_height'];
 		} else {
 			$this->data['usps_height'] = $this->config->get($affiliate_id . '_usps_height');
-		}		
+		}
 
-		$this->template = $this->config->get('config_template') . '/template/affiliate/dashboard_shipping.tpl';
-		
+		$this->template = $this->config->get('config_template') . '/template/affiliate/dashboard_setting_shipping.tpl';
+
 		$this->children = array(
 			'affiliate/common/header',
 			'affiliate/common/footer'
 		);
-		
+
 		$this->response->setOutput($this->render());
 	}
 
