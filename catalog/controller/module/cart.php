@@ -14,6 +14,7 @@ class ControllerModuleCart extends Controller {
 		// Products
 		$this->data['products'] = array();
 		$affiliate_ids = array();
+		$master_total = 0;
 
 		foreach ($this->cart->getProducts() as $product) {
 			$affiliate_ids[] = $product['affiliate_id'];
@@ -69,6 +70,9 @@ class ControllerModuleCart extends Controller {
 				'recurring' => $product['recurring'],
 				'profile'   => $product['profile_name'],
 			);
+
+			// Master Total
+			$master_total += $product['price'] * $product['quantity'];
 		}
 
 		// Language
@@ -93,10 +97,9 @@ class ControllerModuleCart extends Controller {
 
 		// Totals
 		$this->load->model('setting/extension');
-
 		$total_data = array();
 		$total = 0;
-		$key = 0;
+
 		$affiliate_ids = array_unique($affiliate_ids);
 
 		// Display prices
@@ -115,7 +118,7 @@ class ControllerModuleCart extends Controller {
 				if ($this->config->get($result['code'] . '_status')) {
 					$this->load->model('total/' . $result['code']);
 					foreach ($affiliate_ids as $affiliate_id) {
-						$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id, $key);
+						$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id);
 					}
 				}
 
@@ -129,8 +132,8 @@ class ControllerModuleCart extends Controller {
 			}
 		}
 
-		$this->data['totals'] = $total_data;
-		$this->data['text_items'] = sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->currency->format($total));
+		$this->data['master_total'] = $this->currency->format($master_total);
+		$this->data['text_items'] = sprintf($this->language->get('text_items'), $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0), $this->data['master_total']);
 
 		$this->data['cart']     = $this->url->link('checkout/cart');
 		$this->data['checkout'] = $this->url->link('checkout/checkout', '', 'SSL');

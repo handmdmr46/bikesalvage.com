@@ -13,7 +13,6 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 		if (!empty($shipping_address)) {
 			$affiliate_ids = array();
-			$product_names = array();
 			$quote_data    = array();
 
 			$this->load->model('setting/extension');
@@ -23,20 +22,17 @@ class ControllerCheckoutShippingMethod extends Controller {
 			}
 
 			$affiliate_ids = array_unique($affiliate_ids);
+
 			$this->data['affiliate_ids'] = $affiliate_ids;
 
-			foreach($affiliate_ids as $affiliate_id) {
-				foreach($this->cart->getProducts() as $product) {
-					if ($product['affiliate_id'] == $affiliate_id) {
-						$product_names[] = $product['name'];
-					}
-				}
+			$results = $this->model_setting_extension->getExtensions('shipping');
 
-				$results = $this->model_setting_extension->getExtensions('shipping'); // maybe move this out of the affiliate_ids loop? Maybe have different shipping option for affilites?
+			$this->load->model('shipping/usps');
+
+			foreach($affiliate_ids as $affiliate_id) {
 
 				foreach ($results as $key => $result) {
 					if ($this->config->get($result['code'] . '_status')) { // usps_status
-						$this->load->model('shipping/' . $result['code']); // shipping/usps
 
 						$quote = $this->{'model_shipping_' . $result['code']}->getAffiliateQuote($shipping_address, $affiliate_id); // model_shipping_usps
 
@@ -45,8 +41,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 								'info'       => $quote['info'],
 								'quote'      => $quote['quote'],
 								'sort_order' => $quote['sort_order'],
-								'error'      => $quote['error'],
-								'products'   => $product_names
+								'error'      => $quote['error']
 							);
 						}
 					}
@@ -80,12 +75,6 @@ class ControllerCheckoutShippingMethod extends Controller {
 			} else {
 				$this->data['comment'] = '';
 			}
-
-			/*if (isset($this->session->data['shipping_method']['code'])) {
-				$this->data['code'] = $this->session->data['shipping_method']['code'];
-			} else {
-				$this->data['code'] = '';
-			}*/
 
 			if (isset($this->session->data['shipping_methods_' . $affiliate_ids[0]]['quote']['code'])) {
 				$this->data['code'] = $this->session->data['shipping_methods_' . $affiliate_ids[0]]['quote']['code'];
@@ -165,21 +154,17 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 		if (!$json) {
 			foreach ($affiliate_ids as $affiliate_id) {
-				if (!isset($this->request->post['shipping_method'][$affiliate_id])) {
-					// $json['error']['warning'] = $this->language->get('error_shipping');
-					$json['error']['warning'] = 'testingERROR_2';
+				if (!isset($this->request->post['shipping_method' . $affiliate_id])) {
+					$json['error']['warning'] = $this->language->get('error_shipping');
 				} else {
-					$shipping = explode('.', $this->request->post['shipping_method'][$affiliate_id]);
+					$shipping = explode('.', $this->request->post['shipping_method' . $affiliate_id]);
 
 					if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods_' . $affiliate_id]['quote'])) {
-						// $json['error']['warning'] = $this->language->get('error_shipping');
-						$json['error']['warning'] = 'testingERROR_1';
+						$json['error']['warning'] = $this->language->get('error_shipping');
 					}
 				}
 			}
-
 			if (!$json) {
-				// keep this incase shipping comments, one shipping comment for all affiliates, may update in the future
 				$this->session->data['comment'] = strip_tags($this->request->post['comment']);
 			}
 		}

@@ -54,17 +54,18 @@
                 <?php } ?>
             </tbody>
             <tfoot>
-                <?php foreach ($totals as $total) { ?>
-                    <tr>
-                        <td colspan="4" class="price">
-                            <?php if ($total['code'] == 'shipping') { ?>
-                                <strong><?php $total['title'] = $text_shipping_total; ?></strong>
-                            <?php } ?>
-                            <strong><?php echo $total['title']; ?>:</strong>
-                        </td>
-                        <td class="total"><?php echo $total['text']; ?></td>
-                    </tr>
-                <?php } ?>
+                <tr>
+                    <td colspan="4" class="price"><strong>Sub Total:</strong></td>
+                    <td class="total"><?php echo $sub_total; ?></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="price"><strong>Shipping Total:</strong></td>
+                    <td class="total"><?php echo $shipping_total; ?></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="price"><strong>Total Total:</strong></td>
+                    <td class="total"><?php echo $total_total; ?></td>
+                </tr>
             </tfoot>
         </table>
     </div>

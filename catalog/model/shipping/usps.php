@@ -1014,7 +1014,7 @@ class ModelShippingUsps extends Model {
 
 		$weight = $this->weight->convert($this->cart->getWeightByAffiliateId($affiliate_id), $this->config->get('config_weight_class_id'), $this->config->get('usps_weight_class_id'));
 
-		$address = array(
+		/*$address = array(
 			'firstname'  => $query->row['firstname'],
 			'lastname'   => $query->row['lastname'],
 			'state_name' => $zone->row['name'],
@@ -1026,7 +1026,15 @@ class ModelShippingUsps extends Model {
 			'weight'     => $this->weight->format($weight, $this->config->get('usps_weight_class_id'))
 		);
 
-		return $address;
+		return $address;*/
+
+		$info = array(
+			'name'    => $query->row['firstname'] . ' ' . $query->row['lastname'],
+			'address' => $query->row['address_1'] . ' ' . $query->row['address_2'] . ' ' . $query->row['city'] . ', ' . $zone->row['name'] . ' ' . $query->row['postcode'],
+			'weight'  => $this->weight->format($weight, $this->config->get('usps_weight_class_id'))
+		);
+
+		return $info;
 	}
 
 	private function getAdminShippingInfo() {

@@ -220,6 +220,12 @@ class ControllerCommonHeader extends Controller {
 		$this->data['affiliate']         = $this->url->link('affiliate/account', '', 'SSL');
 		$this->data['special']           = $this->url->link('product/special');
 
+		// $this->load->model('checkout/order');
+
+		// $this->data['shipping_total'] = $this->model_checkout_order->getMasterShippingTotal(2);
+		// $this->data['sub_total'] = $this->model_checkout_order->getMasterSubTotal(2);
+		// $this->data['total_total'] = $this->model_checkout_order->getMasterTotalTotal(2);
+
 		$this->children = array(
 			'module/language',
 			'module/currency',

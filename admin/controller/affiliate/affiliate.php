@@ -139,7 +139,7 @@ class ControllerAffiliateAffiliate extends Controller {
 			$action = array();
 
 			$action[] = array(
-				'text' => $this->language->get('text_manage'),
+				'text' => 'Pay Manager',
 				'href' => $this->url->link('affiliate/affiliate/getManageForm', 'token=' . $this->session->data['token'] . '&affiliate_id=' . $result['affiliate_id'] . $url, 'SSL')
 			);
 
@@ -306,9 +306,9 @@ class ControllerAffiliateAffiliate extends Controller {
   		$this->language->load('affiliate/affiliate');
 		$this->load->model('affiliate/affiliate');
 
-		$this->document->setTitle('Affiliate Profile');
+		$this->document->setTitle('Affiliate Payment Manager');
 
-		$this->data['heading_title']             = 'Affiliate Profile';
+		// $this->data['heading_title']             = 'Affiliate Payment Manager';
 
 		$this->data['text_enabled']              = $this->language->get('text_enabled');
 		$this->data['text_disabled']             = $this->language->get('text_disabled');
@@ -481,7 +481,7 @@ class ControllerAffiliateAffiliate extends Controller {
 		);
 
 		$this->data['breadcrumbs'][] = array(
-			'text'      => 'Affiliate Profile',
+			'text'      => 'Affiliate Payment Manager',
 			'href'      => $this->url->link('affiliate/affiliate/getManageForm', 'token=' . $this->session->data['token'] . '&affiliate_id=' . $this->request->get['affiliate_id'] . $url, 'SSL'),
 			'separator' => ' :: '
 		);
@@ -604,6 +604,8 @@ class ControllerAffiliateAffiliate extends Controller {
 		} else {
 			$this->data['country_id'] = '';
 		}
+
+		$this->data['heading_title'] = 'Affiliate Payment Manager: ' . $this->data['firstname'] . ' ' . $this->data['lastname'];
 
 		$this->load->model('localisation/country');
 
@@ -971,7 +973,9 @@ class ControllerAffiliateAffiliate extends Controller {
 			);
 		}
 
-		$this->data['heading_title'] = 'Affiliate Product List';
+		$affiliate_info = $this->model_affiliate_affiliate->getAffiliate($affiliate_id);
+
+		$this->data['heading_title'] = 'Affiliate Product List: ' . $affiliate_info['firstname'] . ' ' . $affiliate_info['lastname'];
 
 		$this->data['text_enabled'] = $this->language->get('text_enabled');
 		$this->data['text_disabled'] = $this->language->get('text_disabled');
@@ -1165,10 +1169,10 @@ class ControllerAffiliateAffiliate extends Controller {
 
 		$this->document->setTitle('Affiliate Product Form');
 
-		$this->load->model('catalog/product');
+		$this->load->model('catalog/admin_product');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateAffiliateProductForm()) {
-			$this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);
+			$this->model_catalog_admin_product->editProduct($this->request->get['product_id'], $this->request->post);
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -1680,15 +1684,20 @@ class ControllerAffiliateAffiliate extends Controller {
 	* Orders
 	*/
 	public function getAffiliateOrderList() {
-		$this->language->load('sale/order');
-		$this->language->load('affiliate/affiliate');
+		$this->load->language('sale/order');
+		$this->load->language('affiliate/affiliate');
 		$this->load->model('affiliate/affiliate');
 		$this->load->model('catalog/product');
 		$this->load->model('sale/order');
 
+		$affiliate_id = $this->request->get['affiliate_id'];
+		$this->data['affiliate_id'] = $affiliate_id;
+
 		$this->document->setTitle('Affiliate Sales');
 
-		$this->data['heading_title']        = 'Affiliate Sales';
+		$affiliate_info = $this->model_affiliate_affiliate->getAffiliate($affiliate_id);
+
+		$this->data['heading_title'] = 'Affiliate Sales: ' . $affiliate_info['firstname'] . ' ' . $affiliate_info['lastname'];
 
 		$this->data['text_no_results']      = $this->language->get('text_no_results');
 		$this->data['text_missing']         = $this->language->get('text_missing');
@@ -1761,9 +1770,6 @@ class ControllerAffiliateAffiliate extends Controller {
 		} else {
 			$page = 1;
 		}
-
-		$affiliate_id = $this->request->get['affiliate_id'];
-		$this->data['affiliate_id'] = $affiliate_id;
 
 		$url = '&affiliate_id=' . $affiliate_id;
 
@@ -1995,8 +2001,15 @@ class ControllerAffiliateAffiliate extends Controller {
 
 	protected function getAffiliateOrderForm() {
 		$this->load->model('sale/customer');
+		$this->load->model('affiliate/affiliate');
 
-		$this->data['heading_title'] = $this->language->get('heading_title');
+		$affiliate_id = $this->request->get['affiliate_id'];
+		$url = '&affiliate_id=' . $affiliate_id;
+
+		// $this->data['heading_title'] = $this->language->get('heading_title');
+		$affiliate_info = $this->model_affiliate_affiliate->getAffiliate($affiliate_id);
+
+		$this->data['heading_title'] = 'Affiliate Sales: ' . $affiliate_info['firstname'] . ' ' . $affiliate_info['lastname'];
 
 		$this->data['text_no_results'] = $this->language->get('text_no_results');
 		$this->data['text_default'] = $this->language->get('text_default');
@@ -2198,9 +2211,6 @@ class ControllerAffiliateAffiliate extends Controller {
 		} else {
 			$this->data['error_shipping_method'] = '';
 		}
-
-		$affiliate_id = $this->request->get['affiliate_id'];
-		$url = '&affiliate_id=' . $affiliate_id;
 
 		if (isset($this->request->get['filter_order_id'])) {
 			$url .= '&filter_order_id=' . $this->request->get['filter_order_id'];
@@ -2820,7 +2830,7 @@ class ControllerAffiliateAffiliate extends Controller {
 
 			$affiliate_id = $this->request->get['affiliate_id'];
 			$url = '&affiliate_id=' . $affiliate_id;
-
+			$this->data['stock_control_id'] = $this->config->get($affiliate_id . '_stock_control_id');
 			// Filters
 			if (isset($this->request->get['filter_order_id'])) {
 				$url .= '&filter_order_id=' . $this->request->get['filter_order_id'];
@@ -2868,7 +2878,19 @@ class ControllerAffiliateAffiliate extends Controller {
 			);
 
 			$this->data['breadcrumbs'][] = array(
-				'text'      => $this->language->get('heading_title'),
+				'text'      => 'Affiliates',
+				'href'      => $this->url->link('affiliate/affiliate/getList', 'token=' . $this->session->data['token'] . $url, 'SSL'),
+				'separator' => ' :: '
+			);
+
+			$this->data['breadcrumbs'][] = array(
+				'text'      => 'Affiliate Orders',
+				'href'      => $this->url->link('affiliate/affiliate/getAffiliateOrderList', 'token=' . $this->session->data['token'] . $url, 'SSL'),
+				'separator' => ' :: '
+			);
+
+			$this->data['breadcrumbs'][] = array(
+				'text'      => 'Affiliate Order Info',
 				'href'      => $this->url->link('affiliate/affiliate/getAffiliateOrderInfo', 'token=' . $this->session->data['token'] . $url, 'SSL'),
 				'separator' => ' :: '
 			);
@@ -2936,8 +2958,7 @@ class ControllerAffiliateAffiliate extends Controller {
 			$this->data['telephone']          = $order_info['telephone'];
 			$this->data['fax']                = $order_info['fax'];
 			$this->data['comment']            = nl2br($order_info['comment']);
-			$this->data['shipping_method']    = $order_info['shipping_method'];
-			$this->data['payment_method']     = $order_info['payment_method'];
+
 			$this->data['total']              = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value']);
 
 			if ($order_info['total'] < 0) {

@@ -51,11 +51,11 @@ class ModelAffiliateDashboard extends Model {
 		$product_id = $this->db->getLastId();
 		$affiliate_id = $this->affiliate->getId();
 
-		if ($this->affiliate->isLogged()) {
+		/*if ($this->affiliate->isLogged()) {
 			$this->db->query("	INSERT INTO " . DB_PREFIX . "product_to_affiliate
 								SET product_id = '" . (int)$product_id . "',
 								affiliate_id = '" . (int)$affiliate_id . "'");
-		}
+		}*/
 
 		// product description & meta description
 		foreach ($data['product_description'] as $language_id => $value) {
@@ -385,7 +385,6 @@ class ModelAffiliateDashboard extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_download WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_layout WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_store WHERE product_id = '" . (int)$product_id . "'");
-		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_affiliate WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "review WHERE product_id = '" . (int)$product_id . "'");
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'product_id=" . (int)$product_id. "'");

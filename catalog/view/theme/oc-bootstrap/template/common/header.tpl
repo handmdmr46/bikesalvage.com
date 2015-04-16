@@ -290,18 +290,9 @@
                                              </ul>
                                         <?php } ?>
                                     <?php } ?>
-
                             </div>
                         </li>
                     </ul>
                 </div>
             </nav>
-            <!-- <br>
-            shipping_methods_0 quote<br>
-            <?php var_dump($_SESSION['shipping_methods_0']['quote']); ?><br>
-            shipping_methods_0 info<br>
-            <?php print_r($_SESSION['shipping_methods_0']['info']); ?><br>
-            shipping_methods_0 error<br>
-            <?php print_r($_SESSION['shipping_methods_0']['error']); ?><br> -->
-
-		<div id="notification"></div>
+		    <div id="notification"></div>

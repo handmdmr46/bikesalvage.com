@@ -3,11 +3,6 @@ class ControllerCheckoutCart extends Controller {
 	private $error = array();
 
 	public function index() {
-		//TEST AREA
-
-		// unset($this->session->data['shipping_methods_0']);
-
-
 		$this->language->load('checkout/cart');
 
 		if (!isset($this->session->data['vouchers'])) {
@@ -29,9 +24,6 @@ class ControllerCheckoutCart extends Controller {
 				$this->cart->update($key, $value);
 			}
 
-			// unset($this->session->data['shipping_method']);
-			// unset($this->session->data['shipping_methods']);
-
 			foreach ($affiliate_ids as $affiliate_id) {
 				unset($this->session->data['shipping_methods_' . $affiliate_id]);
 			}
@@ -50,9 +42,6 @@ class ControllerCheckoutCart extends Controller {
 			unset($this->session->data['vouchers'][$this->request->get['remove']]);
 
 			$this->session->data['success'] = $this->language->get('text_remove');
-
-			// unset($this->session->data['shipping_method']);
-			// unset($this->session->data['shipping_methods']);
 
 			foreach ($affiliate_ids as $affiliate_id) {
 				unset($this->session->data['shipping_methods_' . $affiliate_id]);
@@ -203,6 +192,7 @@ class ControllerCheckoutCart extends Controller {
 			$this->load->model('tool/image');
 
 			$this->data['products'] = array();
+			$master_total = 0;
 
 			$products = $this->cart->getProducts();
 
@@ -298,6 +288,9 @@ class ControllerCheckoutCart extends Controller {
 					'profile_name'        => $product['profile_name'],
 					'profile_description' => $profile_description
 				);
+
+				// Master Total
+				$master_total += $product['price'] * $product['quantity'];
 			}
 
 			$this->data['products_recurring'] = array();
@@ -380,32 +373,12 @@ class ControllerCheckoutCart extends Controller {
 				$this->data['postcode'] = '';
 			}
 
-			// needs affiliate updated??
-			/*if (isset($this->request->post['shipping_method'])) {
-				$this->data['shipping_method'] = $this->request->post['shipping_method'];
-			} elseif (isset($this->session->data['shipping_method'])) {
-				$this->data['shipping_method'] = $this->session->data['shipping_method']['code'];
-			} else {
-				$this->data['shipping_method'] = '';
-			}*/
-
-			foreach ($affiliate_ids as $affiliate_id) {
-				if (isset($this->request->post['shipping_methods'][$affiliate_id])) {
-					$this->data['shipping_methods'][$affiliate_id] = $this->request->post['shipping_methods'][$affiliate_id];
-				} elseif (isset($this->session->data['shipping_methods_' . $affiliate_id])) {
-					$this->data['shipping_methods'][$affiliate_id] = $this->session->data['shipping_methods_' . $affiliate_id]['code'];
-				} else {
-					$this->data['shipping_methods'] = array();
-				}
-			}
-
 			// Totals
 			$this->load->model('setting/extension');
-
 			$total_data = array();
 			$total = 0;
 			$taxes = $this->cart->getTaxes();
-			$key = 0;
+
 			// Display prices
 			if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
 				$sort_order = array();
@@ -422,7 +395,7 @@ class ControllerCheckoutCart extends Controller {
 					if ($this->config->get($result['code'] . '_status')) {
 						$this->load->model('total/' . $result['code']);
 						foreach($affiliate_ids as $affiliate_id) {
-							$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id, $key);
+							$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id);
 						}
 					}
 
@@ -436,7 +409,7 @@ class ControllerCheckoutCart extends Controller {
 				}
 			}
 
-			$this->data['totals'] = $total_data;
+			$this->data['total'] = $this->currency->format($master_total);
 
 			$this->data['continue'] = $this->url->link('common/home');
 
@@ -554,27 +527,9 @@ class ControllerCheckoutCart extends Controller {
 		}
 	}
 
-	/*protected function validateShipping() {
-		if (!empty($this->request->post['shipping_method'])) {
-			$shipping = explode('.', $this->request->post['shipping_method']);
-
-			if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
-				$this->error['warning'] = $this->language->get('error_shipping');
-			}
-		} else {
-			$this->error['warning'] = $this->language->get('error_shipping');
-		}
-
-		if (!$this->error) {
-			return true;
-		} else {
-			return false;
-		}
-	}*/
-
 	protected function validateAffiliateShipping($affiliate_id) {
-		if (!empty($this->request->post['shipping_method'][$affiliate_id])) {
-			$shipping = explode('.', $this->request->post['shipping_method'][$affiliate_id]);
+		if (!empty($this->request->post['shipping_method' . $affiliate_id])) {
+			$shipping = explode('.', $this->request->post['shipping_method' . $affiliate_id]);
 
 			if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods_' . $affiliate_id][$shipping[0]]['quote'][$shipping[1]])) {
 				$this->error['warning'] = $this->language->get('error_shipping');
@@ -659,8 +614,6 @@ class ControllerCheckoutCart extends Controller {
 
 				$affiliate_ids = array_unique($affiliate_ids);
 
-				// unset($this->session->data['shipping_method']);
-				// unset($this->session->data['shipping_methods']);
 				foreach ($affiliate_ids as $affiliate_id) {
 					unset($this->session->data['shipping_methods_' . $affiliate_id]);
 				}
@@ -669,40 +622,12 @@ class ControllerCheckoutCart extends Controller {
 
 				// Totals
 				$this->load->model('setting/extension');
-
-				$total_data = array();
 				$total = 0;
-				$key = 0;
-				$taxes = $this->cart->getTaxes();
 
 				// Display prices
 				if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
-					$sort_order = array();
-
-					$results = $this->model_setting_extension->getExtensions('total');
-
-					foreach ($results as $key => $value) {
-						$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
-					}
-
-					array_multisort($sort_order, SORT_ASC, $results);
-
-					foreach ($results as $result) {
-						if ($this->config->get($result['code'] . '_status')) {
-							$this->load->model('total/' . $result['code']);
-							foreach ($affiliate_ids as $affiliate_id) {
-								$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id, $key);
-							}
-
-						}
-
-						$sort_order = array();
-
-						foreach ($total_data as $key => $value) {
-							$sort_order[$key] = $value['sort_order'];
-						}
-
-						array_multisort($sort_order, SORT_ASC, $total_data);
+					foreach ($this->cart->getProducts() as $product) {
+						$total += $product['price'] * $quantity;
 					}
 				}
 

@@ -409,7 +409,7 @@ CREATE TABLE `oc_transaction_status` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 
-/* new stuff */
+/* new stuff afiliates checkout updates */
 
 CREATE TABLE `oc_ebay_seller_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -427,13 +427,6 @@ CREATE TABLE `oc_no_syn` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-/*CREATE TABLE `oc_ebay_listing` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ebay_item_id` char(100) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `affiliate_id` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;*/
 
 UPDATE oc_setting SET group = '0_usps', key = '0_usps_length' WHERE key = 'usps_length';
 
@@ -444,3 +437,10 @@ UPDATE oc_setting SET group = '0_usps', key = '0_usps_height' WHERE key = 'usps_
 UPDATE oc_setting SET group = '0_usps', key = '0_usps_postcode' WHERE key = 'usps_postcode';
 
 UPDATE oc_setting SET group = '0_usps', key = '0_usps_user_id' WHERE key = 'usps_user_id';
+
+ALTER TABLE `oc_order`
+DROP COLUMN `shipping_method`,
+DROP COLUMN `shipping_code`;
+
+
+

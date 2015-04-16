@@ -94,14 +94,13 @@ class ControllerCheckoutConfirm extends Controller {
 
 			array_multisort($sort_order, SORT_ASC, $results); // sorts array in ascending order
 
-			$key = 0;
 			foreach ($results as $result) {
 				if ($this->config->get($result['code'] . '_status')) {
 
 					$this->load->model('total/' . $result['code']);
 
 					foreach($affiliate_ids as $affiliate_id) {
-						$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id, $key);
+						$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id);
 					}
 				}
 			}
@@ -302,6 +301,8 @@ class ControllerCheckoutConfirm extends Controller {
 			$data['affiliate_id']   = 0; // to prevent warning
 			$data['commission']     = 0; // to prevent warning
 
+			$this->data['test'] = $data;
+
 			// forwarded_ip
 			if (!empty($this->request->server['HTTP_X_FORWARDED_FOR'])) {
 				$data['forwarded_ip'] = $this->request->server['HTTP_X_FORWARDED_FOR'];
@@ -327,7 +328,7 @@ class ControllerCheckoutConfirm extends Controller {
 
 			// Add Order
 			$this->load->model('checkout/order');
-			$order_id = $this->model_checkout_order->addOrder($data); // need change totals in addOrder()
+			$order_id = $this->model_checkout_order->addOrder($data);
 			$this->session->data['order_id'] = $order_id;
 
 			$this->data['column_name']         = $this->language->get('column_name');
@@ -409,7 +410,13 @@ class ControllerCheckoutConfirm extends Controller {
 			}
 
 			// Order Totals for Confirm View
-			$this->data['totals'] = $total_data;
+			$shipping_total = $this->model_checkout_order->getMasterShippingTotal($order_id);
+			$sub_total      = $this->model_checkout_order->getMasterSubTotal($order_id);
+			$total_total    = $this->model_checkout_order->getMasterTotalTotal($order_id);
+
+			$this->data['shipping_total'] = $this->currency->format($shipping_total);
+			$this->data['sub_total']      = $this->currency->format($sub_total);
+			$this->data['total_total']    = $this->currency->format(max(0,$total_total));
 
 			// **** CONFIRM PAYMENT and FINALIZE ORDER through payment module *****
 			$this->data['payment'] = $this->getChild('payment/' . $this->session->data['payment_method']['code']);

@@ -36,14 +36,12 @@ class ControllerCheckoutPaymentMethod extends Controller {
 
 			array_multisort($sort_order, SORT_ASC, $results);
 
-			$key = 0;
-			foreach ($affiliate_ids as $affiliate_id) {
-				foreach ($results as $result) {
-					if ($this->config->get($result['code'] . '_status')) {
-						$this->load->model('total/' . $result['code']);
-						foreach($affiliate_ids as $affiliate_id) {
-							$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id, $key);
-						}
+
+			foreach ($results as $result) {
+				if ($this->config->get($result['code'] . '_status')) {
+					$this->load->model('total/' . $result['code']);
+					foreach($affiliate_ids as $affiliate_id) {
+						$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $affiliate_id);
 					}
 				}
 			}
